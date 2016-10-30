@@ -1,0 +1,10 @@
+D:\Project\Web\AMCL.OPENMF\AMCL.REPORT\bin\Debug\AMCL.REPORT.dll
+D:\Project\Web\AMCL.OPENMF\AMCL.REPORT\bin\Debug\AMCL.REPORT.pdb
+D:\Project\Web\AMCL.OPENMF\AMCL.REPORT\obj\Debug\ResolveAssemblyReference.cache
+D:\Project\Web\AMCL.OPENMF\AMCL.REPORT\obj\Debug\AMCL.REPORT.dll
+D:\Project\Web\AMCL.OPENMF\AMCL.REPORT\obj\Debug\AMCL.REPORT.pdb
+D:\Projects\Web\AMCL.OPENMF\AMCL.REPORT\bin\Debug\AMCL.REPORT.dll
+D:\Projects\Web\AMCL.OPENMF\AMCL.REPORT\bin\Debug\AMCL.REPORT.pdb
+D:\Projects\Web\AMCL.OPENMF\AMCL.REPORT\obj\Debug\ResolveAssemblyReference.cache
+D:\Projects\Web\AMCL.OPENMF\AMCL.REPORT\obj\Debug\AMCL.REPORT.dll
+D:\Projects\Web\AMCL.OPENMF\AMCL.REPORT\obj\Debug\AMCL.REPORT.pdb

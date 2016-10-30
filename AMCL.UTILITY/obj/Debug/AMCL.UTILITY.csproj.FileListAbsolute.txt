@@ -1,0 +1,10 @@
+D:\Project\Web\AMCL.OPENMF\AMCL.UTILITY\bin\Debug\AMCL.UTILITY.dll
+D:\Project\Web\AMCL.OPENMF\AMCL.UTILITY\bin\Debug\AMCL.UTILITY.pdb
+D:\Project\Web\AMCL.OPENMF\AMCL.UTILITY\obj\Debug\ResolveAssemblyReference.cache
+D:\Project\Web\AMCL.OPENMF\AMCL.UTILITY\obj\Debug\AMCL.UTILITY.dll
+D:\Project\Web\AMCL.OPENMF\AMCL.UTILITY\obj\Debug\AMCL.UTILITY.pdb
+D:\Projects\Web\AMCL.OPENMF\AMCL.UTILITY\bin\Debug\AMCL.UTILITY.dll
+D:\Projects\Web\AMCL.OPENMF\AMCL.UTILITY\bin\Debug\AMCL.UTILITY.pdb
+D:\Projects\Web\AMCL.OPENMF\AMCL.UTILITY\obj\Debug\ResolveAssemblyReference.cache
+D:\Projects\Web\AMCL.OPENMF\AMCL.UTILITY\obj\Debug\AMCL.UTILITY.dll
+D:\Projects\Web\AMCL.OPENMF\AMCL.UTILITY\obj\Debug\AMCL.UTILITY.pdb
