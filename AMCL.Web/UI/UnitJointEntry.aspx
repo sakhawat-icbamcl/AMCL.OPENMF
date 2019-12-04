@@ -416,7 +416,7 @@
                 CssClass= "TextInputStyleLarge" MaxLength="125" TabIndex="16" 
                 meta:resourcekey="holderFMTextBoxResource1"></asp:TextBox>
             <span class="star">*</span></td>
-          <td align="right" ><b>Spouce Name:</b></td>
+          <td align="right" ><b>Spouse Name:</b></td>
         <td align="left">
             <span class="star">
             <asp:TextBox ID="spouceTextBox" runat="server" 

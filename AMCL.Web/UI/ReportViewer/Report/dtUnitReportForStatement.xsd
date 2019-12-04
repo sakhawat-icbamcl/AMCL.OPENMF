@@ -30,10 +30,13 @@
               <xs:element name="SL_TYPE" type="xs:string" minOccurs="0" />
               <xs:element name="TIN" type="xs:string" minOccurs="0" />
               <xs:element name="BO" type="xs:string" minOccurs="0" />
+              <xs:element name="NID" type="xs:string" minOccurs="0" />
+              <xs:element name="MONY_RECT_NO" type="xs:string" minOccurs="0" />
               <xs:element name="CERT_RCV_BY" type="xs:string" minOccurs="0" />
               <xs:element name="CERT_DLVRY_DT" type="xs:string" minOccurs="0" />
               <xs:element name="REP_NO" type="xs:int" minOccurs="0" />
               <xs:element name="REP_DT" type="xs:string" minOccurs="0" />
+              <xs:element name="PAY_TYPE" type="xs:string" minOccurs="0" />
               <xs:element name="SL_TR_REP_NO" type="xs:string" minOccurs="0" />
               <xs:element name="OLD_SL_TR_NO" type="xs:string" minOccurs="0" />
               <xs:element name="TR_NO" type="xs:int" minOccurs="0" />

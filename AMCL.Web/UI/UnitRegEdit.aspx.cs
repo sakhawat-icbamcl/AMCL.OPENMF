@@ -58,7 +58,7 @@ public partial class UI_UnitRegEdit : System.Web.UI.Page
             bankNameDropDownList.DataValueField = "BANK_CODE";
             bankNameDropDownList.DataBind();
 
-           IDbankNameDropDownList.DataSource = opendMFDAO.dtFillBankName(" CATE_CODE IN (2,3) ");
+           IDbankNameDropDownList.DataSource = opendMFDAO.dtFillBankName(" CATE_CODE IN (1,2,3) ");
            IDbankNameDropDownList.DataTextField = "BANK_NAME";
            IDbankNameDropDownList.DataValueField = "BANK_CODE";
            IDbankNameDropDownList.DataBind();
@@ -150,7 +150,7 @@ public partial class UI_UnitRegEdit : System.Web.UI.Page
 
 
 
-        
+        unitHolderObj.HolderMobile = MobileTextBox.Text.Trim();
         unitHolderObj.HolderTelephone =TelphoneTextBox.Text.Trim();
         unitHolderObj.HolderEmail =EmailTextBox.Text.Trim();
         unitHolderObj.HolderMaritialStatus = MaritialStatusDropDownList.SelectedValue;
@@ -274,6 +274,7 @@ public partial class UI_UnitRegEdit : System.Web.UI.Page
         OccupationDropDownList.SelectedValue="0";
         NationalityTextBox.Text="BANGLADESHI";
         TelphoneTextBox.Text="";
+        MobileTextBox.Text = "";
         EmailTextBox.Text="";
         SourceFundTextBox.Text = "";
         webaddressTextBox.Text = "";
@@ -479,7 +480,8 @@ public partial class UI_UnitRegEdit : System.Web.UI.Page
                 DateofBirthTextBox.Text = dtHolderRegInfo.Rows[0]["B_DATE"].Equals(DBNull.Value) ? "" : Convert.ToDateTime(dtHolderRegInfo.Rows[0]["B_DATE"].ToString()).ToString("dd-MMM-yyyy");
 
                 TelphoneTextBox.Text = dtHolderRegInfo.Rows[0]["TEL_NO"].Equals(DBNull.Value) ? "" : dtHolderRegInfo.Rows[0]["TEL_NO"].ToString();
-               
+                MobileTextBox.Text = dtHolderRegInfo.Rows[0]["MOBILE1"].Equals(DBNull.Value) ? "" : dtHolderRegInfo.Rows[0]["MOBILE1"].ToString();
+
                 presentAddress1TextBox.Text = dtHolderRegInfo.Rows[0]["ADDRS1"].Equals(DBNull.Value) ? "" : dtHolderRegInfo.Rows[0]["ADDRS1"].ToString();
                 presentAddress2TextBox.Text = dtHolderRegInfo.Rows[0]["ADDRS2"].Equals(DBNull.Value) ? "" : dtHolderRegInfo.Rows[0]["ADDRS2"].ToString();
                 presentCityTextBox.Text = dtHolderRegInfo.Rows[0]["CITY"].Equals(DBNull.Value) ? "" : dtHolderRegInfo.Rows[0]["CITY"].ToString();
@@ -503,13 +505,13 @@ public partial class UI_UnitRegEdit : System.Web.UI.Page
                 {
                     bftnNoRadioButton.Checked = true;
                     bftnYesRadioButton.Checked = false;
-                    divBEFTN.Attributes.Add("style", "visibility:hidden");
+                    divBEFTN.Attributes.Add("style", "visibility:visible");
                 }
                 else if (dtHolderRegInfo.Rows[0]["IS_BEFTN"].ToString().ToUpper() == "N")
                 {
                     bftnNoRadioButton.Checked = true;
                     bftnYesRadioButton.Checked = false;
-                    divBEFTN.Attributes.Add("style", "visibility:hidden");
+                    divBEFTN.Attributes.Add("style", "visibility:visible");
                 }
                 else if (dtHolderRegInfo.Rows[0]["IS_BEFTN"].ToString().ToUpper() == "Y")
                 {

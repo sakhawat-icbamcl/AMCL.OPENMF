@@ -31,6 +31,7 @@ public partial class UI_UnitDividendSearch : System.Web.UI.Page
     UnitReport reportObj = new UnitReport();
     BaseClass bcContent = new BaseClass();
     UnitLienBl unitLienBLObj = new UnitLienBl();
+    EncryptDecrypt encrypt = new EncryptDecrypt();
     protected void Page_Load(object sender, EventArgs e)
     {
         if (BaseContent.IsSessionExpired())
@@ -43,13 +44,26 @@ public partial class UI_UnitDividendSearch : System.Web.UI.Page
         userObj.UserID = bcContent.LoginID.ToString();
         string fundCode = bcContent.FundCode.ToString();
         string branchCode = bcContent.BranchCode.ToString();
-        spanFundName.InnerText = opendMFDAO.GetFundName(fundCode.ToString());
-        fundCodeTextBox.Text = fundCode.ToString();
-        branchCodeTextBox.Text = branchCode.ToString();      
+        spanFundName.InnerText = opendMFDAO.GetFundName(fundCode.ToString());           
         regNoTextBox.Focus();
       
         if (!IsPostBack)
         {
+          
+
+            fundCodeDDL.DataSource = reportObj.dtFundCodeList();
+            fundCodeDDL.DataTextField = "NAME";
+            fundCodeDDL.DataValueField = "ID";
+            fundCodeDDL.SelectedValue = fundCode.ToString();
+            fundCodeDDL.DataBind();
+
+            branchCodeDDL.DataSource = reportObj.dtBranchCodeList();
+            branchCodeDDL.DataTextField = "NAME";
+            branchCodeDDL.DataValueField = "ID";
+            branchCodeDDL.SelectedValue = branchCode.ToString();
+            branchCodeDDL.DataBind();
+
+           
             dateTextBox.Text = DateTime.Today.ToString("dd-MMM-yyyy");
         }
     
@@ -57,7 +71,12 @@ public partial class UI_UnitDividendSearch : System.Web.UI.Page
     
     private void ClearText()
     {
-        
+        bcContent = (BaseClass)Session["BCContent"];
+
+        userObj.UserID = bcContent.LoginID.ToString();
+        string fundCode = bcContent.FundCode.ToString();
+        string branchCode = bcContent.BranchCode.ToString();
+
         holderNameTextBox.Text="";
         jHolderTextBox.Text="";
         holderAddress1TextBox.Text="";
@@ -76,7 +95,9 @@ public partial class UI_UnitDividendSearch : System.Web.UI.Page
         LienLockLabel.Text = "NO";
         RenLockLabel.Text = "NO";
         dvLockin.Attributes.Add("style", "visibility:hidden");
-        
+        fundCodeDDL.SelectedValue = fundCode.ToString();
+        branchCodeDDL.SelectedValue = branchCode.ToString();
+
     }
     protected void CloseButton_Click(object sender, EventArgs e)
     {
@@ -87,41 +108,48 @@ public partial class UI_UnitDividendSearch : System.Web.UI.Page
     {
 
         UnitHolderRegistration regObj = new UnitHolderRegistration();
-        regObj.FundCode = fundCodeTextBox.Text.Trim();
-        regObj.BranchCode = branchCodeTextBox.Text.Trim();
+        regObj.FundCode = fundCodeDDL.SelectedValue.ToString();
+        regObj.BranchCode = branchCodeDDL.SelectedValue.ToString();
         regObj.RegNumber = regNoTextBox.Text.Trim();
-        if(opendMFDAO.IsValidRegistration(regObj))
+        regObj.BO = holderBOTextBox.Text.ToString().Trim();
+        regObj.Folio = folioTextBox.Text.Trim();
+
+        DataTable dtValidSearch = opendMFDAO.dtValidSearch(regObj);
+        if (dtValidSearch.Rows.Count > 0)
         {
-            displayRegInfo();
+            regObj = new UnitHolderRegistration();
+            regObj.FundCode = fundCodeDDL.SelectedValue.ToString();
+            regObj.BranchCode = branchCodeDDL.SelectedValue.ToString();
+            regObj.RegNumber = dtValidSearch.Rows[0]["REG_NO"].ToString();
+            displayRegInfo(regObj);
         }
         else
         {
-            SignImage.ImageUrl = Path.Combine(ConfigReader.SingLocation, "Notavailable.JPG").ToString();
+            SignImage.ImageUrl = encrypt.PhotoBase64ImgSrc(Path.Combine(ConfigReader.SingLocation, "Notavailable.JPG").ToString());
             ClearText();
             dvLedger.Visible = false;
-            ScriptManager.RegisterStartupScript(this.Page, this.Page.GetType(), "Popup", "alert ('Invalid Registration Number');", true);
+            ScriptManager.RegisterStartupScript(this.Page, this.Page.GetType(), "Popup", "alert ('Invalid Registration Number OR BO OR Foilo');", true);
         }
 
 
-       
-        
-    
     }
    
-    public void displayRegInfo()
+    public void displayRegInfo(UnitHolderRegistration unitRegObj)
     {
         dvLedger.Visible = true;
-        UnitHolderRegistration unitRegObj = new UnitHolderRegistration();
-        unitRegObj.FundCode = fundCodeTextBox.Text.Trim();
-        unitRegObj.BranchCode = branchCodeTextBox.Text.Trim();
+      
+        unitRegObj.FundCode = fundCodeDDL.SelectedValue.ToString();
+        unitRegObj.BranchCode = branchCodeDDL.SelectedValue.ToString();
         unitRegObj.RegNumber = regNoTextBox.Text.Trim();
         DataTable dtRegInfo = opendMFDAO.getDtRegInfo(unitRegObj);
         DataTable dtNominee = opendMFDAO.dtNomineeRegInfo(unitRegObj);
+
+
         if (dtRegInfo.Rows.Count > 0)
         {
             //Trasaction Lock Status 
 
-            if (!(dtRegInfo.Rows[0]["ALL_LOCK"].Equals(DBNull.Value) || (dtRegInfo.Rows[0]["ALL_LOCK"].ToString() == "N")) || !(dtRegInfo.Rows[0]["SL_LOCK"].Equals(DBNull.Value) || (dtRegInfo.Rows[0]["SL_LOCK"].ToString() == "N")) || !(dtRegInfo.Rows[0]["REP_LOCK"].Equals(DBNull.Value) || (dtRegInfo.Rows[0]["REP_LOCK"].ToString() == "N")) || !(dtRegInfo.Rows[0]["TR_LOCK"].Equals(DBNull.Value) || (dtRegInfo.Rows[0]["TR_LOCK"].ToString() == "N")) || !(dtRegInfo.Rows[0]["LIEN_LOCK"].Equals(DBNull.Value) || (dtRegInfo.Rows[0]["LIEN_LOCK"].ToString() == "N")) || !(dtRegInfo.Rows[0]["REN_LOCK"].Equals(DBNull.Value)|| (dtRegInfo.Rows[0]["REN_LOCK"].ToString() == "N")) || !(dtRegInfo.Rows[0]["LOCK_REMARKS"].Equals(DBNull.Value)))
+            if (!(dtRegInfo.Rows[0]["ALL_LOCK"].Equals(DBNull.Value) || (dtRegInfo.Rows[0]["ALL_LOCK"].ToString() == "N")) || !(dtRegInfo.Rows[0]["SL_LOCK"].Equals(DBNull.Value) || (dtRegInfo.Rows[0]["SL_LOCK"].ToString() == "N")) || !(dtRegInfo.Rows[0]["REP_LOCK"].Equals(DBNull.Value) || (dtRegInfo.Rows[0]["REP_LOCK"].ToString() == "N")) || !(dtRegInfo.Rows[0]["TR_LOCK"].Equals(DBNull.Value) || (dtRegInfo.Rows[0]["TR_LOCK"].ToString() == "N")) || !(dtRegInfo.Rows[0]["LIEN_LOCK"].Equals(DBNull.Value) || (dtRegInfo.Rows[0]["LIEN_LOCK"].ToString() == "N")) || !(dtRegInfo.Rows[0]["REN_LOCK"].Equals(DBNull.Value) || (dtRegInfo.Rows[0]["REN_LOCK"].ToString() == "N")) || !(dtRegInfo.Rows[0]["LOCK_REMARKS"].Equals(DBNull.Value)))
             {
                 dvLockin.Attributes.Add("style", "visibility:visible");
                 if (dtRegInfo.Rows[0]["ALL_LOCK"].ToString() == "Y")
@@ -176,9 +204,9 @@ public partial class UI_UnitDividendSearch : System.Web.UI.Page
                     {
                         RenLockLabel.Text = "NO";
                     }
-                    
-                   
-                   
+
+
+
                     LockRemarksTextBox.Text = dtRegInfo.Rows[0]["LOCK_REMARKS"].Equals(DBNull.Value) ? "" : dtRegInfo.Rows[0]["LOCK_REMARKS"].ToString();
                 }
             }
@@ -191,7 +219,9 @@ public partial class UI_UnitDividendSearch : System.Web.UI.Page
                 RenLockLabel.Text = "NO";
                 dvLockin.Attributes.Add("style", "visibility:hidden");
             }
-
+            regNoTextBox.Text = dtRegInfo.Rows[0]["REG_NO"].Equals(DBNull.Value) ? "" : dtRegInfo.Rows[0]["REG_NO"].ToString();
+            holderBOTextBox.Text = dtRegInfo.Rows[0]["BO"].Equals(DBNull.Value) ? "" : dtRegInfo.Rows[0]["BO"].ToString();
+            folioTextBox.Text = dtRegInfo.Rows[0]["FOLIO_NO"].Equals(DBNull.Value) ? "" : dtRegInfo.Rows[0]["FOLIO_NO"].ToString();
             holderNameTextBox.Text = dtRegInfo.Rows[0]["HNAME"].Equals(DBNull.Value) ? "" : dtRegInfo.Rows[0]["HNAME"].ToString();
             jHolderTextBox.Text = dtRegInfo.Rows[0]["JNT_NAME"].Equals(DBNull.Value) ? "" : dtRegInfo.Rows[0]["JNT_NAME"].ToString();
             holderAddress1TextBox.Text = dtRegInfo.Rows[0]["ADDRS1"].Equals(DBNull.Value) ? "" : dtRegInfo.Rows[0]["ADDRS1"].ToString();
@@ -208,11 +238,15 @@ public partial class UI_UnitDividendSearch : System.Web.UI.Page
             {
                 tdCIP.InnerHtml = "NO";
             }
+            else
+            {
+                tdCIP.InnerHtml = " ";
+            }
             if (string.Compare(BEFTN, "Y", true) == 0)
             {
                 tdBEFTN.InnerHtml = "YES";
             }
-            else 
+            else
             {
                 tdBEFTN.InnerHtml = "NO";
             }
@@ -300,10 +334,10 @@ public partial class UI_UnitDividendSearch : System.Web.UI.Page
         string fundName = "";
 
         regNo = regNoTextBox.Text.ToString();
-        fundName = opendMFDAO.GetFundName(fundCodeTextBox.Text.ToString());
-        fundCode = fundCodeTextBox.Text.ToString();
-        branchName = opendMFDAO.GetBranchName(branchCodeTextBox.Text.ToString());
-        branchCode = branchCodeTextBox.Text.ToString();
+        fundName = opendMFDAO.GetFundName(fundCodeDDL.SelectedValue.ToString());
+        fundCode = fundCodeDDL.SelectedValue.ToString();
+        branchName = opendMFDAO.GetBranchName(branchCodeDDL.SelectedValue.ToString());
+        branchCode = branchCodeDDL.SelectedValue.ToString();
 
 
         unitHolderName = opendMFDAO.GetHolderName(fundCode, branchCode, regNo);
@@ -328,13 +362,13 @@ public partial class UI_UnitDividendSearch : System.Web.UI.Page
     protected void regNoTextBox_TextChanged(object sender, EventArgs e)
     {
         UnitHolderRegistration regObj = new UnitHolderRegistration();
-        regObj.FundCode = fundCodeTextBox.Text.Trim();
-        regObj.BranchCode = branchCodeTextBox.Text.Trim();
+        regObj.FundCode = fundCodeDDL.SelectedValue.ToString();
+        regObj.BranchCode = branchCodeDDL.SelectedValue.ToString();
         regObj.RegNumber = regNoTextBox.Text.Trim();
         if (opendMFDAO.IsValidRegistration(regObj))
         {
 
-            displayRegInfo();
+            displayRegInfo(regObj);
         }
         else
         {
@@ -348,7 +382,8 @@ public partial class UI_UnitDividendSearch : System.Web.UI.Page
     {
         StringBuilder sbQuery = new StringBuilder();
         sbQuery.Append("SELECT  DIVIDEND.ID, DIVIDEND.FUND_CD, DIVIDEND.DIVI_NO, DIVIDEND.FY, DIVIDEND.WAR_NO, DIVI_PARA.FY_PART, DIVIDEND.TOT_DIVI, DIVIDEND.DIDUCT, DIVIDEND.FI_DIVI_QTY, TO_CHAR(DIVIDEND.WAR_BK_PAY_DT,'DD-MON-YYYY') AS WAR_BK_PAY_DT, ");
-        sbQuery.Append("TO_CHAR(DIVIDEND.BEFTN_RETURN_DT,'DD-MON-YYYY') AS BEFTN_RETURN_DT, DIVIDEND.CIP_QTY, DIVIDEND.BALANCE, TO_CHAR(DIVIDEND.WAR_DELEVARY_DT, 'DD-MON-YYYY') AS WAR_DELEVARY_DT, DECODE(DIVIDEND.IS_BEFTN, 'Y', ");
+        sbQuery.Append(" TO_CHAR(DIVI_PARA.ISS_DT ,'DD-MON-YYYY') AS ISSUE_DT, ");
+        sbQuery.Append(" TO_CHAR(DIVIDEND.BEFTN_RETURN_DT,'DD-MON-YYYY') AS BEFTN_RETURN_DT, DIVIDEND.CIP_QTY, DIVIDEND.BALANCE, TO_CHAR(DIVIDEND.WAR_DELEVARY_DT, 'DD-MON-YYYY') AS WAR_DELEVARY_DT, DECODE(DIVIDEND.IS_BEFTN, 'Y', ");
         sbQuery.Append("  'BEFTN  PROCESS', 'BY HAND') AS IS_BEFTN, DIVIDEND.WARR_RECPT_BY FROM  DIVI_PARA INNER JOIN  DIVIDEND ON DIVI_PARA.FUND_CD = DIVIDEND.FUND_CD AND DIVI_PARA.DIVI_NO = DIVIDEND.DIVI_NO AND DIVI_PARA.F_YEAR = DIVIDEND.FY AND ");
         sbQuery.Append("   DIVI_PARA.CLOSE_DT = DIVIDEND.CLOSE_DT WHERE 1=1 ");
         sbQuery.Append(" AND REG_BR='" + unitRegObj.BranchCode.ToString() + "' AND REG_BK='" + unitRegObj.FundCode.ToString() + "' AND REG_NO=" + unitRegObj.RegNumber);
@@ -389,7 +424,7 @@ public partial class UI_UnitDividendSearch : System.Web.UI.Page
                             htDeliveryInfo.Add("WARR_RECPT_BY", authorizeTextBox.Text.Trim().ToString());
                         }
 
-                        commonGatewayObj.Update(htDeliveryInfo, "DIVIDEND", "REG_BK='" + fundCodeTextBox.Text.ToString() + "' AND DIVI_NO=" + Convert.ToInt32(dtDividendLedger.Rows[countRow]["DIVI_NO"]) + " AND REG_NO="+ Convert.ToInt32(regNoTextBox.Text.Trim())+" AND WAR_NO=" + Convert.ToInt32(dtDividendLedger.Rows[countRow]["WAR_NO"]));
+                        commonGatewayObj.Update(htDeliveryInfo, "DIVIDEND", "REG_BK='" + fundCodeDDL.SelectedValue.ToString() + "' AND DIVI_NO=" + Convert.ToInt32(dtDividendLedger.Rows[countRow]["DIVI_NO"]) + " AND REG_NO="+ Convert.ToInt32(regNoTextBox.Text.Trim())+" AND WAR_NO=" + Convert.ToInt32(dtDividendLedger.Rows[countRow]["WAR_NO"]));
 
 
                     }

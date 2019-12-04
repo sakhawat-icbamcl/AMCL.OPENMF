@@ -66,6 +66,60 @@ public partial class UI_UnitReportFundPosition : System.Web.UI.Page
     
     protected void findButton_Click(object sender, EventArgs e)
     {
+        DataTable dtUnitFundPosition = dtFundPosition();
+        DataRow drUnitFundPosition;
+        drUnitFundPosition = dtUnitFundPosition.NewRow();
+        drUnitFundPosition["SI"] = DBNull.Value;
+        drUnitFundPosition["TRANS_TYPE"] = "Net (1-4+6-7)) ";
+        drUnitFundPosition["TOTAL_UNIT"] = Convert.ToInt64(dtUnitFundPosition.Rows[0]["TOTAL_UNIT"].ToString()) - Convert.ToInt64(dtUnitFundPosition.Rows[3]["TOTAL_UNIT"].ToString()) + Convert.ToInt64(dtUnitFundPosition.Rows[5]["TOTAL_UNIT"].ToString()) - Convert.ToInt64(dtUnitFundPosition.Rows[6]["TOTAL_UNIT"].ToString());
+        drUnitFundPosition["TOTAL_AMT"] =decimal.Parse( dtUnitFundPosition.Rows[0]["TOTAL_AMT"].ToString()) - decimal.Parse(dtUnitFundPosition.Rows[3]["TOTAL_AMT"].ToString());
+        drUnitFundPosition["TOTAL_HOLD"] = DBNull.Value;
+        
+
+        dtUnitFundPosition.Rows.Add(drUnitFundPosition);
+        dgFundPosition.DataSource = dtUnitFundPosition;
+        dgFundPosition.DataBind();
+    }
+
+    protected void PrintButton_Click(object sender, EventArgs e)
+    {
+        DataTable dtUnitFundPosition = dtFundPosition();
+        DataRow drUnitFundPosition;
+        drUnitFundPosition = dtUnitFundPosition.NewRow();
+        drUnitFundPosition["SI"] = DBNull.Value;
+        drUnitFundPosition["TRANS_TYPE"] = "Net (1-4+6-7)) ";
+        drUnitFundPosition["TOTAL_UNIT"] = Convert.ToInt64(dtUnitFundPosition.Rows[0]["TOTAL_UNIT"].ToString()) - Convert.ToInt64(dtUnitFundPosition.Rows[3]["TOTAL_UNIT"].ToString()) + Convert.ToInt64(dtUnitFundPosition.Rows[5]["TOTAL_UNIT"].ToString()) - Convert.ToInt64(dtUnitFundPosition.Rows[6]["TOTAL_UNIT"].ToString());
+        drUnitFundPosition["TOTAL_AMT"] = decimal.Parse(dtUnitFundPosition.Rows[0]["TOTAL_AMT"].ToString()) - decimal.Parse(dtUnitFundPosition.Rows[3]["TOTAL_AMT"].ToString());
+        drUnitFundPosition["TOTAL_HOLD"] = DBNull.Value;
+        dtUnitFundPosition.Rows.Add(drUnitFundPosition);
+
+        if (dtUnitFundPosition.Rows.Count > 0)
+        {
+            Session["reportType"] = "POSITION";
+            Session["dtUnitFundPosition"] = dtUnitFundPosition;
+            Session["FUND_NAME"] = fundNameDropDownList.SelectedItem.Text.ToString();
+            Session["BRANCH_NAME"] = branchNameDropDownList.SelectedItem.Text.ToString();
+            Session["DATE_FROM"] = fromDateTextBox.Text.ToString();
+            Session["DATE_TO"] = toDateTextBox.Text.ToString();
+
+            ScriptManager.RegisterStartupScript(this.Page, this.Page.GetType(), "UnitReportTaxCert", "window.open('ReportViewer/UnitReportFundPositionReportViewer.aspx')", true);
+        }
+        else
+        {
+            Session["reportType"] = null;
+            Session["dtUnitFundPosition"] = null;
+            Session["FUND_NAME"] = null;
+            Session["BRANCH_NAME"] = null;
+            Session["DATE_FROM"] = null;
+            Session["DATE_TO"] = null;
+            ScriptManager.RegisterStartupScript(this.Page, this.Page.GetType(), "Popup", "alert('No Data Found');", true);
+        }
+
+
+
+    }
+    public DataTable dtFundPosition()
+    {
         StringBuilder sbQuery = new StringBuilder();
         DataTable dtUnitFundPosition = new DataTable();
 
@@ -73,7 +127,7 @@ public partial class UI_UnitReportFundPosition : System.Web.UI.Page
         sbQuery.Append(" FROM  SALE WHERE  (REG_BK = '" + fundNameDropDownList.SelectedValue.ToString().ToUpper() + "') ");
         if (branchNameDropDownList.SelectedValue.ToString() != "0")
         {
-            sbQuery.Append(" AND (REG_BR = '" + branchNameDropDownList.SelectedValue.ToString().ToUpper()+ "')");
+            sbQuery.Append(" AND (REG_BR = '" + branchNameDropDownList.SelectedValue.ToString().ToUpper() + "')");
 
         }
         if (fromDateTextBox.Text != "" && toDateTextBox.Text != "")
@@ -122,8 +176,8 @@ public partial class UI_UnitReportFundPosition : System.Web.UI.Page
             sbQuery.Append("UNION ALL");
             sbQuery.Append(" SELECT  5 AS SI, 'Transfer' AS TRANS_TYPE, NVL(SUM(QTY),0) AS TOTAL_UNIT, 0 AS TOTAL_AMT, COUNT(DISTINCT REG_NO_I) AS TOTAL_HOLD");
             sbQuery.Append(" FROM  TRANSFER WHERE  (F_CD = '" + fundNameDropDownList.SelectedValue.ToString().ToUpper() + "')");
-           // sbQuery.Append(" AND (REG_BR_O = REG_BR_I) AND (REG_BR_O = '" + branchNameDropDownList.SelectedValue.ToString() + "') AND (REG_BR_I = '" + branchNameDropDownList.SelectedValue.ToString() + "') ");
-          
+            // sbQuery.Append(" AND (REG_BR_O = REG_BR_I) AND (REG_BR_O = '" + branchNameDropDownList.SelectedValue.ToString() + "') AND (REG_BR_I = '" + branchNameDropDownList.SelectedValue.ToString() + "') ");
+
             if (fromDateTextBox.Text != "" && toDateTextBox.Text != "")
             {
                 sbQuery.Append(" AND (TR_DT BETWEEN '" + fromDateTextBox.Text.Trim().ToString() + "' AND '" + toDateTextBox.Text.Trim().ToString() + "')");
@@ -150,7 +204,7 @@ public partial class UI_UnitReportFundPosition : System.Web.UI.Page
 
 
         }
-       else if (branchNameDropDownList.SelectedValue != "0")
+        else if (branchNameDropDownList.SelectedValue != "0")
         {
 
             sbQuery.Append("UNION ALL");
@@ -214,7 +268,7 @@ public partial class UI_UnitReportFundPosition : System.Web.UI.Page
             sbQuery.Append("   U.REG_NO = TIN.REG_NO_I) A WHERE CIP='Y'  AND (REG_BK = '" + fundNameDropDownList.SelectedValue.ToString().ToUpper() + "')AND BALANCE>0");
         }
 
-       
+
         if (branchNameDropDownList.SelectedValue.ToString() != "0")
         {
             sbQuery.Append(" AND (REG_BR = '" + branchNameDropDownList.SelectedValue.ToString().ToUpper() + "')");
@@ -256,30 +310,9 @@ public partial class UI_UnitReportFundPosition : System.Web.UI.Page
             sbQuery.Append(" AND (REG_BR = '" + branchNameDropDownList.SelectedValue.ToString().ToUpper() + "')");
 
         }
-        
 
-
-
-
-
-
-
-
-      
-       
 
         dtUnitFundPosition = commonGatewayObj.Select(sbQuery.ToString());
-        DataRow drUnitFundPosition;
-        drUnitFundPosition = dtUnitFundPosition.NewRow();
-        drUnitFundPosition["SI"] = DBNull.Value;
-        drUnitFundPosition["TRANS_TYPE"] = "Net (1-4+6-7)) ";
-        drUnitFundPosition["TOTAL_UNIT"] = Convert.ToInt64(dtUnitFundPosition.Rows[0]["TOTAL_UNIT"].ToString()) - Convert.ToInt64(dtUnitFundPosition.Rows[3]["TOTAL_UNIT"].ToString()) + Convert.ToInt64(dtUnitFundPosition.Rows[5]["TOTAL_UNIT"].ToString()) - Convert.ToInt64(dtUnitFundPosition.Rows[6]["TOTAL_UNIT"].ToString());
-        drUnitFundPosition["TOTAL_AMT"] =decimal.Parse( dtUnitFundPosition.Rows[0]["TOTAL_AMT"].ToString()) - decimal.Parse(dtUnitFundPosition.Rows[3]["TOTAL_AMT"].ToString());
-        drUnitFundPosition["TOTAL_HOLD"] = DBNull.Value;
-        
-
-        dtUnitFundPosition.Rows.Add(drUnitFundPosition);
-        dgFundPosition.DataSource = dtUnitFundPosition;
-        dgFundPosition.DataBind();
+        return dtUnitFundPosition;
     }
 }

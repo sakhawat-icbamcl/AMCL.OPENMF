@@ -29,7 +29,8 @@ public partial class UI_UnitReportRepurchaseVoucher : System.Web.UI.Page
     CommonGateway commonGatewayObj = new CommonGateway();
     BaseClass bcContent = new BaseClass();
     NumberToEnglish numberToEnglishObj = new NumberToEnglish();
-    
+    UnitRepurchaseBL unitRepBLObj = new UnitRepurchaseBL();
+
     protected void Page_Load(object sender, EventArgs e)
     {
        if (BaseContent.IsSessionExpired())
@@ -91,11 +92,21 @@ public partial class UI_UnitReportRepurchaseVoucher : System.Web.UI.Page
             //sbRepurchase.Append("SELECT  SUM(QTY) AS QTY, SUM(QTY * REP_PRICE) AS AMOUNT FROM (SELECT REPURCHASE.REP_NO, REPURCHASE.REP_DT, REPURCHASE.QTY, U_MASTER.HNAME, REPURCHASE.SL_TR_NO, ");
             //sbRepurchase.Append(" ");
 
+          
+            UnitHolderRegistration regObj = new UnitHolderRegistration();
+            // UnitTransfer transferObj = new UnitTransfer();
+            UnitRepurchase unitRepObj = new UnitRepurchase();
+
+            regObj.FundCode = fundCodeTextBox.Text.Trim();
+            regObj.BranchCode = branchCodeTextBox.Text.Trim();
+            unitRepObj.RepurchaseNo = Convert.ToInt32(fromRepNoTextBox.Text.Trim().ToString());
 
             StringBuilder sbMaster = new StringBuilder();
             StringBuilder sbFilter = new StringBuilder();
             DataTable dtReportStatement = new DataTable();
             StringBuilder sbReportString = new StringBuilder();
+
+
             string copy =fundCodeTextBox.Text.ToString() + " Copy";
             if (accoountRadioButton.Checked)
             {
@@ -106,7 +117,8 @@ public partial class UI_UnitReportRepurchaseVoucher : System.Web.UI.Page
             sbMaster.Append("SELECT NVL(REPURCHASE.REP_NO,0) AS REP_NO , TO_CHAR(REPURCHASE.REP_DT, 'DD-MON-YYYY') AS REP_DT, U_MASTER.REG_BK, U_MASTER.REG_BR, U_MASTER.REG_NO AS RG_NO, ");
             sbMaster.Append(" U_MASTER.HNAME, U_JHOLDER.JNT_NAME, U_MASTER.REG_BK || '/' || U_MASTER.REG_BR || '/' || U_MASTER.REG_NO AS REG_NO,U_MASTER.TIN,U_MASTER.BO,");
             sbMaster.Append(" U_MASTER.ADDRS1, U_MASTER.ADDRS2, U_MASTER.CITY, U_MASTER.BK_AC_NO,U_MASTER.BK_NM_CD,U_MASTER.ID_FLAG,U_MASTER.ID_BK_NM_CD, U_MASTER.ID_BK_BR_NM_CD,");
-            sbMaster.Append(" U_MASTER.BK_BR_NM_CD, U_MASTER.BK_FLAG,REPURCHASE.QTY,  REPURCHASE.REP_PRICE AS RATE, REPURCHASE.QTY * REPURCHASE.REP_PRICE AS AMOUNT,  REPURCHASE.SL_TR_NO, U_MASTER.CIP, U_MASTER.ID_AC");
+            sbMaster.Append(" U_MASTER.BK_BR_NM_CD, U_MASTER.BK_FLAG,REPURCHASE.QTY,  REPURCHASE.REP_PRICE AS RATE, REPURCHASE.QTY * REPURCHASE.REP_PRICE AS AMOUNT,  REPURCHASE.SL_TR_NO, U_MASTER.CIP, U_MASTER.ID_AC,");
+            sbMaster.Append(" DECODE(REPURCHASE.PAY_TYPE,'EFT','BEFTN','CHEQUE') AS PAY_TYPE ");
             sbMaster.Append(" FROM  U_MASTER INNER JOIN  REPURCHASE ON U_MASTER.REG_BK = REPURCHASE.REG_BK AND U_MASTER.REG_BR = REPURCHASE.REG_BR AND  U_MASTER.REG_NO = REPURCHASE.REG_NO");
             sbMaster.Append(" LEFT OUTER JOIN  U_JHOLDER ON U_MASTER.REG_BK = U_JHOLDER.REG_BK AND U_MASTER.REG_BR = U_JHOLDER.REG_BR AND U_MASTER.REG_NO = U_JHOLDER.REG_NO");
                       
@@ -151,18 +163,35 @@ public partial class UI_UnitReportRepurchaseVoucher : System.Web.UI.Page
                             holderName = reportObj.getBankNameByBankCode(Convert.ToInt32(dtReportStatement.Rows[0]["ID_BK_NM_CD"].ToString())).ToString() + " , " + reportObj.getBankBranchNameByCode(Convert.ToInt32(dtReportStatement.Rows[0]["ID_BK_NM_CD"].ToString()), Convert.ToInt32(dtReportStatement.Rows[0]["ID_BK_BR_NM_CD"].ToString())).ToString() + " ID NO:" + dtReportStatement.Rows[0]["ID_AC"].ToString().ToUpper();
                         }
                                                
-                        string BankInfo = ", bank account no : " + dtReportStatement.Rows[0]["BK_AC_NO"].ToString().ToUpper() + " , " + reportObj.getBankNameByBankCode(int.Parse(dtReportStatement.Rows[0]["BK_NM_CD"].ToString())) + "," + " " + reportObj.getBankBranchNameByCode(int.Parse(dtReportStatement.Rows[0]["BK_NM_CD"].ToString()), int.Parse(dtReportStatement.Rows[0]["BK_BR_NM_CD"].ToString()));
-                   // string BankInfo = "";
-                        decimal totalRepAmount = 0;
+                            string BankInfo = ", bank account no : " + dtReportStatement.Rows[0]["BK_AC_NO"].ToString().ToUpper() + " , " + reportObj.getBankNameByBankCode(int.Parse(dtReportStatement.Rows[0]["BK_NM_CD"].ToString())) + "," + " " + reportObj.getBankBranchNameByCode(int.Parse(dtReportStatement.Rows[0]["BK_NM_CD"].ToString()), int.Parse(dtReportStatement.Rows[0]["BK_BR_NM_CD"].ToString()));
+                            DataTable dtBankBracnhInfo = unitHolderRegBLObj.dtGetBankBracnhInfo(Convert.ToInt32(dtReportStatement.Rows[0]["BK_NM_CD"].ToString()), Convert.ToInt32(dtReportStatement.Rows[0]["BK_BR_NM_CD"].ToString()));
+                            if (dtBankBracnhInfo.Rows.Count > 0)
+                            {
+                            BankInfo = BankInfo + " [ " + dtBankBracnhInfo.Rows[0]["ROUTING_NO"].ToString() + "] ";
+                            }
+
+                    // string BankInfo = "";
+                    decimal totalRepAmount = 0;
                         for (int looper = 0; looper < dtReportStatement.Rows.Count; looper++)
                         {
                             totalRepAmount = totalRepAmount + Convert.ToDecimal(dtReportStatement.Rows[looper]["AMOUNT"].ToString());
                         }
                         if (NoRadioButton.Checked)
                         {
-                            sbReportString.Append(" An account payee cheque for Tk. " + totalRepAmount.ToString("#,##0.00") + "  ( Taka " + numberToEnglishObj.changeNumericToWords(totalRepAmount) + " ) ");
-                            sbReportString.Append(" be issued in favour of Mr./Ms. " + holderName.ToString().ToUpper() + "" + BankInfo);
-                            sbReportString.Append(" being the surrended value of units.  ");
+                            string payType = unitRepBLObj.getPayType(regObj, unitRepObj);
+                            if (payType.ToString() == "EFT")
+                            {
+                                sbReportString.Append(" Through BEFTN Tk. " + totalRepAmount.ToString("#,##0.00") + "  ( Taka " + numberToEnglishObj.changeNumericToWords(totalRepAmount) + " ) ");
+                                sbReportString.Append(" be issued in favour of Mr./Ms. " + holderName.ToString().ToUpper() + "" + BankInfo);
+                                sbReportString.Append(" being the surrended value of units.  ");
+                            }
+                            else
+                            {
+                                sbReportString.Append(" An account payee cheque for Tk. " + totalRepAmount.ToString("#,##0.00") + "  ( Taka " + numberToEnglishObj.changeNumericToWords(totalRepAmount) + " ) ");
+                                sbReportString.Append(" be issued in favour of Mr./Ms. " + holderName.ToString().ToUpper() + "" + BankInfo);
+                                sbReportString.Append(" being the surrended value of units.  ");
+                            }
+                            
                         }
                         else if (YesRadioButton.Checked)
                         {

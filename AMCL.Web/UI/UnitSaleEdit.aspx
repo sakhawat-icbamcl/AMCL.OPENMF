@@ -618,11 +618,7 @@ function CheckAllDataGridWarrantNo(checkVal)
         {
             var textBoxid=txtObj.id;
             var checkBoxID=textBoxid.replace("certNoTextBox","leftCheckBox");
-               
-            
-        
-           
-           
+                                                         
               var inputs = document.getElementById("<%=dinoGridView.ClientID%>").getElementsByTagName("input");
                 
                
@@ -747,7 +743,7 @@ function CheckAllDataGridWarrantNo(checkVal)
             <td align="left">
                 <asp:TextBox ID="MoneyReceiptNoTextBox" runat="server" 
                     CssClass="textInputStyleDate" meta:resourcekey="saleNumberTextBoxResource1" 
-                    onkeypress="fncInputNumericValuesOnly()"></asp:TextBox>
+                    onkeypress="fncInputNumericValuesOnly()" Enabled="False"></asp:TextBox>
             </td>
             <td align="center" colspan="2" rowspan="10">
                 <asp:Image ID="SignImage" runat="server" Height="202px" 

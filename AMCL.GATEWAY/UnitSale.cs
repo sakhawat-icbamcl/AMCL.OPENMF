@@ -117,7 +117,13 @@ namespace AMCL.GATEWAY
             set { multiPayType = value; }
         }
 
+        public int SellingAgentCode
+        {
+            get { return sellingAgentCode; }
+            set { sellingAgentCode = value; }                       
+         }
 
+        private int sellingAgentCode;
         
     }
 }

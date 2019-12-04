@@ -20,7 +20,7 @@ public partial class UI_AMCLCommon : System.Web.UI.MasterPage
 
         if (!IsPostBack)
         {
-           // PopulateRootLevel();
+           
         }
         mnuMenu.Items.Clear();
         skmMenu.MenuItem item;
@@ -39,15 +39,6 @@ public partial class UI_AMCLCommon : System.Web.UI.MasterPage
             item.SubItems.Add(Subitem);
             mnuMenu.Items.Add(item);
 
-            //Subitem = new skmMenu.MenuItem("Trustee Fee");
-            //SSubitem = new skmMenu.MenuItem("Fund Wise");
-            //SSubitem.Url = "TrusteeFeeFundwise.aspx";
-            //Subitem.SubItems.Add(SSubitem);
-            //SSubitem = new skmMenu.MenuItem("Summery");
-            //SSubitem.Url = "Pf1s1Entry.aspx";
-            //Subitem.SubItems.Add(SSubitem);
-            //item.SubItems.Add(Subitem);
-            //Logout
         }
         item = new skmMenu.MenuItem("Change Password");
         item.Url = "UnitUserChangePassword.aspx";
@@ -62,22 +53,5 @@ public partial class UI_AMCLCommon : System.Web.UI.MasterPage
         
 
     }
-    //private void PopulateRootLevel()
-    // {
-    //     DataTable dt = commonGatewayObj.Select("SELECT ");
-
-    // }
-    //private void PopulateNodes(DataTable dt, TreeNodeCollection nodes)
-    //{
-    //}
-    //private void PopulateSubLevel(int parentid, TreeNode parentNode)
-    //{
-    //}
-
-  
-    //protected void TreeView1_TreeNodePopulate(object sender, TreeNodeEventArgs e)
-    //{
-       
-    //    PopulateSubLevel(Convert.ToInt32(e.Node.Value), e.Node);
-    //}
+    
 }

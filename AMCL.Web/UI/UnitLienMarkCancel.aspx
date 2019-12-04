@@ -270,6 +270,10 @@
         {
             width: 87px;
         }
+        .style16
+        {
+            height: 18px;
+        }
         </style>
  
 
@@ -429,12 +433,13 @@
     
     
     <div id="dvTotalUnits" runat="server" 
-              style="text-align:left;  width:410px; height: 43px;" >
-     <table align="left" width="400" cellpadding="0" cellspacing="0">
+              style="text-align:left;  width:529px; height: 43px;" >
+     <table align="left" cellpadding="0" cellspacing="0" style="width: 501px">
      <colgroup width="260"></colgroup>
     
         <tr >
-           <td align="left" ><b>Total Liened&nbsp; Units:            <td align="left">
+           <td align="left" class="style16" ><b>Total Liened&nbsp; Units:            
+            <td align="left" class="style16">
                 <asp:TextBox ID="TotalLienUnitHoldingTextBox" runat="server" 
                     CssClass= "TextInputStyleSmall"   Enabled= "false" Width="100px" 
                     Font-Bold="True" ForeColor="#009933"></asp:TextBox>
@@ -446,6 +451,10 @@
                 <asp:TextBox ID="TotalUnitLienCancelTextBox" runat="server" 
                     CssClass= "TextInputStyleSmall"   Enabled= "false" Width="100px" 
                     Font-Bold="True" ForeColor="#990033"></asp:TextBox>
+            &nbsp;<asp:Button ID="AddTotalButton" runat="server" AccessKey="l" 
+                   CssClass="buttoncommon" EnableTheming="True" 
+                   Text="Add Total" 
+                   Height="18px" Width="87px" onclick="AddTotalButton_Click" />
             </td>           
         </tr>                      
       </table>
@@ -522,7 +531,7 @@
     
    
     <table align="left" cellpadding="0" cellspacing="0" 
-        style="width: 1061px; height: 23px;">
+        style="width: 1235px; height: 23px;">
      <tr>
       
         <td align="center">

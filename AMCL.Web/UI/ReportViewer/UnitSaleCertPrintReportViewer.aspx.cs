@@ -71,7 +71,7 @@ public partial class ReportViewer_UnitSaleCertPrintReportViewer : System.Web.UI.
 
 
                 dtSaleCertPrintReport.TableName = "dtSaleCertPrintReport";
-                //dtSaleCertPrintReport.WriteXmlSchema(@"D:\Project\Web\AMCL.OPENMF\AMCL.REPORT\XMLSCHEMAS\dtSaleCertPrintReport.xsd");
+             //   dtSaleCertPrintReport.WriteXmlSchema(@"F:\GITHUB_AMCL\DOTNET2015\AMCL.PORTAL\AMCL.REPORT\XMLSCHEMAS\dtSaleCertPrintReport.xsd");
 
               
                 if (certType.ToString() == "SALE" || certType.ToString() == "RENE")
@@ -103,8 +103,7 @@ public partial class ReportViewer_UnitSaleCertPrintReportViewer : System.Web.UI.
                         {
                             CR_CFUFCIPCertPrint.Refresh();
                             CR_CFUFCIPCertPrint.SetDataSource(dtSaleCertPrintReport);
-                            CrystalReportViewer1.ReportSource = CR_CFUFCIPCertPrint;
-                           // CR_CFUFCIPCertPrint.SetParameterValue("certificate", certificate);
+                            CrystalReportViewer1.ReportSource = CR_CFUFCIPCertPrint;                           
                             CR_CFUFCIPCertPrint.SetParameterValue("literature", literature);
 
                         }
@@ -138,8 +137,7 @@ public partial class ReportViewer_UnitSaleCertPrintReportViewer : System.Web.UI.
                         {
                             CR_UnitCIPScriptPrint.Refresh();
                             CR_UnitCIPScriptPrint.SetDataSource(dtSaleCertPrintReport);
-                            CrystalReportViewer1.ReportSource = CR_UnitCIPScriptPrint;
-                            // CR_CFUFCIPCertPrint.SetParameterValue("certificate", certificate);
+                            CrystalReportViewer1.ReportSource = CR_UnitCIPScriptPrint;                            
                             CR_UnitCIPScriptPrint.SetParameterValue("literature", literature);
 
                         }
@@ -293,125 +291,133 @@ public partial class ReportViewer_UnitSaleCertPrintReportViewer : System.Web.UI.
                     //CR_Dividend.SetDataSource(dtReport);
                     if (fundCode.ToString().ToUpper() == "BDF")
                     {
-                        CR_BTransCertPrint.Refresh();
-                        CR_BTransCertPrint.SetParameterValue("date1", date1);
-                        CR_BTransCertPrint.SetParameterValue("transNumber1", transNumber1);
-                        CR_BTransCertPrint.SetParameterValue("tfereeRegNo1", tfereeRegNo1);
-                        CR_BTransCertPrint.SetParameterValue("tfereeName1", tfereeName1);
-                        CR_BTransCertPrint.SetParameterValue("tfreeJHolderName1", tfreeJHolderName1);
-                        CR_BTransCertPrint.SetParameterValue("tfreeAddress1", tfreeAddress1);
-                        CR_BTransCertPrint.SetParameterValue("tferorRegNo1", tferorRegNo1);
+                        //CR_BTransCertPrint.Refresh();
+                        //CR_BTransCertPrint.SetParameterValue("date1", date1);
+                        //CR_BTransCertPrint.SetParameterValue("transNumber1", transNumber1);
+                        //CR_BTransCertPrint.SetParameterValue("tfereeRegNo1", tfereeRegNo1);
+                        //CR_BTransCertPrint.SetParameterValue("tfereeName1", tfereeName1);
+                        //CR_BTransCertPrint.SetParameterValue("tfreeJHolderName1", tfreeJHolderName1);
+                        //CR_BTransCertPrint.SetParameterValue("tfreeAddress1", tfreeAddress1);
+                        //CR_BTransCertPrint.SetParameterValue("tferorRegNo1", tferorRegNo1);
 
-                        CR_BTransCertPrint.SetParameterValue("date2", date2);
-                        CR_BTransCertPrint.SetParameterValue("transNumber2", transNumber2);
-                        CR_BTransCertPrint.SetParameterValue("tfereeRegNo2", tfereeRegNo2);
-                        CR_BTransCertPrint.SetParameterValue("tfereeName2", tfereeName2);
-                        CR_BTransCertPrint.SetParameterValue("tfreeJHolderName2", tfreeJHolderName2);
-                        CR_BTransCertPrint.SetParameterValue("tfreeAddress2", tfreeAddress2);
-                        CR_BTransCertPrint.SetParameterValue("tferorRegNo2", tferorRegNo2);
+                        //CR_BTransCertPrint.SetParameterValue("date2", date2);
+                        //CR_BTransCertPrint.SetParameterValue("transNumber2", transNumber2);
+                        //CR_BTransCertPrint.SetParameterValue("tfereeRegNo2", tfereeRegNo2);
+                        //CR_BTransCertPrint.SetParameterValue("tfereeName2", tfereeName2);
+                        //CR_BTransCertPrint.SetParameterValue("tfreeJHolderName2", tfreeJHolderName2);
+                        //CR_BTransCertPrint.SetParameterValue("tfreeAddress2", tfreeAddress2);
+                        //CR_BTransCertPrint.SetParameterValue("tferorRegNo2", tferorRegNo2);
 
-                        CR_BTransCertPrint.SetParameterValue("date3", date3);
-                        CR_BTransCertPrint.SetParameterValue("transNumber3", transNumber3);
-                        CR_BTransCertPrint.SetParameterValue("tfereeRegNo3", tfereeRegNo3);
-                        CR_BTransCertPrint.SetParameterValue("tfereeName3", tfereeName3);
-                        CR_BTransCertPrint.SetParameterValue("tfreeJHolderName3", tfreeJHolderName3);
-                        CR_BTransCertPrint.SetParameterValue("tfreeAddress3", tfreeAddress3);
-                        CR_BTransCertPrint.SetParameterValue("tferorRegNo3", tferorRegNo3);
+                        //CR_BTransCertPrint.SetParameterValue("date3", date3);
+                        //CR_BTransCertPrint.SetParameterValue("transNumber3", transNumber3);
+                        //CR_BTransCertPrint.SetParameterValue("tfereeRegNo3", tfereeRegNo3);
+                        //CR_BTransCertPrint.SetParameterValue("tfereeName3", tfereeName3);
+                        //CR_BTransCertPrint.SetParameterValue("tfreeJHolderName3", tfreeJHolderName3);
+                        //CR_BTransCertPrint.SetParameterValue("tfreeAddress3", tfreeAddress3);
+                        //CR_BTransCertPrint.SetParameterValue("tferorRegNo3", tferorRegNo3);
 
-                        CR_BTransCertPrint.SetParameterValue("date4", date4);
-                        CR_BTransCertPrint.SetParameterValue("transNumber4", transNumber4);
-                        CR_BTransCertPrint.SetParameterValue("tfereeRegNo4", tfereeRegNo4);
-                        CR_BTransCertPrint.SetParameterValue("tfereeName4", tfereeName4);
-                        CR_BTransCertPrint.SetParameterValue("tfreeJHolderName4", tfreeJHolderName4);
-                        CR_BTransCertPrint.SetParameterValue("tfreeAddress4", tfreeAddress4);
-                        CR_BTransCertPrint.SetParameterValue("tferorRegNo4", tferorRegNo4);
+                        //CR_BTransCertPrint.SetParameterValue("date4", date4);
+                        //CR_BTransCertPrint.SetParameterValue("transNumber4", transNumber4);
+                        //CR_BTransCertPrint.SetParameterValue("tfereeRegNo4", tfereeRegNo4);
+                        //CR_BTransCertPrint.SetParameterValue("tfereeName4", tfereeName4);
+                        //CR_BTransCertPrint.SetParameterValue("tfreeJHolderName4", tfreeJHolderName4);
+                        //CR_BTransCertPrint.SetParameterValue("tfreeAddress4", tfreeAddress4);
+                        //CR_BTransCertPrint.SetParameterValue("tferorRegNo4", tferorRegNo4);
 
-                        CR_BTransCertPrint.SetParameterValue("date5", date5);
-                        CR_BTransCertPrint.SetParameterValue("transNumber5", transNumber5);
-                        CR_BTransCertPrint.SetParameterValue("tfereeRegNo5", tfereeRegNo5);
-                        CR_BTransCertPrint.SetParameterValue("tfereeName5", tfereeName5);
-                        CR_BTransCertPrint.SetParameterValue("tfreeJHolderName5", tfreeJHolderName5);
-                        CR_BTransCertPrint.SetParameterValue("tfreeAddress5", tfreeAddress5);
-                        CR_BTransCertPrint.SetParameterValue("tferorRegNo5", tferorRegNo5);
+                        //CR_BTransCertPrint.SetParameterValue("date5", date5);
+                        //CR_BTransCertPrint.SetParameterValue("transNumber5", transNumber5);
+                        //CR_BTransCertPrint.SetParameterValue("tfereeRegNo5", tfereeRegNo5);
+                        //CR_BTransCertPrint.SetParameterValue("tfereeName5", tfereeName5);
+                        //CR_BTransCertPrint.SetParameterValue("tfreeJHolderName5", tfreeJHolderName5);
+                        //CR_BTransCertPrint.SetParameterValue("tfreeAddress5", tfreeAddress5);
+                        //CR_BTransCertPrint.SetParameterValue("tferorRegNo5", tferorRegNo5);
 
-                        CR_BTransCertPrint.SetParameterValue("date6", date6);
-                        CR_BTransCertPrint.SetParameterValue("transNumber6", transNumber6);
-                        CR_BTransCertPrint.SetParameterValue("tfereeRegNo6", tfereeRegNo6);
-                        CR_BTransCertPrint.SetParameterValue("tfereeName6", tfereeName6);
-                        CR_BTransCertPrint.SetParameterValue("tfreeJHolderName6", tfreeJHolderName6);
-                        CR_BTransCertPrint.SetParameterValue("tfreeAddress6", tfreeAddress6);
-                        CR_BTransCertPrint.SetParameterValue("tferorRegNo6", tferorRegNo6);
+                        //CR_BTransCertPrint.SetParameterValue("date6", date6);
+                        //CR_BTransCertPrint.SetParameterValue("transNumber6", transNumber6);
+                        //CR_BTransCertPrint.SetParameterValue("tfereeRegNo6", tfereeRegNo6);
+                        //CR_BTransCertPrint.SetParameterValue("tfereeName6", tfereeName6);
+                        //CR_BTransCertPrint.SetParameterValue("tfreeJHolderName6", tfreeJHolderName6);
+                        //CR_BTransCertPrint.SetParameterValue("tfreeAddress6", tfreeAddress6);
+                        //CR_BTransCertPrint.SetParameterValue("tferorRegNo6", tferorRegNo6);
 
-                        CR_BTransCertPrint.SetParameterValue("date7", date7);
-                        CR_BTransCertPrint.SetParameterValue("transNumber7", transNumber7);
-                        CR_BTransCertPrint.SetParameterValue("tfereeRegNo7", tfereeRegNo7);
-                        CR_BTransCertPrint.SetParameterValue("tfereeName7", tfereeName7);
-                        CR_BTransCertPrint.SetParameterValue("tfreeJHolderName7", tfreeJHolderName7);
-                        CR_BTransCertPrint.SetParameterValue("tfreeAddress7", tfreeAddress7);
-                        CR_BTransCertPrint.SetParameterValue("tferorRegNo7", tferorRegNo7);
+                        //CR_BTransCertPrint.SetParameterValue("date7", date7);
+                        //CR_BTransCertPrint.SetParameterValue("transNumber7", transNumber7);
+                        //CR_BTransCertPrint.SetParameterValue("tfereeRegNo7", tfereeRegNo7);
+                        //CR_BTransCertPrint.SetParameterValue("tfereeName7", tfereeName7);
+                        //CR_BTransCertPrint.SetParameterValue("tfreeJHolderName7", tfreeJHolderName7);
+                        //CR_BTransCertPrint.SetParameterValue("tfreeAddress7", tfreeAddress7);
+                        //CR_BTransCertPrint.SetParameterValue("tferorRegNo7", tferorRegNo7);
 
                         CrystalReportViewer1.ReportSource = CR_BTransCertPrint;
                     }
                     else
                     {
-                        CR_TransCertPrint.Refresh();
-                        CR_TransCertPrint.SetParameterValue("date1", date1);
-                        CR_TransCertPrint.SetParameterValue("transNumber1", transNumber1);
-                        CR_TransCertPrint.SetParameterValue("tfereeRegNo1", tfereeRegNo1);
-                        CR_TransCertPrint.SetParameterValue("tfereeName1", tfereeName1);
-                        CR_TransCertPrint.SetParameterValue("tfreeJHolderName1", tfreeJHolderName1);
-                        CR_TransCertPrint.SetParameterValue("tfreeAddress1", tfreeAddress1);
-                        CR_TransCertPrint.SetParameterValue("tferorRegNo1", tferorRegNo1);
+                        //CR_TransCertPrint.SetDatabaseLogon("UNIT", "UNIT","194.25.1.200","AMCL");
+                        //CR_TransCertPrint.VerifyDatabase();
 
-                        CR_TransCertPrint.SetParameterValue("date2", date2);
-                        CR_TransCertPrint.SetParameterValue("transNumber2", transNumber2);
-                        CR_TransCertPrint.SetParameterValue("tfereeRegNo2", tfereeRegNo2);
-                        CR_TransCertPrint.SetParameterValue("tfereeName2", tfereeName2);
-                        CR_TransCertPrint.SetParameterValue("tfreeJHolderName2", tfreeJHolderName2);
-                        CR_TransCertPrint.SetParameterValue("tfreeAddress2", tfreeAddress2);
-                        CR_TransCertPrint.SetParameterValue("tferorRegNo2", tferorRegNo2);
 
-                        CR_TransCertPrint.SetParameterValue("date3", date3);
-                        CR_TransCertPrint.SetParameterValue("transNumber3", transNumber3);
-                        CR_TransCertPrint.SetParameterValue("tfereeRegNo3", tfereeRegNo3);
-                        CR_TransCertPrint.SetParameterValue("tfereeName3", tfereeName3);
-                        CR_TransCertPrint.SetParameterValue("tfreeJHolderName3", tfreeJHolderName3);
-                        CR_TransCertPrint.SetParameterValue("tfreeAddress3", tfreeAddress3);
-                        CR_TransCertPrint.SetParameterValue("tferorRegNo3", tferorRegNo3);
+                        //CR_TransCertPrint.Refresh();
+                        //CR_TransCertPrint.SetParameterValue("date1", date1);
+                        //CR_TransCertPrint.SetParameterValue("transNumber1", transNumber1);
+                        //CR_TransCertPrint.SetParameterValue("tfereeRegNo1", tfereeRegNo1);
+                        //CR_TransCertPrint.SetParameterValue("tfereeName1", tfereeName1);
+                        //CR_TransCertPrint.SetParameterValue("tfreeJHolderName1", tfreeJHolderName1);
+                        //CR_TransCertPrint.SetParameterValue("tfreeAddress1", tfreeAddress1);
+                        //CR_TransCertPrint.SetParameterValue("tferorRegNo1", tferorRegNo1);
 
-                        CR_TransCertPrint.SetParameterValue("date4", date4);
-                        CR_TransCertPrint.SetParameterValue("transNumber4", transNumber4);
-                        CR_TransCertPrint.SetParameterValue("tfereeRegNo4", tfereeRegNo4);
-                        CR_TransCertPrint.SetParameterValue("tfereeName4", tfereeName4);
-                        CR_TransCertPrint.SetParameterValue("tfreeJHolderName4", tfreeJHolderName4);
-                        CR_TransCertPrint.SetParameterValue("tfreeAddress4", tfreeAddress4);
-                        CR_TransCertPrint.SetParameterValue("tferorRegNo4", tferorRegNo4);
+                        //CR_TransCertPrint.SetParameterValue("date2", date2);
+                        //CR_TransCertPrint.SetParameterValue("transNumber2", transNumber2);
+                        //CR_TransCertPrint.SetParameterValue("tfereeRegNo2", tfereeRegNo2);
+                        //CR_TransCertPrint.SetParameterValue("tfereeName2", tfereeName2);
+                        //CR_TransCertPrint.SetParameterValue("tfreeJHolderName2", tfreeJHolderName2);
+                        //CR_TransCertPrint.SetParameterValue("tfreeAddress2", tfreeAddress2);
+                        //CR_TransCertPrint.SetParameterValue("tferorRegNo2", tferorRegNo2);
 
-                        CR_TransCertPrint.SetParameterValue("date5", date5);
-                        CR_TransCertPrint.SetParameterValue("transNumber5", transNumber5);
-                        CR_TransCertPrint.SetParameterValue("tfereeRegNo5", tfereeRegNo5);
-                        CR_TransCertPrint.SetParameterValue("tfereeName5", tfereeName5);
-                        CR_TransCertPrint.SetParameterValue("tfreeJHolderName5", tfreeJHolderName5);
-                        CR_TransCertPrint.SetParameterValue("tfreeAddress5", tfreeAddress5);
-                        CR_TransCertPrint.SetParameterValue("tferorRegNo5", tferorRegNo5);
+                        //CR_TransCertPrint.SetParameterValue("date3", date3);
+                        //CR_TransCertPrint.SetParameterValue("transNumber3", transNumber3);
+                        //CR_TransCertPrint.SetParameterValue("tfereeRegNo3", tfereeRegNo3);
+                        //CR_TransCertPrint.SetParameterValue("tfereeName3", tfereeName3);
+                        //CR_TransCertPrint.SetParameterValue("tfreeJHolderName3", tfreeJHolderName3);
+                        //CR_TransCertPrint.SetParameterValue("tfreeAddress3", tfreeAddress3);
+                        //CR_TransCertPrint.SetParameterValue("tferorRegNo3", tferorRegNo3);
 
-                        CR_TransCertPrint.SetParameterValue("date6", date6);
-                        CR_TransCertPrint.SetParameterValue("transNumber6", transNumber6);
-                        CR_TransCertPrint.SetParameterValue("tfereeRegNo6", tfereeRegNo6);
-                        CR_TransCertPrint.SetParameterValue("tfereeName6", tfereeName6);
-                        CR_TransCertPrint.SetParameterValue("tfreeJHolderName6", tfreeJHolderName6);
-                        CR_TransCertPrint.SetParameterValue("tfreeAddress6", tfreeAddress6);
-                        CR_TransCertPrint.SetParameterValue("tferorRegNo6", tferorRegNo6);
+                        //CR_TransCertPrint.SetParameterValue("date4", date4);
+                        //CR_TransCertPrint.SetParameterValue("transNumber4", transNumber4);
+                        //CR_TransCertPrint.SetParameterValue("tfereeRegNo4", tfereeRegNo4);
+                        //CR_TransCertPrint.SetParameterValue("tfereeName4", tfereeName4);
+                        //CR_TransCertPrint.SetParameterValue("tfreeJHolderName4", tfreeJHolderName4);
+                        //CR_TransCertPrint.SetParameterValue("tfreeAddress4", tfreeAddress4);
+                        //CR_TransCertPrint.SetParameterValue("tferorRegNo4", tferorRegNo4);
 
-                        CR_TransCertPrint.SetParameterValue("date7", date7);
-                        CR_TransCertPrint.SetParameterValue("transNumber7", transNumber7);
-                        CR_TransCertPrint.SetParameterValue("tfereeRegNo7", tfereeRegNo7);
-                        CR_TransCertPrint.SetParameterValue("tfereeName7", tfereeName7);
-                        CR_TransCertPrint.SetParameterValue("tfreeJHolderName7", tfreeJHolderName7);
-                        CR_TransCertPrint.SetParameterValue("tfreeAddress7", tfreeAddress7);
-                        CR_TransCertPrint.SetParameterValue("tferorRegNo7", tferorRegNo7);
+                        //CR_TransCertPrint.SetParameterValue("date5", date5);
+                        //CR_TransCertPrint.SetParameterValue("transNumber5", transNumber5);
+                        //CR_TransCertPrint.SetParameterValue("tfereeRegNo5", tfereeRegNo5);
+                        //CR_TransCertPrint.SetParameterValue("tfereeName5", tfereeName5);
+                        //CR_TransCertPrint.SetParameterValue("tfreeJHolderName5", tfreeJHolderName5);
+                        //CR_TransCertPrint.SetParameterValue("tfreeAddress5", tfreeAddress5);
+                        //CR_TransCertPrint.SetParameterValue("tferorRegNo5", tferorRegNo5);
+
+                        //CR_TransCertPrint.SetParameterValue("date6", date6);
+                        //CR_TransCertPrint.SetParameterValue("transNumber6", transNumber6);
+                        //CR_TransCertPrint.SetParameterValue("tfereeRegNo6", tfereeRegNo6);
+                        //CR_TransCertPrint.SetParameterValue("tfereeName6", tfereeName6);
+                        //CR_TransCertPrint.SetParameterValue("tfreeJHolderName6", tfreeJHolderName6);
+                        //CR_TransCertPrint.SetParameterValue("tfreeAddress6", tfreeAddress6);
+                        //CR_TransCertPrint.SetParameterValue("tferorRegNo6", tferorRegNo6);
+
+                        //CR_TransCertPrint.SetParameterValue("date7", date7);
+                        //CR_TransCertPrint.SetParameterValue("transNumber7", transNumber7);
+                        //CR_TransCertPrint.SetParameterValue("tfereeRegNo7", tfereeRegNo7);
+                        //CR_TransCertPrint.SetParameterValue("tfereeName7", tfereeName7);
+                        //CR_TransCertPrint.SetParameterValue("tfreeJHolderName7", tfreeJHolderName7);
+                        //CR_TransCertPrint.SetParameterValue("tfreeAddress7", tfreeAddress7);
+                        //CR_TransCertPrint.SetParameterValue("tferorRegNo7", tferorRegNo7);
+
+
+                                          
 
                         CrystalReportViewer1.ReportSource = CR_TransCertPrint;
+
                     }
                    
 

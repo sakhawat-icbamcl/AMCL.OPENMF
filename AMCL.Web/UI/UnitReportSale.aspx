@@ -162,9 +162,7 @@
                 CssClass="buttoncommon"  onclick="regCloseButton_Click" 
                   />
         &nbsp;&nbsp;
-            <asp:Button ID="ExportReportButton" runat="server" Text="Export File" CssClass="buttoncommon"
-                AccessKey="E" onclick="ExportReportButton_Click" />
-        </td>
+            </td>
         <td>
         &nbsp;
             </td>

@@ -30,7 +30,7 @@ public partial class ReportViewer_UnitReportRepurchaseReportViewer: System.Web.U
     UnitReport reportObj = new UnitReport();
     CommonGateway commonGatewayObj = new CommonGateway();
     BaseClass bcContent = new BaseClass();
-    
+    AMCL.REPORT.CR_UnitRepurchaseStatement rep_Statement = new AMCL.REPORT.CR_UnitRepurchaseStatement();
 
     protected void Page_Load(object sender, EventArgs e)
     {
@@ -73,6 +73,8 @@ public partial class ReportViewer_UnitReportRepurchaseReportViewer: System.Web.U
                 drReport["ADDRS2"] = dtReportStatement.Rows[looper]["ADDRS2"].Equals(DBNull.Value) ? "" : dtReportStatement.Rows[looper]["ADDRS2"].ToString();
                 drReport["CITY"] = dtReportStatement.Rows[looper]["CITY"].Equals(DBNull.Value) ? "" : dtReportStatement.Rows[looper]["CITY"].ToString();
                 drReport["REG_NO"] = dtReportStatement.Rows[looper]["REG_NO"].Equals(DBNull.Value) ? "" : dtReportStatement.Rows[looper]["REG_NO"].ToString();
+               
+                drReport["BO"] = dtReportStatement.Rows[looper]["BO"].Equals(DBNull.Value) ? "" : dtReportStatement.Rows[looper]["BO"].ToString();
 
                 repNo = Convert.ToInt32(dtReportStatement.Rows[looper]["REP_NO"].ToString());
                 SL_TR_NO =dtReportStatement.Rows[looper]["SL_TR_NO"].ToString();
@@ -88,18 +90,28 @@ public partial class ReportViewer_UnitReportRepurchaseReportViewer: System.Web.U
               dtReport.Rows.Add(drReport);
             }
 
-          //  dtReport.WriteXmlSchema(@"D:\Project\Web\AMCL.OpenEndMF\UI\ReportViewer\Report\dtUnitReportForStatement.xsd");
+            // dtReport.WriteXmlSchema(@"F:\GITHUB_AMCL\DOTNET2015\AMCL.OPENMF\AMCL.REPORT\XMLSCHEMAS\dtUnitReportForStatement.xsd");
 
-            ReportDocument rdoc = new ReportDocument();
-            string Path = Server.MapPath("Report/rptRepStatement.rpt");
-            rdoc.Load(Path);
-            rdoc.SetDataSource(dtReport);
-            CrystalReportViewer1.ReportSource = rdoc;
-            rdoc.SetParameterValue("fundName", opendMFDAO.GetFundName(fundCode.ToString()));
-            rdoc.SetParameterValue("branchName", opendMFDAO.GetBranchName(branchCode.ToString()).ToString());
-            rdoc.SetParameterValue("branchCode", branchCode.ToString());
-           
-           
+
+            rep_Statement.Refresh();
+            rep_Statement.SetDataSource(dtReport);
+
+            rep_Statement.SetParameterValue("fundName", opendMFDAO.GetFundName(fundCode.ToString()));
+            rep_Statement.SetParameterValue("branchName", opendMFDAO.GetBranchName(branchCode.ToString()).ToString());
+            rep_Statement.SetParameterValue("branchCode", branchCode.ToString());
+
+            CrystalReportViewer1.ReportSource = rep_Statement;
+
+            //ReportDocument rdoc = new ReportDocument();
+            //string Path = Server.MapPath("Report/rptRepStatement.rpt");
+            //rdoc.Load(Path);
+            //rdoc.SetDataSource(dtReport);
+            //CrystalReportViewer1.ReportSource = rdoc;
+            //rdoc.SetParameterValue("fundName", opendMFDAO.GetFundName(fundCode.ToString()));
+            //rdoc.SetParameterValue("branchName", opendMFDAO.GetBranchName(branchCode.ToString()).ToString());
+            //rdoc.SetParameterValue("branchCode", branchCode.ToString());
+
+
 
         }
         else
@@ -110,5 +122,11 @@ public partial class ReportViewer_UnitReportRepurchaseReportViewer: System.Web.U
 
 
 
+    }
+    protected void Page_Unload(object sender, EventArgs e)
+    {
+       
+        rep_Statement.Close();
+        rep_Statement.Dispose();
     }
 }

@@ -13,6 +13,21 @@
       
    }
   
+    function fnCheckInput()
+    {
+    
+         
+          if(document.getElementById("<%=fromRepNoTextBox.ClientID%>").value =="")
+               {
+                document.getElementById("<%=fromRepNoTextBox.ClientID%>").focus();
+                alert("Please Enter Repurchase Number ");
+                return false;
+               }
+          
+          
+     }
+       
+      
  
  function fncInputNumericValuesOnly()
 	{
@@ -51,8 +66,8 @@
         </tr> 
       </table>--%>
       <br />
-      <asp:UpdatePanel ID="holderInfoUpdatePanel" runat="server">
-    <ContentTemplate>  
+      
+   
       <table align="left" cellpadding="0" cellspacing="0" style=" width: 699px;">
       <colgroup width="200"></colgroup>
         <tr>
@@ -215,7 +230,7 @@
        <table width="500" align="center" cellpadding="0" cellspacing="0">
      <tr>
         <td align="right">
-        <asp:Button ID="ShowReportButton" runat="server" Text="View Repoert" CssClass="buttoncommon"
+        <asp:Button ID="ShowReportButton" runat="server" Text="Print Report" CssClass="buttoncommon"  OnClientClick="return fnCheckInput();"
                 AccessKey="V" onclick="ShowReportButton_Click"/>&nbsp;
         </td>
         <td align="left">&nbsp;&nbsp;&nbsp;
@@ -248,14 +263,7 @@
       </tr>
       
 </table>
-      </ContentTemplate>
-<Triggers>
-    <asp:AsyncPostBackTrigger ControlID="LienbankNameDropDownList" EventName="SelectedIndexChanged" />
-    <asp:AsyncPostBackTrigger ControlID="YesRadioButton" EventName="CheckedChanged" />
-    <asp:AsyncPostBackTrigger ControlID="NoRadioButton" EventName="CheckedChanged" />
-    
-</Triggers>
-</asp:UpdatePanel> 
-    
+     
+
     </asp:Content>
 

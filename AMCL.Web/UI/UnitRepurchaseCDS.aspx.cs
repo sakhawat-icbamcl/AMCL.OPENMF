@@ -96,7 +96,14 @@ public partial class UI_UnitRepurchaseCDS : System.Web.UI.Page
         unitRepObj.RepurchaseNo = Convert.ToInt32(RepNoTextBox.Text.Trim().ToString());
         unitRepObj.RepurchaseRate = decimal.Parse(RepRateTextBox.Text.Trim().ToString());
         unitRepObj.RepurchaseDate = RepDateTextBox.Text.Trim().ToString();
-       
+        if (EFTRadioButton.Checked)
+        {
+            unitRepObj.PayType = "EFT";
+        }
+        else
+        {
+            unitRepObj.PayType = "CHQ";
+        }
  
         try
         {
@@ -119,6 +126,16 @@ public partial class UI_UnitRepurchaseCDS : System.Web.UI.Page
                 {
                     ScriptManager.RegisterStartupScript(this.Page, this.Page.GetType(), "Popup", "alert ('Save Failed: Surrender Value con not be equal or less than Zero');", true);
                 }
+                else if (!unitRepBLObj.IsValidBEFTN(regObj, unitRepObj))
+                {
+                   
+                    ScriptManager.RegisterStartupScript(this.Page, this.Page.GetType(), "Popup", "alert('" + msgObj.Error().ToString() + " " + "Either No Router Number  or Account Number>13 digits " + "');", true);
+                }
+                else if (unitRepBLObj.IsIDAccount(regObj, unitRepObj))
+                {
+                   
+                    ScriptManager.RegisterStartupScript(this.Page, this.Page.GetType(), "Popup", "alert('" + msgObj.Error().ToString() + " " + "ID Account is not allow to BEFTN " + "');", true);
+                }
                 else
                 {
 
@@ -137,6 +154,7 @@ public partial class UI_UnitRepurchaseCDS : System.Web.UI.Page
                             drGrid["SURRENDER_UNITS"] = SURRENDER_UNITSTxt.Text.Trim().ToString();
                             drGrid["EXIST_UNITS"] = EXIST_UNITSTxt.Text.Trim().ToString();
                             dtGrid.Rows.Add(drGrid);
+
                         }
                     }
 
@@ -146,7 +164,8 @@ public partial class UI_UnitRepurchaseCDS : System.Web.UI.Page
                     leftDataGrid.DataSource = opendMFDAO.getTableDataGridCDS();// hide remaining Data
                     leftDataGrid.DataBind();
                     TotalUnitHoldingTextBox.Text = "";
-
+                    EFTRadioButton.Checked = true;
+                    CHQRadioButton.Checked = false;
 
                     ScriptManager.RegisterStartupScript(this.Page, this.Page.GetType(), "Popup", "alert ('Save SuccessFully');", true);
                 }
@@ -215,7 +234,7 @@ public partial class UI_UnitRepurchaseCDS : System.Web.UI.Page
                     ScriptManager.RegisterStartupScript(this.Page, this.Page.GetType(), "Popup", "alert ('No Units To Repurchase');", true);
 
                 }
-
+                TotalUnitRepurchaseTextBox.Text = "";
                 RepNoTextBox.Text = unitRepBLObj.getNextRepurchaseNo(unitRegObj, userObj).ToString();
                 unitRepObj.RepurchaseNo = unitRepBLObj.getNextRepurchaseNo(unitRegObj, userObj) - 1;
                 RepDateTextBox.Text = unitRepBLObj.getLastRepDate(unitRegObj, unitRepObj).ToString("dd-MMM-yyyy");

@@ -62,6 +62,9 @@ namespace AMCL.BL
             dtHolderInfo.Columns.Add("BALANCE", typeof(int));
             dtHolderInfo.Columns.Add("BEFTN", typeof(string));
             dtHolderInfo.Columns.Add("TIN", typeof(string));
+            dtHolderInfo.Columns.Add("PASS_NO", typeof(string));
+            dtHolderInfo.Columns.Add("BIRTH_CERT_NO", typeof(string));
+            dtHolderInfo.Columns.Add("NID", typeof(string));
 
             dtHolderInfo.Columns.Add("JNT_NAME", typeof(string));
             dtHolderInfo.Columns.Add("JNT_FMH_NAME", typeof(string));
@@ -225,6 +228,7 @@ namespace AMCL.BL
             dtReportStatement.Columns.Add("JNT_NAME", typeof(string));
             dtReportStatement.Columns.Add("ADDRS1", typeof(string));
             dtReportStatement.Columns.Add("ADDRS2", typeof(string));
+            dtReportStatement.Columns.Add("MOBILE1", typeof(string));      
             dtReportStatement.Columns.Add("CITY", typeof(string));
             dtReportStatement.Columns.Add("REG_NO", typeof(string));
             dtReportStatement.Columns.Add("BK_AC_NO", typeof(string));
@@ -240,12 +244,33 @@ namespace AMCL.BL
             dtReportStatement.Columns.Add("SL_TYPE", typeof(string));
             dtReportStatement.Columns.Add("TIN", typeof(string));
             dtReportStatement.Columns.Add("BO", typeof(string));
+            dtReportStatement.Columns.Add("NID", typeof(string));
+            dtReportStatement.Columns.Add("MONY_RECT_NO", typeof(string));
+            dtReportStatement.Columns.Add("BEFTN", typeof(string));
+
 
             dtReportStatement.Columns.Add("CERT_RCV_BY", typeof(string));
             dtReportStatement.Columns.Add("CERT_DLVRY_DT", typeof(string));
 
+            dtReportStatement.Columns.Add("DRF_REF_NO", typeof(long));
+            dtReportStatement.Columns.Add("DRF_REG_FOLIO_NO", typeof(string));
+            dtReportStatement.Columns.Add("DRF_CERT_NO", typeof(string));
+
+            dtReportStatement.Columns.Add("DRF_DISTNCT_NO_FROM", typeof(long));
+            dtReportStatement.Columns.Add("DRF_DISTNCT_NO_TO", typeof(long));
+            dtReportStatement.Columns.Add("DRF_CUST_REQ_DATE", typeof(string));
+
+            dtReportStatement.Columns.Add("DRF_ACCEPT_NO", typeof(long));
+            dtReportStatement.Columns.Add("DRF_DRN", typeof(long));
+            dtReportStatement.Columns.Add("DRF_ACCEPT_DATE", typeof(string));
+
+            dtReportStatement.Columns.Add("DRF_TR_SEQ_NO", typeof(long));
+            dtReportStatement.Columns.Add("DRF_TR_DATE", typeof(string));
+           
+
             dtReportStatement.Columns.Add("REP_NO", typeof(int));
             dtReportStatement.Columns.Add("REP_DT", typeof(string));
+            dtReportStatement.Columns.Add("PAY_TYPE", typeof(string));
             dtReportStatement.Columns.Add("SL_TR_REP_NO", typeof(string));
             dtReportStatement.Columns.Add("OLD_SL_TR_NO", typeof(string));
 
@@ -269,8 +294,7 @@ namespace AMCL.BL
         }
         public string getTotalCertNo(string queryString, string fundCode)
         {
-            string totalCert = "";
-            //string certHeader = "";
+            string totalCert = "";          
             string certTrailer = "";
             int count = 0;
             DataTable dtCert = new DataTable();
@@ -478,6 +502,95 @@ namespace AMCL.BL
                 certificate = dtCertificate.Rows[0]["CERTIFICATE"].ToString().ToUpper();
             }
             return certificate;
+        }
+        public DataTable dtFundCodeList()
+        {
+            DataTable dtList = commonGatewayObj.Select("SELECT FUND_CD AS NAME ,FUND_CD AS ID FROM FUND_INFO ORDER BY FUND_CD");
+            return dtList;
+        }
+        public DataTable dtBranchCodeList()
+        {
+            DataTable dtList = commonGatewayObj.Select("SELECT BR_CD AS NAME ,BR_CD AS ID FROM BRANCH_INFO ORDER BY BR_CD");
+            return dtList;
+        }
+        public DataTable dtFundInfoDetails( string filter)
+        {
+            DataTable dtFundInfoDetails = commonGatewayObj.Select("SELECT * FROM FUND_INFO WHERE 1=1  " + filter.ToString()+ "  ORDER BY FUND_SUB_OPEN_DT ");
+            return dtFundInfoDetails;
+        }
+        public DataTable dtPriceDetails(string filter)
+        {
+            DataTable dtFundInfoDetails = commonGatewayObj.Select("SELECT PRICE_REFIX.*, TO_CHAR(PRICE_REFIX.REFIX_DT,'DD-MON-YYYY') AS REFIX_DATE,TO_CHAR(PRICE_REFIX.EFFECTIVE_DATE,'DD-MON-YYYY') AS EFFECTIVE_DT  FROM PRICE_REFIX WHERE 1=1  " + filter.ToString() + "  ORDER BY FUND_CD ");
+            return dtFundInfoDetails;
+        }
+        public DataTable dtPriceDetailsWithNAV(string filter)
+        {
+            DataTable dtFundInfoDetails = commonGatewayObj.Select(" SELECT * FROM NAV.NAV_MASTER WHERE 1=1 "+filter.ToString());
+            return dtFundInfoDetails;
+        }
+        public bool CheckDuplicate(string refixationDate)
+        {
+            DataTable dtDuplicate = commonGatewayObj.Select("SELECT * FROM PRICE_REFIX WHERE  REFIX_DT='" + refixationDate +"'");
+            if (dtDuplicate.Rows.Count > 0)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+        public DataTable dtFillFixationDate(string filter)
+        {
+            DataTable dtFillFixationDate = commonGatewayObj.Select(" SELECT DISTINCT REFIX_DT AS ID ,TO_CHAR(REFIX_DT,'DD-MON-YYYY') AS NAME FROM PRICE_REFIX WHERE 1=1 " + filter.ToString() + " ORDER BY REFIX_DT DESC");
+            DataTable dtDate = new DataTable();
+            dtDate.Columns.Add("ID", typeof(string));
+            dtDate.Columns.Add("NAME", typeof(string));
+
+            DataRow drDate = dtDate.NewRow();
+            drDate["NAME"] = "--Select Date--- ";
+            drDate["ID"] = "0";
+            dtDate.Rows.Add(drDate);
+
+
+            for (int loop = 0; loop < dtFillFixationDate.Rows.Count; loop++)
+            {
+                drDate = dtDate.NewRow();
+                drDate["NAME"] = dtFillFixationDate.Rows[loop]["NAME"].ToString();
+                drDate["ID"] = dtFillFixationDate.Rows[loop]["ID"].ToString();
+                dtDate.Rows.Add(drDate);
+            }
+
+           
+            return dtDate;
+
+
+        }
+        public DataTable dtFillEffectiveDate(string filter)
+        {
+            DataTable dtFillEffectiveDate = commonGatewayObj.Select(" SELECT DISTINCT REFIX_DT AS ID ,TO_CHAR(REFIX_DT,'DD-MON-YYYY') AS NAME FROM PRICE_REFIX WHERE 1=1 " + filter.ToString() + " ORDER BY REFIX_DT DESC");
+            DataTable dtDate = new DataTable();
+            dtDate.Columns.Add("ID", typeof(string));
+            dtDate.Columns.Add("NAME", typeof(string));
+
+            DataRow drDate = dtDate.NewRow();
+            drDate["NAME"] = "--Select Date--- ";
+            drDate["ID"] = "0";
+            dtDate.Rows.Add(drDate);
+
+
+            for (int loop = 0; loop < dtFillEffectiveDate.Rows.Count; loop++)
+            {
+                drDate = dtDate.NewRow();
+                drDate["NAME"] = dtFillEffectiveDate.Rows[loop]["NAME"].ToString();
+                drDate["ID"] = dtFillEffectiveDate.Rows[loop]["ID"].ToString();
+                dtDate.Rows.Add(drDate);
+            }
+
+
+            return dtDate;
+
+
         }
 
     }

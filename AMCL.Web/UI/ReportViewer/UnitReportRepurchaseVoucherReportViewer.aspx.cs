@@ -30,8 +30,8 @@ public partial class ReportViewer_UnitReportRepurchaseVoucherReportViewer : Syst
     NumberToEnglish numberToEnglisObj = new NumberToEnglish();
     UnitReport reportObj = new UnitReport();
     CommonGateway commonGatewayObj = new CommonGateway();
-
-    private ReportDocument rdoc = new ReportDocument();
+    AMCL.REPORT.CR_UnitRepurchaseVoucher CR_RepVoucher = new AMCL.REPORT.CR_UnitRepurchaseVoucher();
+    //private ReportDocument rdoc = new ReportDocument();
 
     protected void Page_Load(object sender, EventArgs e)
     {
@@ -62,6 +62,7 @@ public partial class ReportViewer_UnitReportRepurchaseVoucherReportViewer : Syst
             int repNo = 0;
             string SL_TR_NO="";
             decimal totalAmount = 0;
+            
 
 
             for (int looper = 0; looper < dtReportStatement.Rows.Count; looper++)
@@ -80,10 +81,11 @@ public partial class ReportViewer_UnitReportRepurchaseVoucherReportViewer : Syst
                 drReport["ADDRS2"] = dtReportStatement.Rows[looper]["ADDRS2"].Equals(DBNull.Value) ? "" : dtReportStatement.Rows[looper]["ADDRS2"].ToString();
                 drReport["CITY"] = dtReportStatement.Rows[looper]["CITY"].Equals(DBNull.Value) ? "" : dtReportStatement.Rows[looper]["CITY"].ToString();
                 drReport["REG_NO"] = dtReportStatement.Rows[looper]["REG_NO"].Equals(DBNull.Value) ? "" : dtReportStatement.Rows[looper]["REG_NO"].ToString();
+                drReport["PAY_TYPE"] = dtReportStatement.Rows[looper]["PAY_TYPE"].ToString();
 
                 repNo = Convert.ToInt32(dtReportStatement.Rows[looper]["REP_NO"].ToString());
                 SL_TR_NO =dtReportStatement.Rows[looper]["SL_TR_NO"].ToString();
-                drReport["CERT_NO"] = reportObj.getTotalCertNo("SELECT NVL(CERT_TYPE,' ') AS CERT_TYPE, NVL(CERT_NO,0) AS CERT_NO FROM REP_CERT_NO WHERE REP_NO=" + repNo + " AND REG_BK='" + fundCode.ToString() + "'AND REG_BR='" + branchCode.ToString() + "' AND SL_TR_NO='" + SL_TR_NO.ToString() + "'", fundCode.ToString()).ToString();
+                drReport["CERT_NO"] = reportObj.getTotalCertNo("SELECT NVL(CERT_TYPE,' ') AS CERT_TYPE, NVL(CERT_NO,0) AS CERT_NO FROM REP_CERT_NO WHERE REP_NO=" + repNo + " AND REG_BK='" + fundCode.ToString() + "'AND REG_BR='" + branchCode.ToString() + "' AND SL_TR_NO='" + SL_TR_NO.ToString() + "'  ORDER BY CERT_TYPE,CERT_NO ", fundCode.ToString()).ToString();
 
                 drReport["CIP"] = dtReportStatement.Rows[looper]["CIP"].Equals(DBNull.Value) ? "" : dtReportStatement.Rows[looper]["CIP"].ToString();
                // drReport["ID_AC"] = dtReportStatement.Rows[looper]["ID_AC"].Equals(DBNull.Value) ? "" : dtReportStatement.Rows[looper]["ID_AC"].ToString();
@@ -95,20 +97,30 @@ public partial class ReportViewer_UnitReportRepurchaseVoucherReportViewer : Syst
                 dtReport.Rows.Add(drReport);
             }
 
-          //  dtReport.WriteXmlSchema(@"D:\Project\Web\AMCL.OpenEndMF\UI\ReportViewer\Report\dtUnitReportForStatement.xsd");
+            //  dtReport.WriteXmlSchema(@"F:\GITHUB_AMCL\DOTNET2015\AMCL.OPENMF\AMCL.REPORT\XMLSCHEMAS\dtUnitReportForStatement.xsd");
 
-           
-            string Path = Server.MapPath("Report/rptRepVoucherStatement.rpt");
-            rdoc.Load(Path);
-            rdoc.SetDataSource(dtReport);
-            CrystalReportViewer1.ReportSource = rdoc;
-            rdoc.SetParameterValue("fundName", opendMFDAO.GetFundName(fundCode.ToString()));
-            rdoc.SetParameterValue("branchName", opendMFDAO.GetBranchName(branchCode.ToString()).ToString());
-            rdoc.SetParameterValue("branchCode", branchCode.ToString());
-            rdoc.SetParameterValue("inWord", sbReportString);
-            rdoc.SetParameterValue("copy", copy);
-            rdoc = ReportFactory.GetReport(rdoc.GetType());
-           
+            CR_RepVoucher.Refresh();
+            CR_RepVoucher.SetDataSource(dtReport);
+
+            CR_RepVoucher.SetParameterValue("fundName", opendMFDAO.GetFundName(fundCode.ToString()));
+            CR_RepVoucher.SetParameterValue("branchName", opendMFDAO.GetBranchName(branchCode.ToString()).ToString());
+            CR_RepVoucher.SetParameterValue("branchCode", branchCode.ToString());
+            CR_RepVoucher.SetParameterValue("inWord", sbReportString);
+            CR_RepVoucher.SetParameterValue("copy", copy);
+          
+
+            CrystalReportViewer1.ReportSource = CR_RepVoucher;
+            //string Path = Server.MapPath("Report/rptRepVoucherStatement.rpt");
+            //rdoc.Load(Path);
+            //rdoc.SetDataSource(dtReport);
+            //CrystalReportViewer1.ReportSource = rdoc;
+            //rdoc.SetParameterValue("fundName", opendMFDAO.GetFundName(fundCode.ToString()));
+            //rdoc.SetParameterValue("branchName", opendMFDAO.GetBranchName(branchCode.ToString()).ToString());
+            //rdoc.SetParameterValue("branchCode", branchCode.ToString());
+            //rdoc.SetParameterValue("inWord", sbReportString);
+            //rdoc.SetParameterValue("copy", copy);
+            //rdoc = ReportFactory.GetReport(rdoc.GetType());
+
 
         }
         else
@@ -122,11 +134,7 @@ public partial class ReportViewer_UnitReportRepurchaseVoucherReportViewer : Syst
     }
     protected void Page_Unload(object sender, EventArgs e)
     {
-        CrystalReportViewer1.Dispose();
-        CrystalReportViewer1 = null;
-        rdoc.Close();
-        rdoc.Dispose();
-        rdoc = null;
-        GC.Collect();
+        CR_RepVoucher.Close();
+        CR_RepVoucher.Dispose();
     }
 }

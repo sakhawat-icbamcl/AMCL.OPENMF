@@ -99,11 +99,11 @@ public partial class UI_Renewal : System.Web.UI.Page
                     txtCert = (TextBox)(gridItem.FindControl("certNoTextBox"));
                     txtWeight = (TextBox)(gridItem.FindControl("weightTextBox"));
                     duplicateCerNoReg = opendMFDAO.duplicateCerNoReg(regObj, txtDino.Text.ToString(), txtCert.Text.ToString());
-                    allocateCert = unitSaleBLObj.IsCertificateAllocate(regObj, txtDino.Text.ToString(), txtCert.Text.ToString());
+                    allocateCert = unitSaleBLObj.IsCertificateAllocate(regObj, txtDino.Text.ToString(), txtCert.Text.ToString());                    
                     if (duplicateCerNoReg == 0)
                     {
 
-                        if (opendMFDAO.validationDino(txtDino.Text.ToString().ToUpper(), regObj.FundCode.ToString().ToUpper()) && opendMFDAO.validationWeight(Convert.ToInt32(txtWeight.Text.ToString()), regObj.FundCode.ToString().ToUpper()))
+                        if (opendMFDAO.validationDino(txtDino.Text.ToString().ToUpper(), regObj.FundCode.ToString().ToUpper()) && opendMFDAO.validationWeight(Convert.ToInt32(txtWeight.Text.ToString()), regObj.FundCode.ToString().ToUpper(), txtDino.Text.ToString().ToUpper()))
                         {
                             if (allocateCert)
                             {
@@ -227,6 +227,8 @@ public partial class UI_Renewal : System.Web.UI.Page
         iTextBox.Text = "";
         jTextBox.Text = "";
         kTextBox.Text = "";
+        yTextBox.Text = "";
+        yQTYTextBox.Text = "";
     }
     protected void CloseButton_Click(object sender, EventArgs e)
     {
@@ -254,11 +256,36 @@ public partial class UI_Renewal : System.Web.UI.Page
         DataRow drDinomination = dtDinomination.NewRow();
         int certQty = 0;
 
-
-        if (kTextBox.Text != "")
+        if (string.Compare(regObj.FundCode.ToString(), "CFUF") == 0 || string.Compare(regObj.FundCode.ToString(), "IUF") == 0)
         {
-            if (string.Compare(fundCodeTextBox.Text.Trim().ToString(), "BDF") == 0)
+            if (lTextBox.Text != "")
             {
+
+
+                certNo = opendMFDAO.GetMaxCertNo("L", regObj, userObj);
+                certQty = Convert.ToInt32(lTextBox.Text.Trim());
+                for (int i = 0; i < certQty; i++)
+                {
+                    drDinomination = dtDinomination.NewRow();
+                    drDinomination["dino"] = "L";
+                    drDinomination["cert_no"] = certNo;
+                    drDinomination["cert_weight"] = "20000";
+                    dtDinomination.Rows.Add(drDinomination);
+                    certNo++;
+                }
+                unitQty = unitQty + (certQty * 20000);
+
+
+            }
+        }
+
+        if (string.Compare(regObj.FundCode.ToString(), "BDF") == 0 || string.Compare(regObj.FundCode.ToString(), "CFUF") == 0 || string.Compare(regObj.FundCode.ToString(), "IUF") == 0)
+        {
+
+
+            if (kTextBox.Text != "")
+            {
+
 
                 certNo = opendMFDAO.GetMaxCertNo("K", regObj, userObj);
                 certQty = Convert.ToInt32(kTextBox.Text.Trim());
@@ -272,7 +299,35 @@ public partial class UI_Renewal : System.Web.UI.Page
                     certNo++;
                 }
                 unitQty = unitQty + (certQty * 10000);
+
+
             }
+        }
+        if (yTextBox.Text != "")
+        {
+
+            certNo = opendMFDAO.GetMaxCertNo("Y", regObj, userObj);
+            certQty = Convert.ToInt32(yTextBox.Text.Trim());
+            int weight= Convert.ToInt32(yQTYTextBox.Text.Trim());
+            int certQtyRemainder = certQty;
+            int certweightRemainder = weight;
+
+            for (int i = 0; i < certQty; i++)
+            {
+                int cert_weight = certweightRemainder / certQtyRemainder;                
+                drDinomination = dtDinomination.NewRow();
+                drDinomination["dino"] = "Y";
+                drDinomination["cert_no"] = certNo;
+                drDinomination["cert_weight"] = cert_weight.ToString();
+                dtDinomination.Rows.Add(drDinomination);
+                certNo++;
+                certweightRemainder = certweightRemainder - cert_weight;
+                certQtyRemainder--;
+
+            }
+            
+                                  
+            unitQty = unitQty +Convert.ToInt32(yQTYTextBox.Text.Trim());
         }
         if (jTextBox.Text != "")
         {

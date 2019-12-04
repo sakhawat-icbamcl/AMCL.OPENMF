@@ -28,15 +28,7 @@ public partial class _Default : System.Web.UI.Page
         loginIDTextBox.Focus();
         if (IsPostBack)
         {
-            ccJoin.ValidateCaptcha(CaptchaTextBox.Text.Trim().ToString());
-            if (!ccJoin.UserValidated)
-            {
-                loginErrorLabel.Visible = true;
-                CaptchaTextBox.Text = "";
-                loginErrorLabel.Text = "Re-Enter the chracarters you see in the picture right";
-            }
-            else
-            {
+           
                 if (IsUesrCheck(loginIDTextBox.Text.Trim().ToString(), encrypt.Encrypt(loginPasswardTextBox.Text.Trim().ToString())))
                 {
                 
@@ -48,9 +40,9 @@ public partial class _Default : System.Web.UI.Page
                     loginErrorLabel.Text = "Invalid LoginID or Passward";
                     loginIDTextBox.Text = "";
                     loginPasswardTextBox.Text = "";
-                    CaptchaTextBox.Text = "";
+                 
                 }
-            }
+           
         }
         else
         {

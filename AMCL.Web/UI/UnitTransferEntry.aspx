@@ -500,6 +500,11 @@
                 <asp:TextBox ID="TotalUnitRepurchaseTextBox" runat="server" 
                     CssClass= "TextInputStyleSmall"   Enabled= "false" Width="100px" 
                     Font-Bold="True" ForeColor="#990033"></asp:TextBox>
+            &nbsp;
+               <asp:Button ID="AddTotalButton" runat="server" AccessKey="l" 
+                   CssClass="buttoncommon" EnableTheming="True" 
+                   Text="Add Total" 
+                   Height="18px" Width="87px" onclick="AddTotalButton_Click" />
             </td>           
         </tr>
         

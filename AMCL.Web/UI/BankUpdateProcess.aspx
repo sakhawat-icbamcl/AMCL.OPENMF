@@ -102,6 +102,7 @@
                 ID="Button1" runat="server" onclick="Button1_Click" Text="SSLIST" />
         &nbsp;<asp:Button ID="Button2" runat="server" onclick="Button2_Click" 
                 Text="ImageRename" />
+            <asp:Button ID="Button4" runat="server" OnClick="Button4_Click" Text="DpwnloadExecl" />
         </td>
     </tr>
 </table>

@@ -30,7 +30,7 @@ public partial class ReportViewer_UnitReportPriceRefixationReportViewer : System
     UnitReport reportObj = new UnitReport();
     CommonGateway commonGatewayObj = new CommonGateway();
     BaseClass bcContent = new BaseClass();
-    AMCL.REPORT.CR_PriceRefixation CR_PRICE = new AMCL.REPORT.CR_PriceRefixation();
+    AMCL.REPORT.CR_PriceRefixationAllFundLast CR_PRICE = new AMCL.REPORT.CR_PriceRefixationAllFundLast();
 
     protected void Page_Load(object sender, EventArgs e)
     {

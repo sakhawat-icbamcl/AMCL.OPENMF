@@ -78,8 +78,11 @@ public partial class ReportViewer_UnitReportStatementAfterClosingReportViewer : 
                 drUnitHolderInfo["BALANCE"] =Convert.ToInt32(dtHolderInfo.Rows[looper]["BALANCE"].Equals(DBNull.Value) ? "0" : dtHolderInfo.Rows[looper]["BALANCE"].ToString());
                 
                 drUnitHolderInfo["JNT_NAME"] = dtHolderInfo.Rows[looper]["JNT_NAME"].Equals(DBNull.Value) ? "" : dtHolderInfo.Rows[looper]["JNT_NAME"].ToString();
-                
 
+                if (!dtHolderInfo.Rows[looper]["REG_TYPE"].Equals(DBNull.Value))
+                {
+                    drUnitHolderInfo["REG_TYPE"] = reportObj.getRegTypeFullName(dtHolderInfo.Rows[looper]["REG_TYPE"].ToString()).ToString();
+                }   
                 drUnitHolderInfo["CIP"] = dtHolderInfo.Rows[looper]["CIP"].Equals(DBNull.Value) ? "" : dtHolderInfo.Rows[looper]["CIP"].ToString();
 
                 if (!dtHolderInfo.Rows[looper]["CIP"].Equals(DBNull.Value))

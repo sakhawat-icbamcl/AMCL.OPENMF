@@ -536,7 +536,7 @@
     <tr>
         <td colspan="4" align="left">
          <fieldset>
-            <legend style="font-weight: 700"> ::Guardian Details (If Nominee is Minor::</legend>
+            <legend style="font-weight: 700"> ::Guardian Details (If Nominee is Minor)::</legend>
             <br />
             <table width="100%" align="center" cellpadding="0" cellspacing="0" border="0" >
             <colgroup width="150"></colgroup>

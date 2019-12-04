@@ -25,26 +25,7 @@
              {
                 document.getElementById("<%=divLeftgrid.ClientID%>").innerHTML ="";
              }  
-          
-              if( document.getElementById("<%=NormalRadioButton.ClientID%>").checked)                
-                {       
-                         
-                               
-                      if(document.getElementById("<%=dvChequeIssue.ClientID%>").style.visibility == "visible")
-                      {
-                    
-                        document.getElementById("<%=dvChequeIssue.ClientID%>").style.visibility = "hidden";
-                      }
-                    
-                }
-                else
-                {
-                    document.getElementById("<%=DeathRadioButton.ClientID%>").checked=false;
-                    document.getElementById("<%=NormalRadioButton.ClientID%>").checked=true;
-                     document.getElementById("<%=dvChequeIssue.ClientID%>").style.visibility = "hidden";
-                    
-                }
-                
+         
              
          return false;
         }
@@ -60,7 +41,7 @@
                 document.forms[0].elements[Looper].checked=true;
             }   
         }
-        fnSelectedTotalUnit();
+       
     }
     function fnUnCheckAll()
     {
@@ -73,7 +54,7 @@
                 document.forms[0].elements[Looper].checked=false;
           }   
         }
-        fnSelectedTotalUnit();
+        
     }
     
     
@@ -141,112 +122,22 @@
                      return false;
                     }
              }
-      
-      
-        if(document.getElementById("<%=leftDataGrid.ClientID%>"))
-        {
-        
-            var leftDatagrid=document.getElementById("<%=leftDataGrid.ClientID%>")
-            var saleCert="";    
-            var chek=0;                         
-            for( var rowCount = 1; rowCount < leftDatagrid.rows.length; rowCount++)
-            {
-              var tr = leftDatagrid.rows[rowCount];
-              var td= tr.childNodes[0]; 
-              var item = td.firstChild; 
-              var strType=item.type;
-              if(strType=="checkbox")
-              {
-                if(item.checked)
-                {
-                 chek=chek+1;
-                    if(saleCert=="")
-                    {                       
-                        saleCert=leftDatagrid.rows[rowCount].cells[1].innerHTML+"::"+leftDatagrid.rows[rowCount].cells[2].innerHTML;
-                     }
-                     else
-                     {
-                        if(leftDatagrid.rows[rowCount].cells[1].innerHTML==leftDatagrid.rows[rowCount-1].cells[1].innerHTML)
-                        {
-                            saleCert=saleCert+","+leftDatagrid.rows[rowCount].cells[2].innerHTML;
-                         }
-                         else
-                         {
-                            saleCert=saleCert+"\n"+leftDatagrid.rows[rowCount].cells[1].innerHTML+"::"+leftDatagrid.rows[rowCount].cells[2].innerHTML;
-                         }
-                     }
-                }
-              }
-            } 
-            
-           if(chek>0)
-            {
-                var msg="Are You Sure to Surrender The Following Sale Certificate?"+'\n';
-                msg=msg+" Sale Certificates: "+'\n'+saleCert;  
-                var  conformMsg=confirm(msg);       
-                if(conformMsg)
-                {
-                    return true;
-                }
-                else
-                {
-                    return false;
-                }
-            }
-            else
-            {
-                alert("Please Select Any Sale Number To Surrender");
-                return false;
-            }
-  
-        }
-        else
-        {
-          alert("No Units to Surrender");
-          return false;
-        }  
+       if(document.getElementById("<%=TotalUnitRepurchaseTextBox.ClientID%>").value ==""||document.getElementById("<%=TotalUnitRepurchaseTextBox.ClientID%>").value =="0")
+           {
+           
+            alert("Please Add Totol Units to Surrender ");
+            return false;
+           }
+       if(document.getElementById("<%=TotalUnitRepurchaseTextBox.ClientID%>").value =="0")
+           {
+          
+            alert("Please Select Any Sale to Surrender ");
+            return false;
+           }
+       
      }
   
-  function fnSelectedTotalUnit()
-  {
-    if(document.getElementById("<%=leftDataGrid.ClientID%>"))
-            {      
-                var datagrid=document.getElementById("<%=leftDataGrid.ClientID%>")
-                var sum = 0;    
-                var check = 0;                
-                
-                for( var rowCount = 0; rowCount < datagrid.rows.length; rowCount++)
-                {
-                  var tr = datagrid.rows[rowCount];
-                  var td= tr.childNodes[0]; 
-                  var item = td.firstChild; 
-                  var strType=item.type;
-                  if(strType=="checkbox")
-                  {
-                    if(item.checked)
-                    {
-                    datagrid.rows[rowCount].style.backgroundColor='#DDAAFF';
-                     check = check +1;
-                        
-                     sum = sum + parseInt(datagrid.rows[rowCount].cells[3].innerHTML);
-                       
-                    }
-                    else
-                    {
-                        if(rowCount%2==0)
-                        {
-                            datagrid.rows[rowCount].style.backgroundColor='#D5E0E6';
-                        }
-                        else
-                        {
-                            datagrid.rows[rowCount].style.backgroundColor='#DBEAF5';
-                        }
-                    }
-                  }
-                }
-                document.getElementById("<%=TotalUnitRepurchaseTextBox.ClientID%>").value=parseInt(sum);
-            }  
-        }
+ 
         
      function PopupLienDetails()
         {
@@ -288,40 +179,7 @@
 	}
 	
 	
-	 function fnEnable(Action)
-        {
-       
-            if(Action.indexOf("DeathRadioButton")!=-1)
-            {   
-                if( document.getElementById("<%=DeathRadioButton.ClientID%>").checked)                
-                {       
-                         
-                               
-                      if(document.getElementById("<%=dvChequeIssue.ClientID%>").style.visibility == "hidden")
-                      {
-                    
-                        document.getElementById("<%=dvChequeIssue.ClientID%>").style.visibility = "visible";
-                      }
-                      
-                }
-                
-             }
-           if(Action.indexOf("NormalRadioButton")!=-1)
-            {   
-                if( document.getElementById("<%=NormalRadioButton.ClientID%>").checked)                
-                {       
-                         
-                               
-                      if(document.getElementById("<%=dvChequeIssue.ClientID%>").style.visibility == "visible")
-                      {
-                    
-                        document.getElementById("<%=dvChequeIssue.ClientID%>").style.visibility = "hidden";
-                      }
-                    
-                }
-                
-             }
-         }
+	 
          
   
 </script>
@@ -449,6 +307,27 @@
                                      
         </tr>
           <tr>
+            <td align="left">Payment Type:</td>
+            <td align="left">
+                  <table>
+                    <tr>
+                       
+                        <td>
+                            <asp:RadioButton ID="EFTRadioButton" runat="server" Font-Bold="True" 
+                                GroupName="PayType" Text="BEFTN" Checked="True"/>
+                        </td>
+                         <td>
+                            <asp:RadioButton ID="CHQRadioButton" runat="server" Font-Bold="True"
+                                GroupName="PayType" Text="CHEQUE"  />
+                        </td>
+                        <td runat="server">
+                        
+                        </td>
+                    </tr>
+                </table></td>
+                                     
+        </tr>
+        <%--  <tr>
             <td align="left">Repurchase Type:</td>
             <td align="left">
                 <table>
@@ -481,7 +360,8 @@
                 </table>
              </td>
                                      
-        </tr>
+        </tr>--%>
+        
 
         </table>
         </div>
@@ -501,7 +381,7 @@
     </div>
             
     <br />
-     <table align="center" cellpadding="0" cellspacing="0" style="width: 467px">
+     <table align="center" cellpadding="0" cellspacing="0" style="width: 785px">
      <colgroup width="250"></colgroup>
     
         <tr >
@@ -528,12 +408,16 @@
                 <asp:TextBox ID="TotalUnitRepurchaseTextBox" runat="server" 
                     CssClass= "TextInputStyleSmall"   Enabled= "false" Width="100px" 
                     Font-Bold="True" ForeColor="#990033"></asp:TextBox>
+            &nbsp;
+               <asp:Button ID="AddTotalButton" runat="server" AccessKey="l" 
+                   CssClass="buttoncommon" EnableTheming="True" 
+                   Text="Add Total" 
+                   Height="18px" Width="87px" onclick="AddTotalButton_Click" />
             </td>           
         </tr>
         
               
       </table>
-    <br />
     <br />
    
     <div id="dvContentBottom" runat="server"  style="width:840px; height: 266px;">
@@ -561,7 +445,7 @@
                     <Columns>
                     <asp:TemplateColumn HeaderText="">
                     <ItemTemplate> 
-                         <asp:CheckBox ID="leftCheckBox" runat="server" onclick="fnSelectedTotalUnit();" ></asp:CheckBox> 
+                         <asp:CheckBox ID="leftCheckBox" runat="server" ></asp:CheckBox> 
                     </ItemTemplate>                    
                     </asp:TemplateColumn>                    
                     <asp:BoundColumn DataField="SL_NO"></asp:BoundColumn>                                                                                              

@@ -1,6 +1,6 @@
 ﻿<%@ Page Language="C#" AutoEventWireup="true" CodeFile="UnitReportLedgerReportViewer.aspx.cs" Inherits="ReportViewer_UnitReportLedgerReportViewer" Title="Unit Holder Information Report" %>
 
-<%@ Register Assembly="CrystalDecisions.Web, Version=10.5.3700.0, Culture=neutral, PublicKeyToken=692fbea5521e1304"
+<%@ Register Assembly="CrystalDecisions.Web, Version=13.0.2000.0, Culture=neutral, PublicKeyToken=692fbea5521e1304"
     Namespace="CrystalDecisions.Web" TagPrefix="CR" %>
 
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
@@ -13,8 +13,7 @@
     <form id="form1" runat="server">
     <div>
         <CR:CrystalReportViewer ID="CrystalReportViewer1" runat="server" 
-            AutoDataBind="true" 
-             ToolbarImagesFolderUrl="\aspnet_client\system_web\2_0_50727\CrystalReportWebFormViewer4\images\toolbar\"  />
+            AutoDataBind="true" />
            
     </div>
     </form>

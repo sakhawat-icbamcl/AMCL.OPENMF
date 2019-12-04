@@ -101,16 +101,34 @@ public partial class UI_UnitCertPrint : System.Web.UI.Page
                 commonGatewayObj.Update(htPrint, "RENEWAL", "REG_BK='" + fundCode + "'  AND REG_BR='" + branchCode + "' AND REN_NO='" + RenNoTextBox.Text.Trim().ToString() + "'");
                 commonGatewayObj.CommitTransaction();
             }
-            
 
-            if (dtSaleCertPrintReport.Rows[0]["ID_FLAG"].ToString().ToUpper().ToString() == "Y" && certType.ToUpper().ToString() == "SALE")
+            if (certType == "TRAN")
             {
-                if (dtSaleCertPrintReport.Rows[0]["ID_AC"].Equals(DBNull.Value) || dtSaleCertPrintReport.Rows[0]["ID_BK_NM_CD"].Equals(DBNull.Value) || dtSaleCertPrintReport.Rows[0]["ID_BK_BR_NM_CD"].Equals(DBNull.Value))
+                Session["lineNumber"] = lineNumber;
+                Session["dtSaleCertPrintReport"] = dtSaleCertPrintReport;
+                Session["certType"] = certType;
+                ClientScript.RegisterStartupScript(this.GetType(), "TransferCert", "window.open('ReportViewer/UnitTransCertPrintReportViewer.aspx')", true);
+            }
+            else
+            {
+                if (dtSaleCertPrintReport.Rows[0]["ID_FLAG"].ToString().ToUpper().ToString() == "Y" && certType.ToUpper().ToString() == "SALE")
                 {
-                    ClientScript.RegisterStartupScript(this.GetType(), "Popup", "alert('Please Update ID Account Information');", true);
+                    if (dtSaleCertPrintReport.Rows[0]["ID_AC"].Equals(DBNull.Value) || dtSaleCertPrintReport.Rows[0]["ID_BK_NM_CD"].Equals(DBNull.Value) || dtSaleCertPrintReport.Rows[0]["ID_BK_BR_NM_CD"].Equals(DBNull.Value))
+                    {
+                        ClientScript.RegisterStartupScript(this.GetType(), "Popup", "alert('Please Update ID Account Information');", true);
+                    }
+                    else
+                    {
+                        Session["dtSaleCertPrintReport"] = dtSaleCertPrintReport;
+                        Session["certType"] = certType;
+                        Session["lineNumber"] = lineNumber;
+                        ClientScript.RegisterStartupScript(this.GetType(), "DividendWarrant", "window.open('ReportViewer/UnitSaleCertPrintReportViewer.aspx')", true);
+                    }
+
                 }
                 else
                 {
+
                     Session["dtSaleCertPrintReport"] = dtSaleCertPrintReport;
                     Session["certType"] = certType;
                     Session["lineNumber"] = lineNumber;
@@ -118,19 +136,12 @@ public partial class UI_UnitCertPrint : System.Web.UI.Page
                 }
 
             }
-            else
-            {
-
-                Session["dtSaleCertPrintReport"] = dtSaleCertPrintReport;
-                Session["certType"] = certType;
-                Session["lineNumber"] = lineNumber;
-                ClientScript.RegisterStartupScript(this.GetType(), "DividendWarrant", "window.open('ReportViewer/UnitSaleCertPrintReportViewer.aspx')", true);
-            }
-           
-           
         }
         else
         {
+            Session["dtSaleCertPrintReport"] = null;
+            Session["certType"] = null;
+            Session["lineNumber"] = null;
             ClientScript.RegisterStartupScript(this.GetType(), "Popup", "alert('No Data Found');", true);
         }
     }
@@ -143,7 +154,7 @@ public partial class UI_UnitCertPrint : System.Web.UI.Page
         if (SaleNoRadioButton.Checked)
         {
             sbQueryString.Append("SELECT U_MASTER.REG_NO, U_MASTER.REG_BK || '/' || U_MASTER.REG_BR || '/' || U_MASTER.REG_NO AS REGI_NO, SALE.SL_NO, TO_CHAR(SALE.SL_DT, 'DD-MON-YYYY') AS SL_DT,U_MASTER.ID_FLAG,U_MASTER.ID_AC, U_MASTER.ID_BK_NM_CD,U_MASTER.ID_BK_BR_NM_CD,");
-            sbQueryString.Append(" DECODE(U_MASTER.ID_FLAG, 'Y', BANK_NAME.BANK_NAME || ', ' || BANK_BRANCH.BRANCH_NAME ,U_MASTER.HNAME) HNAME, U_MASTER.FMH_NAME, U_MASTER.REG_BK, U_MASTER.REG_BR, U_JHOLDER.JNT_NAME,DECODE(U_MASTER.ID_FLAG, 'Y', U_MASTER.HNAME||','||'ID AC NO: ' || U_MASTER.ID_AC ||','||' ', U_MASTER.ADDRS1) AS ADDRS1,");
+            sbQueryString.Append(" DECODE(U_MASTER.ID_FLAG, 'Y', BANK_NAME.BANK_NAME || ', ' || BANK_BRANCH.BRANCH_NAME ,U_MASTER.HNAME) HNAME, U_MASTER.FMH_NAME, U_MASTER.REG_BK, U_MASTER.REG_BR,DECODE(U_MASTER.ID_FLAG, 'Y',' ',U_JHOLDER.JNT_NAME)JNT_NAME,DECODE(U_MASTER.ID_FLAG, 'Y', U_MASTER.HNAME||','||','||U_JHOLDER.JNT_NAME||','||'ID AC NO: ' || U_MASTER.ID_AC ||','||' ', U_MASTER.ADDRS1) AS ADDRS1,");
             sbQueryString.Append(" DECODE(U_MASTER.ID_FLAG, 'Y',BANK_BRANCH.BRANCH_ADDRS1 || ' ' || BANK_BRANCH.BRANCH_ADDRS2,U_MASTER.ADDRS2) AS ADDRS2,");
             sbQueryString.Append(" DECODE(U_MASTER.ID_FLAG, 'Y', BANK_BRANCH.BRANCH_DISTRICT, U_MASTER.CITY) AS CITY, SALE.QTY,SALE.SL_TYPE ");
             sbQueryString.Append(" FROM  U_JHOLDER RIGHT OUTER JOIN  BANK_NAME INNER JOIN  BANK_BRANCH ON BANK_NAME.BANK_CODE = BANK_BRANCH.BANK_CODE RIGHT OUTER JOIN   SALE INNER JOIN ");

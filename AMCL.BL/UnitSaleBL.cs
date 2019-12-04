@@ -87,8 +87,10 @@ namespace AMCL.BL
                 if (unitSaleObj.MultiPayType != null)
                 {
                     htUnitSale.Add("MULTI_PAY_REMARKS", unitSaleObj.MultiPayType);
-                }
-             
+                }                
+                 htUnitSale.Add("SELLING_AGENT_ID", unitSaleObj.SellingAgentCode);
+               
+
                 commonGatewayObj.Insert(htUnitSale, "SALE");
 
                 htCertNoTemp.Add("REG_BK", unitRegObj.FundCode.ToString().ToUpper());
@@ -195,7 +197,8 @@ namespace AMCL.BL
                 {
                     htUnitSale.Add("MULTI_PAY_REMARKS", unitSaleObj.MultiPayType);
                 }
-             
+                htUnitSale.Add("SELLING_AGENT_ID", unitSaleObj.SellingAgentCode);
+
                 commonGatewayObj.Insert(htUnitSale, "SALE");
                 commonGatewayObj.CommitTransaction();
             }
@@ -262,24 +265,24 @@ namespace AMCL.BL
             return nextSaleNo + 1;
 
         }
-        public int getNextMoneReceiptNo(UnitHolderRegistration regObj, UnitUser unitUserObj)
-        {
-            int nextMoneReceiptNo = 0;
-            DataTable dtNextMoneReceiptNo = new DataTable();
-            dtNextMoneReceiptNo = commonGatewayObj.Select("SELECT MAX(MONY_RECT_NO) AS MAX_MONEY_NO FROM SALE WHERE REG_BK='" + regObj.FundCode.ToString().ToUpper() + "'AND REG_BR='" + regObj.BranchCode.ToString() + "' AND USER_NM='" + unitUserObj.UserID.ToString() + "' AND ENT_DT IN(SELECT MAX(ENT_DT) FROM SALE SALE_1 WHERE REG_BK='" + regObj.FundCode.ToString().ToUpper() + "'AND REG_BR='" + regObj.BranchCode.ToString() + "' AND USER_NM='" + unitUserObj.UserID.ToString() + "' )");
-            if (!dtNextMoneReceiptNo.Rows[0]["MAX_MONEY_NO"].Equals(DBNull.Value))
-            {
-                nextMoneReceiptNo = Convert.ToInt16(dtNextMoneReceiptNo.Rows[0]["MAX_MONEY_NO"].ToString());
-            }
-            else
-            {
-                dtNextMoneReceiptNo = new DataTable();
-                dtNextMoneReceiptNo = commonGatewayObj.Select("SELECT MAX(MONY_RECT_NO) AS MAX_MONEY_NO FROM SALE WHERE REG_BK='" + regObj.FundCode.ToString().ToUpper() + "'AND REG_BR='" + regObj.BranchCode.ToString() + "'");
-                nextMoneReceiptNo = dtNextMoneReceiptNo.Rows[0]["MAX_MONEY_NO"].Equals(DBNull.Value) ? 0 : Convert.ToInt16(dtNextMoneReceiptNo.Rows[0]["MAX_MONEY_NO"].ToString());
-            }
-            return nextMoneReceiptNo + 1;
+        //public int getNextMoneReceiptNo(UnitHolderRegistration regObj, UnitUser unitUserObj)
+        //{
+        //    int nextMoneReceiptNo = 0;
+        //    DataTable dtNextMoneReceiptNo = new DataTable();
+        //    dtNextMoneReceiptNo = commonGatewayObj.Select("SELECT MAX(MONY_RECT_NO) AS MAX_MONEY_NO FROM SALE WHERE REG_BK='" + regObj.FundCode.ToString().ToUpper() + "'AND REG_BR='" + regObj.BranchCode.ToString() + "' AND USER_NM='" + unitUserObj.UserID.ToString() + "' AND ENT_DT IN(SELECT MAX(ENT_DT) FROM SALE SALE_1 WHERE REG_BK='" + regObj.FundCode.ToString().ToUpper() + "'AND REG_BR='" + regObj.BranchCode.ToString() + "' AND USER_NM='" + unitUserObj.UserID.ToString() + "' )");
+        //    if (!dtNextMoneReceiptNo.Rows[0]["MAX_MONEY_NO"].Equals(DBNull.Value))
+        //    {
+        //        nextMoneReceiptNo = Convert.ToInt16(dtNextMoneReceiptNo.Rows[0]["MAX_MONEY_NO"].ToString());
+        //    }
+        //    else
+        //    {
+        //        dtNextMoneReceiptNo = new DataTable();
+        //        dtNextMoneReceiptNo = commonGatewayObj.Select("SELECT MAX(MONY_RECT_NO) AS MAX_MONEY_NO FROM SALE WHERE REG_BK='" + regObj.FundCode.ToString().ToUpper() + "'AND REG_BR='" + regObj.BranchCode.ToString() + "'");
+        //        nextMoneReceiptNo = dtNextMoneReceiptNo.Rows[0]["MAX_MONEY_NO"].Equals(DBNull.Value) ? 0 : Convert.ToInt16(dtNextMoneReceiptNo.Rows[0]["MAX_MONEY_NO"].ToString());
+        //    }
+        //    return nextMoneReceiptNo + 1;
 
-        }
+        //}
         public bool IsCertificateAllocate(UnitHolderRegistration regObj, string dino, string certNo)
         {
             bool isCertificateAllocate = false;
@@ -384,6 +387,16 @@ namespace AMCL.BL
             sbQuery.Append(" U_JHOLDER.JNT_NAME, U_MASTER.ADDRS1, U_MASTER.ADDRS2,U_MASTER.TEL_NO, U_MASTER.CITY, U_MASTER.CIP , SALE_CERT.STATUS_FLAG FROM  U_MASTER INNER JOIN SALE INNER JOIN ");
             sbQuery.Append(" SALE_CERT ON SALE.SL_NO = SALE_CERT.SL_NO AND SALE.REG_BK = SALE_CERT.REG_BK AND SALE.REG_BR = SALE_CERT.REG_BR ON ");
             sbQuery.Append(" U_MASTER.REG_BK = SALE.REG_BK AND U_MASTER.REG_BR = SALE.REG_BR AND U_MASTER.REG_NO = SALE.REG_NO LEFT OUTER JOIN");
+            sbQuery.Append(" U_JHOLDER ON U_MASTER.REG_BK = U_JHOLDER.REG_BK AND U_MASTER.REG_BR = U_JHOLDER.REG_BR AND U_MASTER.REG_NO = U_JHOLDER.REG_NO");
+            sbQuery.Append(" WHERE (SALE.REG_BR = '" + regObj.BranchCode.ToString() + "') AND (SALE.SL_NO = " + saleObj.SaleNo + ") AND (SALE.REG_BK = '" + regObj.FundCode.ToString() + "')");
+            DataTable dtGetSaleInfo = commonGatewayObj.Select(sbQuery.ToString());
+            return dtGetSaleInfo;
+        }
+        public DataTable dtGetSaleInfoCDS(UnitHolderRegistration regObj, UnitSale saleObj)
+        {
+            StringBuilder sbQuery = new StringBuilder();
+            sbQuery.Append(" SELECT SALE.*,U_MASTER.*,U_JHOLDER.* FROM  U_MASTER INNER JOIN SALE ");
+            sbQuery.Append(" ON U_MASTER.REG_BK = SALE.REG_BK AND U_MASTER.REG_BR = SALE.REG_BR AND U_MASTER.REG_NO = SALE.REG_NO LEFT OUTER JOIN");
             sbQuery.Append(" U_JHOLDER ON U_MASTER.REG_BK = U_JHOLDER.REG_BK AND U_MASTER.REG_BR = U_JHOLDER.REG_BR AND U_MASTER.REG_NO = U_JHOLDER.REG_NO");
             sbQuery.Append(" WHERE (SALE.REG_BR = '" + regObj.BranchCode.ToString() + "') AND (SALE.SL_NO = " + saleObj.SaleNo + ") AND (SALE.REG_BK = '" + regObj.FundCode.ToString() + "')");
             DataTable dtGetSaleInfo = commonGatewayObj.Select(sbQuery.ToString());
@@ -568,6 +581,129 @@ namespace AMCL.BL
             }
 
         }
+        public void SaveSaleEditInfoCDS(UnitHolderRegistration unitRegObj, UnitSale unitSaleObj,  UnitUser unitUserObj)
+        {
+            Hashtable htUnitSale = new Hashtable();
+            Hashtable htUnitSaleCert = new Hashtable();
+            StringBuilder sbQuery = new StringBuilder();
+           
+            try
+            {
+                commonGatewayObj.BeginTransaction();
+
+                
+                                                     
+                htUnitSale.Add("SL_DT", Convert.ToDateTime(unitSaleObj.SaleDate).ToString("dd-MMM-yyyy"));
+                htUnitSale.Add("SL_PRICE", Convert.ToDecimal(unitSaleObj.SaleRate.ToString()));
+                htUnitSale.Add("QTY", Convert.ToInt32(unitSaleObj.SaleUnitQty.ToString()));
+                htUnitSale.Add("SL_TYPE", unitSaleObj.SaleType.ToString().ToUpper());
+
+               
+
+                if (!(unitSaleObj.MoneyReceiptNo.ToString() == "0"))
+                {
+                    htUnitSale.Add("MONY_RECT_NO", Convert.ToInt32(unitSaleObj.MoneyReceiptNo));
+                   
+                }
+                else
+                {
+                    htUnitSale.Add("MONY_RECT_NO", DBNull.Value);
+                   
+                }
+
+                if (!((unitSaleObj.MoneyReceiptNo.ToString() == "0") && unitSaleObj.PaymentType.ToString() == "CHQ" && unitSaleObj.ChequeNo == null && unitSaleObj.ChequeDate == null))
+                {
+                    htUnitSale.Add("PAY_TYPE", unitSaleObj.PaymentType);
+                   
+                }
+                else
+                {
+                    htUnitSale.Add("PAY_TYPE", DBNull.Value);
+                   
+                }
+
+                if (unitSaleObj.ChequeNo != null)
+                {
+                    htUnitSale.Add("CHQ_DD_NO", unitSaleObj.ChequeNo);
+                   
+                }
+                else
+                {
+                    htUnitSale.Add("CHQ_DD_NO", DBNull.Value);
+                  
+                }
+                if (unitSaleObj.ChequeDate == null)
+                {
+                    htUnitSale.Add("CHEQUE_DT", DBNull.Value);
+                   
+                }
+                else
+                {
+                    htUnitSale.Add("CHEQUE_DT", unitSaleObj.ChequeDate);
+                   
+                }
+                if (!(unitSaleObj.BankCode.ToString() == "0"))
+                {
+                    htUnitSale.Add("BANK_CODE", Convert.ToInt16(unitSaleObj.BankCode));
+                  
+                }
+                else
+                {
+                    htUnitSale.Add("BANK_CODE", DBNull.Value);
+                   
+                }
+                if (!(unitSaleObj.BranchCode.ToString() == "0"))
+                {
+                    htUnitSale.Add("BRANCH_CODE", Convert.ToInt16(unitSaleObj.BranchCode));
+                    
+                }
+                else
+                {
+                    htUnitSale.Add("BRANCH_CODE", DBNull.Value);
+                    
+                }
+
+                if (!(unitSaleObj.CashAmount.ToString() == "0"))
+                {
+                    htUnitSale.Add("CASH_AMT", Convert.ToDecimal(unitSaleObj.CashAmount));
+                   
+                }
+                else
+                {
+                    htUnitSale.Add("CASH_AMT", DBNull.Value);
+                   
+                }
+                if (unitSaleObj.MultiPayType != null)
+                {
+                    htUnitSale.Add("MULTI_PAY_REMARKS", unitSaleObj.MultiPayType);
+                   
+                }
+                else
+                {
+                    htUnitSale.Add("MULTI_PAY_REMARKS", DBNull.Value);
+                   
+                }
+
+
+               
+                commonGatewayObj.Update(htUnitSale, "SALE", "SL_NO=" + Convert.ToInt32(unitSaleObj.SaleNo.ToString()) + " AND REG_BK='" + unitRegObj.FundCode.ToString().ToUpper() + "' AND REG_BR='" + unitRegObj.BranchCode.ToString() + "' ");
+
+                sbQuery.Append(" INSERT INTO  SALE_ED_INFO ( SL_NO, SL_DT, REG_BK, REG_BR, REG_NO, SL_PRICE, QTY, SL_TYPE, VALID, MONY_RECT_NO, PAY_TYPE, CHQ_DD_NO, ");
+                sbQuery.Append(" CASH_AMT, BANK_CODE, BRANCH_CODE, MULTI_PAY_REMARKS, CHEQUE_DT,USER_NM, EDIT_TYPE, ENT_DT ) ");
+                sbQuery.Append(" SELECT SL_NO, SL_DT, REG_BK, REG_BR, REG_NO, SL_PRICE, QTY, SL_TYPE, VALID, MONY_RECT_NO, PAY_TYPE, CHQ_DD_NO, CASH_AMT, BANK_CODE, BRANCH_CODE, MULTI_PAY_REMARKS, CHEQUE_DT, ");
+                sbQuery.Append(" '" + unitUserObj.UserID + "' USER_NM,'E' EDIT_TYPE ,'" + DateTime.Now.ToString("dd-MMM-yyyy") + "'  ENT_DT  FROM  SALE "); 
+                sbQuery.Append(" WHERE SL_NO=" + Convert.ToInt32(unitSaleObj.SaleNo.ToString()) + " AND REG_BK='" + unitRegObj.FundCode.ToString().ToUpper() + "' AND REG_BR='" + unitRegObj.BranchCode.ToString() + "' AND REG_NO=" + Convert.ToInt32( unitRegObj.RegNumber));
+                commonGatewayObj.ExecuteNonQuery(sbQuery.ToString());
+                          
+                commonGatewayObj.CommitTransaction();
+            }
+            catch (Exception ex)
+            {
+                commonGatewayObj.RollbackTransaction();
+                throw ex;
+            }
+
+        }
         public void DeleteSaleEditInfo(UnitHolderRegistration unitRegObj, UnitSale unitSaleObj, DataTable dtDinomination, UnitUser unitUserObj)
         {
             Hashtable htUnitSale = new Hashtable();
@@ -696,6 +832,31 @@ namespace AMCL.BL
             }
 
         }
+        public void DeleteSaleEditInfoCDS(UnitHolderRegistration unitRegObj, UnitSale unitSaleObj, UnitUser unitUserObj)
+        {
+
+           
+            StringBuilder sbQuery = new StringBuilder();
+
+            try
+            {
+                commonGatewayObj.BeginTransaction();
+
+                commonGatewayObj.DeleteByCommand("SALE", "SL_NO=" + Convert.ToInt32(unitSaleObj.SaleNo.ToString()) + " AND REG_BK='" + unitRegObj.FundCode.ToString().ToUpper() + "' AND REG_BR='" + unitRegObj.BranchCode.ToString() + "' AND REG_NO=" + Convert.ToInt32(unitRegObj.RegNumber));
+                sbQuery.Append(" INSERT INTO  SALE_ED_INFO ( SL_NO, SL_DT, REG_BK, REG_BR, REG_NO, SL_PRICE, QTY, SL_TYPE, VALID, MONY_RECT_NO, PAY_TYPE, CHQ_DD_NO, ");
+                sbQuery.Append(" CASH_AMT, BANK_CODE, BRANCH_CODE, MULTI_PAY_REMARKS, CHEQUE_DT,USER_NM, EDIT_TYPE, ENT_DT ) ");
+                sbQuery.Append(" SELECT SL_NO, SL_DT, REG_BK, REG_BR, REG_NO, SL_PRICE, QTY, SL_TYPE, VALID, MONY_RECT_NO, PAY_TYPE, CHQ_DD_NO, CASH_AMT, BANK_CODE, BRANCH_CODE, MULTI_PAY_REMARKS, CHEQUE_DT, ");
+                sbQuery.Append(" '" + unitUserObj.UserID + "' USER_NM,'D' EDIT_TYPE ,'" + DateTime.Now.ToString("dd-MMM-yyyy") + "'  ENT_DT  FROM  SALE ");
+                sbQuery.Append(" WHERE SL_NO=" + Convert.ToInt32(unitSaleObj.SaleNo.ToString()) + " AND REG_BK='" + unitRegObj.FundCode.ToString().ToUpper() + "' AND REG_BR='" + unitRegObj.BranchCode.ToString() + "' AND REG_NO=" + Convert.ToInt32(unitRegObj.RegNumber));
+                commonGatewayObj.ExecuteNonQuery(sbQuery.ToString());
+                commonGatewayObj.CommitTransaction();
+            }
+            catch (Exception ex)
+            {
+                commonGatewayObj.RollbackTransaction();
+                throw ex;
+            }
+        }
         public DataTable getTableDinoForEdit()
         {
             DataTable dtDinomination = new DataTable();
@@ -738,5 +899,314 @@ namespace AMCL.BL
             }
             return lockStatus;
         }
+       
+
+        //Demate and CDS Related Methods////
+        public DataTable dtGetSaleInfoForDRF(string filter)
+        {
+            StringBuilder sbQuery = new StringBuilder();
+            sbQuery.Append(" SELECT  U_MASTER.REG_BK, U_MASTER.REG_BR, U_MASTER.REG_NO, SALE.SL_NO, U_MASTER.HNAME, U_MASTER.BO, SALE.QTY, SALE.SL_PRICE, SALE.QTY * SALE.SL_PRICE AS TOTAL_AMT");
+            sbQuery.Append(" FROM U_MASTER, SALE WHERE U_MASTER.REG_BK = SALE.REG_BK AND U_MASTER.REG_BR = SALE.REG_BR AND U_MASTER.REG_NO = SALE.REG_NO AND (SALE.DRF_REQ_DATE IS NULL)  AND (SALE.DRF_REF_NO IS NULL) AND  U_MASTER.BO IS NOT NULL ");
+            sbQuery.Append(" AND (SALE.FOLIO_TR_REQ_DATE IS NULL) ");
+            sbQuery.Append(filter.ToString());
+            sbQuery.Append(" ORDER BY SALE.SL_NO");
+            DataTable dtSaleInfoForDRF = commonGatewayObj.Select(sbQuery.ToString());
+            return dtSaleInfoForDRF;
+
+        }
+        public DataTable dtGetSaleInfoForFolioTransfer(string filter)
+        {
+            StringBuilder sbQuery = new StringBuilder();
+            sbQuery.Append(" SELECT  U_MASTER.REG_BK, U_MASTER.REG_BR, U_MASTER.REG_NO, SALE.SL_NO, U_MASTER.HNAME, U_MASTER.BO, SALE.QTY, SALE.SL_PRICE, SALE.QTY * SALE.SL_PRICE AS TOTAL_AMT,FUND_INFO.OMNIBUS_FOLIO_BO ");
+            sbQuery.Append(" FROM U_MASTER, SALE,FUND_INFO WHERE U_MASTER.REG_BK = SALE.REG_BK AND U_MASTER.REG_BR = SALE.REG_BR AND U_MASTER.REG_NO = SALE.REG_NO AND U_MASTER.REG_BK = FUND_INFO.FUND_CD  ");
+            sbQuery.Append(" AND (SALE.DRF_TR_SEQ_NO IS  NULL) AND (SALE.DRF_REQ_DATE IS NULL)  AND (SALE.DRF_REF_NO IS NULL) AND  U_MASTER.BO IS NOT NULL  AND (SALE.FOLIO_TR_REQ_DATE IS NULL) ");
+            sbQuery.Append(filter.ToString());
+            sbQuery.Append(" ORDER BY SALE.SL_NO");
+            DataTable dtSaleInfoForDRF = commonGatewayObj.Select(sbQuery.ToString());
+            return dtSaleInfoForDRF;
+
+        }
+        public long getNexDRReferenceNumber(string filter)
+        {
+            long nextDRRefNumber = 0;
+            DataTable dtDRRefNo = commonGatewayObj.Select("SELECT MAX(NVL(DRF_REF_NO,0))+1 AS NEXDREFNO  FROM SALE WHERE 1=1 " + filter.ToString());
+            if (dtDRRefNo.Rows.Count > 0)
+            {
+                nextDRRefNumber = Convert.ToInt64(dtDRRefNo.Rows[0]["NEXDREFNO"].ToString());
+            }
+                return nextDRRefNumber;
+
+
+        }
+        public bool CheckDuplicateSaleRelatedInfo(string filter)
+        {
+            bool check = false;
+            DataTable dtCheck = commonGatewayObj.Select("SELECT * FROM SALE WHERE (1=1) " + filter.ToString());
+            if(dtCheck.Rows.Count>0)
+            {
+                check = true;
+            }
+            return check;
+        }
+        public DataTable dtDRRefNoListForCustodian(string filter)
+        {
+            DataTable dtList = commonGatewayObj.Select("SELECT DISTINCT DRF_REF_NO AS NAME,DRF_REF_NO AS ID FROM SALE WHERE DRF_REF_NO IS NOT NULL AND DRF_CUST_REQ_DATE IS NULL AND DRF_CUST_REQ_BY IS  NULL AND DRF_REG_FOLIO_NO IS NULL AND DRF_CERT_NO IS NULL AND DRF_DISTNCT_NO_FROM IS NULL AND DRF_DISTNCT_NO_TO IS NULL AND FOLIO_TR_REQ_DATE IS NULL " + filter.ToString()+ " ORDER BY ID ");
+
+            DataTable dtListDropDown = new DataTable();
+            dtListDropDown.Columns.Add("NAME", typeof(string));
+            dtListDropDown.Columns.Add("ID", typeof(string));
+
+            DataRow drListDropDown = dtListDropDown.NewRow();
+
+            drListDropDown["NAME"] = " ";
+            drListDropDown["ID"] = "0";
+            dtListDropDown.Rows.Add(drListDropDown);
+            for (int loop = 0; loop < dtList.Rows.Count; loop++)
+            {
+                drListDropDown = dtListDropDown.NewRow();
+                drListDropDown["NAME"] = dtList.Rows[loop]["NAME"].ToString();
+                drListDropDown["ID"] = dtList.Rows[loop]["ID"].ToString();
+                dtListDropDown.Rows.Add(drListDropDown);
+            }
+            return dtListDropDown;
+        }
+        public DataTable dtGetSaleInfoForDemate(string filter)
+        {
+            StringBuilder sbQuery = new StringBuilder();
+            sbQuery.Append(" SELECT SALE.*, U_MASTER.HNAME FROM U_MASTER, SALE WHERE U_MASTER.REG_BK = SALE.REG_BK AND U_MASTER.REG_BR = SALE.REG_BR AND U_MASTER.REG_NO = SALE.REG_NO");           
+            sbQuery.Append(filter.ToString());
+            sbQuery.Append(" ORDER BY SALE.SL_NO");
+            DataTable dtSaleInfoForCusto = commonGatewayObj.Select(sbQuery.ToString());
+            return dtSaleInfoForCusto;
+
+        }
+        public long getTotalUnitsForDRF(string filter)
+        {
+            long totalUnits = 0;
+            DataTable dtTotalUnits = commonGatewayObj.Select("SELECT SUM(QTY) AS TOTAL_QTY  FROM SALE WHERE 1=1 " + filter.ToString());
+            if (dtTotalUnits.Rows.Count > 0)
+            {
+                totalUnits = Convert.ToInt64(dtTotalUnits.Rows[0]["TOTAL_QTY"].Equals(DBNull.Value) ? 0 : dtTotalUnits.Rows[0]["TOTAL_QTY"]);
+            }
+            return totalUnits;
+
+
+        }
+        public DataTable dtDRRefNoListForDRN(string filter)
+        {
+            StringBuilder sbQuery = new StringBuilder();
+            sbQuery.Append(" SELECT DISTINCT DRF_REF_NO AS NAME,DRF_REF_NO AS ID FROM SALE WHERE DRF_REF_NO IS NOT NULL AND DRF_CUST_REQ_DATE IS NOT NULL AND DRF_CUST_REQ_BY IS NOT NULL AND DRF_REG_FOLIO_NO IS NOT NULL AND DRF_CERT_NO IS NOT NULL AND DRF_DISTNCT_NO_FROM IS NOT NULL AND DRF_DISTNCT_NO_TO IS NOT NULL ");
+            sbQuery.Append(" AND DRF_ACCEPT_NO IS  NULL AND DRF_DRN IS  NULL AND DRF_ACCEPT_DATE IS  NULL AND FOLIO_TR_REQ_DATE IS NULL " + filter.ToString() + " ORDER BY ID ");
+            DataTable dtList = commonGatewayObj.Select(sbQuery.ToString());
+
+            DataTable dtListDropDown = new DataTable();
+            dtListDropDown.Columns.Add("NAME", typeof(string));
+            dtListDropDown.Columns.Add("ID", typeof(string));
+
+            DataRow drListDropDown = dtListDropDown.NewRow();
+
+            drListDropDown["NAME"] = " ";
+            drListDropDown["ID"] = "0";
+            dtListDropDown.Rows.Add(drListDropDown);
+            for (int loop = 0; loop < dtList.Rows.Count; loop++)
+            {
+                drListDropDown = dtListDropDown.NewRow();
+                drListDropDown["NAME"] = dtList.Rows[loop]["NAME"].ToString();
+                drListDropDown["ID"] = dtList.Rows[loop]["ID"].ToString();
+                dtListDropDown.Rows.Add(drListDropDown);
+            }
+            return dtListDropDown;
+        }
+        public DataTable dtDRRefNoListForTransfer(string filter)
+        {
+            StringBuilder sbQuery = new StringBuilder();
+            sbQuery.Append(" SELECT DISTINCT DRF_REF_NO AS NAME,DRF_REF_NO AS ID FROM SALE WHERE DRF_REF_NO IS NOT NULL AND DRF_CUST_REQ_DATE IS NOT NULL AND DRF_CUST_REQ_BY IS NOT NULL AND DRF_REG_FOLIO_NO IS NOT NULL AND DRF_CERT_NO IS NOT NULL AND DRF_DISTNCT_NO_FROM IS NOT NULL AND DRF_DISTNCT_NO_TO IS NOT NULL ");
+            sbQuery.Append(" AND DRF_ACCEPT_NO IS NOT NULL AND DRF_DRN IS NOT NULL AND DRF_ACCEPT_DATE IS NOT NULL AND DRF_TR_DATE IS NULL AND DRF_TR_SEQ_NO IS NULL  AND FOLIO_TR_REQ_DATE IS NULL " + filter.ToString() + " ORDER BY ID ");
+            DataTable dtList = commonGatewayObj.Select(sbQuery.ToString());
+
+            DataTable dtListDropDown = new DataTable();
+            dtListDropDown.Columns.Add("NAME", typeof(string));
+            dtListDropDown.Columns.Add("ID", typeof(string));
+
+            DataRow drListDropDown = dtListDropDown.NewRow();
+
+            drListDropDown["NAME"] = " ";
+            drListDropDown["ID"] = "0";
+            dtListDropDown.Rows.Add(drListDropDown);
+            for (int loop = 0; loop < dtList.Rows.Count; loop++)
+            {
+                drListDropDown = dtListDropDown.NewRow();
+                drListDropDown["NAME"] = dtList.Rows[loop]["NAME"].ToString();
+                drListDropDown["ID"] = dtList.Rows[loop]["ID"].ToString();
+                dtListDropDown.Rows.Add(drListDropDown);
+            }
+            return dtListDropDown;
+        }
+        public DataTable dtDRRefNoListForFolioTransfer(string filter)
+        {
+            StringBuilder sbQuery = new StringBuilder();
+            sbQuery.Append(" SELECT DISTINCT DRF_REF_NO AS NAME,DRF_REF_NO AS ID FROM SALE WHERE DRF_REF_NO IS NOT NULL AND DRF_CUST_REQ_DATE IS  NULL AND DRF_CUST_REQ_BY IS  NULL AND DRF_REG_FOLIO_NO IS  NULL AND DRF_CERT_NO IS  NULL AND DRF_DISTNCT_NO_FROM IS  NULL AND DRF_DISTNCT_NO_TO IS  NULL ");
+            sbQuery.Append(" AND DRF_ACCEPT_NO IS  NULL AND DRF_DRN IS  NULL AND DRF_ACCEPT_DATE IS  NULL AND DRF_TR_DATE IS NULL AND DRF_TR_SEQ_NO IS NULL  AND FOLIO_TR_REQ_DATE IS NOT NULL " + filter.ToString() + " ORDER BY ID ");
+            DataTable dtList = commonGatewayObj.Select(sbQuery.ToString());
+
+            DataTable dtListDropDown = new DataTable();
+            dtListDropDown.Columns.Add("NAME", typeof(string));
+            dtListDropDown.Columns.Add("ID", typeof(string));
+
+            DataRow drListDropDown = dtListDropDown.NewRow();
+
+            drListDropDown["NAME"] = " ";
+            drListDropDown["ID"] = "0";
+            dtListDropDown.Rows.Add(drListDropDown);
+            for (int loop = 0; loop < dtList.Rows.Count; loop++)
+            {
+                drListDropDown = dtListDropDown.NewRow();
+                drListDropDown["NAME"] = dtList.Rows[loop]["NAME"].ToString();
+                drListDropDown["ID"] = dtList.Rows[loop]["ID"].ToString();
+                dtListDropDown.Rows.Add(drListDropDown);
+            }
+            return dtListDropDown;
+        }
+        public DataTable dtGetSaleInfoForFolioTransferPrint(string filter)
+        {
+            StringBuilder sbQuery = new StringBuilder();
+            sbQuery.Append(" SELECT  U_MASTER.REG_BK, U_MASTER.REG_BR, U_MASTER.REG_NO, SALE.SL_NO, U_MASTER.HNAME, U_MASTER.BO, SALE.QTY, SALE.SL_PRICE, SALE.QTY * SALE.SL_PRICE AS TOTAL_AMT,FUND_INFO.OMNIBUS_FOLIO_BO ");
+            sbQuery.Append(" FROM U_MASTER, SALE,FUND_INFO WHERE U_MASTER.REG_BK = SALE.REG_BK AND U_MASTER.REG_BR = SALE.REG_BR AND U_MASTER.REG_NO = SALE.REG_NO AND U_MASTER.REG_BK = FUND_INFO.FUND_CD  ");
+            sbQuery.Append(" AND (SALE.DRF_TR_SEQ_NO IS  NULL) AND (SALE.DRF_REQ_DATE IS  NULL)  AND (SALE.DRF_REF_NO IS NOT NULL) AND  U_MASTER.BO IS NOT NULL  AND (SALE.FOLIO_TR_REQ_DATE IS NOT NULL) ");
+            sbQuery.Append(filter.ToString());
+            sbQuery.Append(" ORDER BY SALE.SL_NO");
+            DataTable dtSaleInfoForDRF = commonGatewayObj.Select(sbQuery.ToString());
+            return dtSaleInfoForDRF;
+
+        }
+
+        // Money Receipt////////////
+        public long GetMaxReceiptNo(UnitHolderRegistration regObj, string receipt_type)
+        {
+            DataTable dtMaxReceiptNo = new DataTable();
+            dtMaxReceiptNo = commonGatewayObj.Select("SELECT MAX(NVL(RECEIPT_NO,0)) AS MAX_RECEIPT_NO FROM MONEY_RECEIPT WHERE REG_BK='" + regObj.FundCode.ToString().ToUpper() + "' AND REG_BR='" + regObj.BranchCode.ToString().ToUpper() + "'AND RECEIPT_TYPE='" + receipt_type.ToUpper() + "' AND VALID IS NULL ");
+            long MaxReceiptNo = dtMaxReceiptNo.Rows[0]["MAX_RECEIPT_NO"].Equals(DBNull.Value) ? 0 : Convert.ToInt64(dtMaxReceiptNo.Rows[0]["MAX_RECEIPT_NO"].ToString());
+            return MaxReceiptNo + 1;
+        }
+        public decimal GetLastPrice(UnitHolderRegistration regObj, string price_type)
+        {
+            decimal price = 0;
+           DataTable dtLastPrice = commonGatewayObj.Select("SELECT * FROM PRICE_REFIX WHERE FUND_CD='" + regObj.FundCode.ToString() + "'  AND REFIX_DT=(SELECT MAX (REFIX_DT) FROM PRICE_REFIX WHERE FUND_CD='" + regObj.FundCode.ToString().ToUpper() + "') ");
+           if(price_type.ToUpper()=="SL")
+            {
+                price = dtLastPrice.Rows[0]["REFIX_SL_PR"].Equals(DBNull.Value) ? 0 : Convert.ToDecimal(dtLastPrice.Rows[0]["REFIX_SL_PR"].ToString());
+            }
+           else if (price_type.ToUpper() == "REP")
+            {
+                price = dtLastPrice.Rows[0]["REFIX_REP_PR"].Equals(DBNull.Value) ? 0 : Convert.ToDecimal(dtLastPrice.Rows[0]["REFIX_REP_PR"].ToString());
+            }
+            return price;
+        }
+        public bool CheckDuplicateMoneyReceiptNo(UnitHolderRegistration regObj, string receipt_type, long receiptNo)
+        {
+            bool check = false;
+            DataTable dtCheck = commonGatewayObj.Select("SELECT * FROM MONEY_RECEIPT WHERE REG_BK='" + regObj.FundCode.ToString().ToUpper() + "' AND REG_BR='" + regObj.BranchCode.ToString().ToUpper() + "'AND RECEIPT_NO="+ receiptNo + " AND RECEIPT_TYPE='" + receipt_type.ToUpper() + "' AND VALID IS NULL ");
+            if (dtCheck.Rows.Count > 0)
+            {
+                check = true;
+            }
+            return check;
+        }
+       
+        public DataTable dtMoneyReceiptInfo(string filter)
+        {
+            StringBuilder sbQuery = new StringBuilder();
+            sbQuery.Append(" SELECT TO_CHAR(MONEY_RECEIPT.CHQ_DD_DATE,'DD-MON-YYYY') AS CHQ_DATE, TO_CHAR(MONEY_RECEIPT.RECEIPT_DATE,'DD-MON-YYYY') AS SALE_DATE, MONEY_RECEIPT.UNIT_QTY * MONEY_RECEIPT.RATE AS TOTAL_AMT, MONEY_RECEIPT.*,  FUND_INFO.*  FROM   FUND_INFO, MONEY_RECEIPT ");
+            sbQuery.Append(" WHERE  VALID IS NULL AND MONEY_RECEIPT.ACC_VOUCHER_NO IS NULL AND FUND_INFO.FUND_CD = MONEY_RECEIPT.REG_BK " + filter.ToString());
+            sbQuery.Append(" ORDER BY MONEY_RECEIPT.REG_BK,MONEY_RECEIPT.RECEIPT_NO ");           
+            DataTable dtMoneyReceiptInfo = commonGatewayObj.Select(sbQuery.ToString());
+            return dtMoneyReceiptInfo;
+
+        }
+        public string getNexAccountVoucherNo(string accountSchema, string voucherTypeNo)
+        {
+            DataTable dtAccountVoucherNo = commonGatewayObj.Select("SELECT VOUCHER_NO FROM " + accountSchema + ".GL_TRAN WHERE (CTRLNO=(SELECT MAX(TO_NUMBER(CTRLNO))MAX_CTRLNO FROM " + accountSchema + ".GL_TRAN GL_TRAN_1 WHERE (VOUCHER_TYPE='" + voucherTypeNo + "'))) ");
+
+            string voucherNo = dtAccountVoucherNo.Rows[0]["VOUCHER_NO"].ToString().ToUpper();
+            string[] wordVoucher = voucherNo.Split('/');
+            int accVoucherNo = Convert.ToInt32(wordVoucher[0].ToString()) + 1;
+            return accVoucherNo.ToString();
+
+        }
+        public DataTable dtMoneyRecieptInfoforDDL(UnitHolderRegistration regObj, string receipt_type)
+        {
+            DataTable dtMoneyRecieptInfo = commonGatewayObj.Select("SELECT ID,RECEIPT_NO FROM MONEY_RECEIPT WHERE VALID IS NULL AND REG_BK='" + regObj.FundCode.ToString().ToUpper() + "' AND REG_BR='" + regObj.BranchCode.ToString().ToUpper() + "'AND RECEIPT_TYPE='" + receipt_type.ToUpper() + "' AND SL_REP_TR_RN_NO IS NULL AND ACC_VOUCHER_NO IS NOT NULL ORDER BY RECEIPT_NO");
+            DataTable dtDropDown = new DataTable();
+            dtDropDown.Columns.Add("ID", typeof(string));
+            dtDropDown.Columns.Add("RECEIPT_NO", typeof(string));
+
+            DataRow drdtDropDownn = dtDropDown.NewRow();
+
+            drdtDropDownn["RECEIPT_NO"] = "-Select-";
+            drdtDropDownn["ID"] = "0";
+            dtDropDown.Rows.Add(drdtDropDownn);
+            for (int loop = 0; loop < dtMoneyRecieptInfo.Rows.Count; loop++)
+            {
+                drdtDropDownn = dtDropDown.NewRow();
+                drdtDropDownn["RECEIPT_NO"] = dtMoneyRecieptInfo.Rows[loop]["RECEIPT_NO"].ToString();
+                drdtDropDownn["ID"] = dtMoneyRecieptInfo.Rows[loop]["ID"].ToString();
+                dtDropDown.Rows.Add(drdtDropDownn);
+            }
+            return dtDropDown;
+        }
+        public DataTable dtMoneyRecieptforDDL(string filter)
+        {
+            DataTable dtMoneyRecieptInfo = commonGatewayObj.Select("SELECT ID,RECEIPT_NO FROM MONEY_RECEIPT WHERE VALID IS NULL  "+filter.ToString());
+            DataTable dtDropDown = new DataTable();
+            dtDropDown.Columns.Add("ID", typeof(string));
+            dtDropDown.Columns.Add("RECEIPT_NO", typeof(string));
+
+            DataRow drdtDropDownn = dtDropDown.NewRow();
+
+            drdtDropDownn["RECEIPT_NO"] = "-Select-";
+            drdtDropDownn["ID"] = "0";
+            dtDropDown.Rows.Add(drdtDropDownn);
+            for (int loop = 0; loop < dtMoneyRecieptInfo.Rows.Count; loop++)
+            {
+                drdtDropDownn = dtDropDown.NewRow();
+                drdtDropDownn["RECEIPT_NO"] = dtMoneyRecieptInfo.Rows[loop]["RECEIPT_NO"].ToString();
+                drdtDropDownn["ID"] = dtMoneyRecieptInfo.Rows[loop]["ID"].ToString();
+                dtDropDown.Rows.Add(drdtDropDownn);
+            }
+            return dtDropDown;
+        }
+        public DataTable dtMoneyRecieptInfoDetails(long ID)
+        {
+            DataTable dtMoneyRecieptInfo = commonGatewayObj.Select("SELECT * FROM MONEY_RECEIPT WHERE VALID IS NULL AND ID=" + ID);
+            return dtMoneyRecieptInfo;
+        }
+        public DataTable dtUserInfoByUserID(UnitUser userObj)
+        {
+            DataTable dtUserInfoByUserID = commonGatewayObj.Select(" SELECT * FROM USER_INFO WHERE USER_STATUS='V' AND USER_ID='" + userObj.UserID + "'");
+            return dtUserInfoByUserID;
+        }
+        public DataTable dtSellingAgentInfoforDDL()
+        {
+            DataTable dtMoneyRecieptInfo = commonGatewayObj.Select("SELECT ID, NAME||'['||ID||']' AS NAME FROM SELLING_AGENT_INFO ORDER BY ID ");
+            DataTable dtDropDown = new DataTable();
+            dtDropDown.Columns.Add("ID", typeof(string));
+            dtDropDown.Columns.Add("NAME", typeof(string));
+
+            DataRow drdtDropDownn = dtDropDown.NewRow();
+
+            drdtDropDownn["NAME"] = "-Select-";
+            drdtDropDownn["ID"] = "0";
+            dtDropDown.Rows.Add(drdtDropDownn);
+            for (int loop = 0; loop < dtMoneyRecieptInfo.Rows.Count; loop++)
+            {
+                drdtDropDownn = dtDropDown.NewRow();
+                drdtDropDownn["NAME"] = dtMoneyRecieptInfo.Rows[loop]["NAME"].ToString();
+                drdtDropDownn["ID"] = dtMoneyRecieptInfo.Rows[loop]["ID"].ToString();
+                dtDropDown.Rows.Add(drdtDropDownn);
+            }
+            return dtDropDown;
+        }
+
+
     }
 }

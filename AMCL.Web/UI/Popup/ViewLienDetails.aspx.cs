@@ -74,13 +74,15 @@ public partial class UI_ViewLienDetails : System.Web.UI.Page
          if (dtLienDetails.Rows.Count > 0)
          {
              sbInnerString.Append("<table width=\"800\" align=\"center\">");                         
-             sbInnerString.Append("<colgroup width=\"120\"></colgroup>");
-             sbInnerString.Append("<colgroup width=\"120\"></colgroup>");
+            
+            sbInnerString.Append("<colgroup width=\"120\"></colgroup>");
+            sbInnerString.Append("<colgroup width=\"120\"></colgroup>");
              sbInnerString.Append("<colgroup width=\"120\"></colgroup>");
              sbInnerString.Append("<colgroup width=\"120\"></colgroup>");
              sbInnerString.Append("<tr>");
              sbInnerString.Append("<td <span style=\"color:Green;border:1px solid; text-align:center;\"><b> LIEN NUMBER </b></span></td>");
-             sbInnerString.Append("<td <span style=\"color:Green;border:1px solid; text-align:center;\"><b> TRANSACTION NUMBER</b></span></td>");
+           // sbInnerString.Append("<td <span style=\"color:Green;border:1px solid; text-align:center;\"><b> LIEN DATE </b></span></td>");
+            sbInnerString.Append("<td <span style=\"color:Green;border:1px solid; text-align:center;\"><b> TRANSACTION NUMBER</b></span></td>");
              sbInnerString.Append("<td <span style=\"color:Green;border:1px solid; text-align:center;\"><b> CERTIFICATE </b></span></td>");
              sbInnerString.Append("<td <span style=\"color:Green;border:1px solid; text-align:center;\"><b>WEIGHT </b></span></td>");
              sbInnerString.Append("<td <span style=\"color:Green;border:1px solid; text-align:center;\"><b>LIEN INSTITUTION </b></span></td>");
@@ -93,7 +95,8 @@ public partial class UI_ViewLienDetails : System.Web.UI.Page
                  dtLienBankDetails = unitLienBLObj.dtLienDetailsInfo(regObj, unitLienObj);
                  sbInnerString.Append("<tr>");
                  sbInnerString.Append("<td style=\"border:1px solid; text-align:center;\"><b>" + dtLienDetails.Rows[looper]["LIEN_NO"].ToString() + " </b></td>");
-                 sbInnerString.Append("<td style=\"border:1px solid; text-align:center;\"><b> " + dtLienDetails.Rows[looper]["SL_TR_NO"] .ToString()+ "</b></td>");
+                //sbInnerString.Append("<td style=\"border:1px solid; text-align:center;\"><b>" + dtLienDetails.Rows[looper]["LN_REQ_DT"].ToString() + " </b></td>");
+                sbInnerString.Append("<td style=\"border:1px solid; text-align:center;\"><b> " + dtLienDetails.Rows[looper]["SL_TR_NO"] .ToString()+ "</b></td>");
                  sbInnerString.Append("<td style=\"border:1px solid; text-align:center;\"><b>" + dtLienDetails.Rows[looper]["CERTIFICATE"].ToString() + " </b></td>");
                  sbInnerString.Append("<td style=\"border:1px solid; text-align:center;\"><b>" + dtLienDetails.Rows[looper]["QTY"].ToString() + " </b></td>");
                  sbInnerString.Append("<td style=\"border:1px solid; text-align:center;\"><b>" + reportObj.getBankNameByBankCode(Convert.ToInt16(dtLienBankDetails.Rows[0]["LN_BK_CODE"].ToString())) + "," + reportObj.getBankBranchNameByCode(Convert.ToInt16(dtLienBankDetails.Rows[0]["LN_BK_CODE"].ToString()), Convert.ToInt16(dtLienBankDetails.Rows[0]["LN_BK_BR_CODE"].ToString())) + " </b></td>");

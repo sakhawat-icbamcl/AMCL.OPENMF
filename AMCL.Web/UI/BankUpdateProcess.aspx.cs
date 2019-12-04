@@ -1,16 +1,9 @@
 ﻿using System;
 using System.Collections;
-using System.Configuration;
+
 using System.Data;
-using System.Linq;
-using System.Web;
-using System.Web.Security;
-using System.Web.UI;
-using System.Web.UI.HtmlControls;
-using System.Web.UI.WebControls;
-using System.Web.UI.WebControls.WebParts;
-using System.Xml.Linq;
-using System.Text;
+using System.Data.OleDb;
+
 using System.IO;
 using AMCL.DL;
 using AMCL.BL;
@@ -304,7 +297,7 @@ public partial class UI_BankUpdateProcess : System.Web.UI.Page
     protected void Button2_Click(object sender, EventArgs e)
     {
 
-        DirectoryInfo di = new DirectoryInfo(@"D:\ICB Unit Fund Conversion Data\ICB All Funds Sign FROM CDBL\7thicb");
+        DirectoryInfo di = new DirectoryInfo(@"D:\ICB Unit Fund Conversion Data\nrb2\signature\BD0166INRB27");
         FileInfo[] finfos = di.GetFiles("*.jpg", SearchOption.TopDirectoryOnly);
         foreach (FileInfo fi in finfos)
         {
@@ -316,11 +309,11 @@ public partial class UI_BankUpdateProcess : System.Web.UI.Page
            string fileNameReg = opendMFDAO.getRegNoByFolio(fileBO.ToString()).ToString();
            if (fileNameReg != "0")
            {
-               newFileName = @"\\WEBSERVER\inv_Signature\ICB7\ICB7_AMC_01_" + fileNameReg.ToString() + ".jpg";
+               newFileName = @"\\194.25.1.202\inv_Signature\INRB2\INRB2_AMC_01_" + fileNameReg.ToString() + ".jpg";
            }
            else
            {
-               newFileName = @"\\WEBSERVER\inv_Signature\ICB7\ICB7_AMC_01_Not_Found_" + spliteFileName[0].ToString() + ".jpg";
+               newFileName = @"\\194.25.1.202\inv_Signature\INRB2\INRB2_AMC_01_Not_Found_" + spliteFileName[0].ToString() + ".jpg";
            }
            File.Copy(fi.DirectoryName.ToString() + "\\" + fi.ToString(), newFileName);
           // File.Move(fi.DirectoryName.ToString() + "\\" + fi.ToString(), newFileName);
@@ -408,5 +401,38 @@ public partial class UI_BankUpdateProcess : System.Web.UI.Page
             
         }
         commonGatewayObj.CommitTransaction();
+    }
+
+    protected void Button4_Click(object sender, EventArgs e)
+    {
+        string ConStr = "";
+        //getting the path of the file  
+       string path = Server.MapPath("BEFTN.xlsx");
+        //connection string for that file which extantion is .xlsx 
+        ConStr = "Provider=Microsoft.ACE.OLEDB.12.0;Data Source="+ path + " ;Extended Properties=\"Excel 12.0;ReadOnly=False;HDR=Yes;\"";
+        //making query 
+        string query = "INSERT INTO [Sheet1$] ([NAME], [ROLL] VALUES('TEST','1234')";
+        //Providing connection 
+        OleDbConnection conn = new OleDbConnection(ConStr);
+        //checking that connection state is closed or not if closed the  
+        //open the connection 
+        if (conn.State == ConnectionState.Closed)
+        {
+            conn.Open();
+        }
+        //create command object 
+        OleDbCommand cmd = new OleDbCommand(query, conn);
+        int result = cmd.ExecuteNonQuery();
+        if (result > 0)
+        {
+            Response.Write("<script>alert('Sucessfully Data Inserted Into Excel')</script>");
+        }
+        else
+        {
+            Response.Write("<script>alert('Sorry!\n Insertion Failed')</script>");
+        }
+        conn.Close();
+
+        
     }
 }

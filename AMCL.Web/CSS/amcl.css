@@ -75,8 +75,7 @@ height:43;
 	FONT-WEIGHT: bold; FONT-SIZE: 11px; 
 	BACKGROUND-COLOR: #547AC6;
 	WIDTH: 90px;
-	height: 20px;
-}
+	}
 .buttonsmall
 {
 	BORDER-TOP: #CCCCCC 1px solid; 
@@ -782,7 +781,7 @@ A.signout:hover
 	padding-right:10;
 }
 
-/* Menu Color */
+/* Menu Color old*/
 .menu
 {
 	height: 18px;
@@ -849,9 +848,62 @@ A.signout:hover
 	BORDER-LEFT: #CCCCCC 1px solid; 
 	BORDER-RIGHT: #000000 1px solid; 
 	vertical-align:middle;
+	
 
 	
 }
+
+/* Munue  Newv*/
+
+.ParentMenu, .ParentMenu:hover {                  
+        text-decoration: none;
+        font-weight:bold;
+        color: #660066;       
+        color: #333;  
+        text-align: left;  
+        height: 20px;  
+        line-height: 20px;  
+        BORDER-TOP: #CCCCCC 1px solid; 
+	    BORDER-BOTTOM: #000000 1px solid; 
+	    BORDER-LEFT: #CCCCCC 1px solid; 
+	    BORDER-RIGHT: #000000 1px solid; 
+        margin-right: 3px;  
+        padding-left:5px;
+        background-color: #DDDBBB;  
+    }  
+  
+        .ParentMenu:hover {  
+            background-color: #ccc;  
+        }  
+  
+    .ChildMenu, .ChildMenu:hover {  
+        font-weight:bold;                  
+        color: #660066;  
+        text-align: left;  
+        height: 20px;  
+        line-height: 20px;  
+        margin-top: 3px;  
+        BORDER-TOP: #CCCCCC 1px solid; 
+	    BORDER-BOTTOM: #000000 1px solid; 
+	    BORDER-LEFT: #CCCCCC 1px solid; 
+	    BORDER-RIGHT: #000000 1px solid; 
+        padding-left:5px;
+        background-color: #DDDBBB;  
+    }  
+  
+        .ChildMenu:hover {  
+            background-color: #ccc;  
+        }  
+  
+    .selected, .selected:hover {  
+        background-color: #A6A6A6 !important;  
+        color: #660066;  
+    }  
+  
+    .level2 {  
+        background-color: #DDDBBB;  
+    }   
+
 /* Calendar Color */
 
 .calendarbg

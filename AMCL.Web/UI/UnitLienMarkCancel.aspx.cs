@@ -115,6 +115,7 @@ public partial class UI_UnitLienMarkCancel : System.Web.UI.Page
             }
             else
             {
+                long totalSurrenderUnits = 0;
                 DataTable dtGrid = opendMFDAO.getTableDataGrid();
                 DataRow drGrid;
                 foreach (DataGridItem gridRow in leftDataGrid.Items)
@@ -126,16 +127,24 @@ public partial class UI_UnitLienMarkCancel : System.Web.UI.Page
                         drGrid["SL_NO"] = gridRow.Cells[1].Text.Trim().ToString();
                         drGrid["CERTIFICATE"] = gridRow.Cells[2].Text.Trim().ToString();
                         drGrid["QTY"] = gridRow.Cells[3].Text.Trim().ToString();
+                        totalSurrenderUnits = totalSurrenderUnits + Convert.ToInt64(gridRow.Cells[3].Text.Trim().ToString());
                         dtGrid.Rows.Add(drGrid);
                     }
                 }
-                unitLienBLObj.saveLienMarkCancel(dtGrid, regObj, unitLienObj, userObj);//save Lien Cancel Data                
-                leftDataGrid.DataSource = opendMFDAO.getTableDataGrid();// hide remaining Data
-                leftDataGrid.DataBind();
-                TotalLienUnitHoldingTextBox.Text = "";
-                LienMarkDropDownList.SelectedValue = "0";
+                if (totalSurrenderUnits == Convert.ToInt64(TotalUnitLienCancelTextBox.Text))
+                {
+                    unitLienBLObj.saveLienMarkCancel(dtGrid, regObj, unitLienObj, userObj);//save Lien Cancel Data                
+                    leftDataGrid.DataSource = opendMFDAO.getTableDataGrid();// hide remaining Data
+                    leftDataGrid.DataBind();
+                    TotalLienUnitHoldingTextBox.Text = "";
+                    LienMarkDropDownList.SelectedValue = "0";
 
-                ScriptManager.RegisterStartupScript(this.Page, this.Page.GetType(), "Popup", "alert ('Save SuccessFully');", true);
+                    ScriptManager.RegisterStartupScript(this.Page, this.Page.GetType(), "Popup", "alert ('Save SuccessFully');", true);
+                }
+                else
+                {
+                    ScriptManager.RegisterStartupScript(this.Page, this.Page.GetType(), "Popup", "alert ('Save Failed : Total Selected Units and Add Total Units is not equal');", true);
+                }
             }
         }
         catch (Exception ex)
@@ -267,5 +276,22 @@ public partial class UI_UnitLienMarkCancel : System.Web.UI.Page
             ScriptManager.RegisterStartupScript(this.Page, this.Page.GetType(), "Popup", "alert ('No Units To Lien Cancel  ');", true);
         }
         
+    }
+    protected void AddTotalButton_Click(object sender, EventArgs e)
+    {
+        long totalSurrenderUnits = 0;
+        DataTable dtGrid = opendMFDAO.getTableDataGrid();
+
+        foreach (DataGridItem gridRow in leftDataGrid.Items)
+        {
+            CheckBox leftCheckBox = (CheckBox)gridRow.FindControl("leftCheckBox");
+            if (leftCheckBox.Checked)
+            {
+
+                totalSurrenderUnits = totalSurrenderUnits + Convert.ToInt64(gridRow.Cells[3].Text.Trim().ToString());
+
+            }
+        }
+        TotalUnitLienCancelTextBox.Text = totalSurrenderUnits.ToString();
     }
 }

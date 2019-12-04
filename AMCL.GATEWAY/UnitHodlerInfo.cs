@@ -112,6 +112,13 @@ namespace AMCL.GATEWAY
             get { return holderTelephone; }
             set { holderTelephone = value; }
         }
+
+        private string holderMobile;
+        public string HolderMobile
+        {
+            get { return holderMobile; }
+            set { holderMobile = value; }
+        }
         private string holderEmail;
 
         public string HolderEmail

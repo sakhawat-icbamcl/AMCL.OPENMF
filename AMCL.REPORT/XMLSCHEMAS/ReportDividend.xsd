@@ -58,6 +58,8 @@
               <xs:element name="ID_AC" type="xs:string" minOccurs="0" />
               <xs:element name="ID_BK_NM" type="xs:string" minOccurs="0" />
               <xs:element name="ID_BK_BR_NM" type="xs:string" minOccurs="0" />
+              <xs:element name="WAR_TYPE" type="xs:string" minOccurs="0" />
+              <xs:element name="BO_FOLIO" type="xs:string" minOccurs="0" />
             </xs:sequence>
           </xs:complexType>
         </xs:element>

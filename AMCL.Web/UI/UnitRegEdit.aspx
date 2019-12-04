@@ -42,7 +42,8 @@
             document.getElementById("<%=webaddressTextBox.ClientID%>").value ="";
             
             document.getElementById("<%=EmailTextBox.ClientID%>").value ="";
-            document.getElementById("<%=TelphoneTextBox.ClientID%>").value ="";
+            document.getElementById("<%=TelphoneTextBox.ClientID%>").value = "";
+             document.getElementById("<%=MobileTextBox.ClientID%>").value = "";
             document.getElementById("<%=SexDropDownList.ClientID%>").value ="0";
             document.getElementById("<%=DateofBirthTextBox.ClientID%>").value ="";
             document.getElementById("<%=MaritialStatusDropDownList.ClientID%>").value ="0";
@@ -246,7 +247,18 @@
                 return false;
                 
             }
-            
+           if(document.getElementById("<%=MobileTextBox.ClientID%>").value !="")
+            {
+                var len = parseInt(document.getElementById("<%=MobileTextBox.ClientID%>").value.length);
+                         
+                if (len != 11)
+                {
+                    document.getElementById("<%=MobileTextBox.ClientID%>").focus();
+                    alert("Please Enter 11 Digits Mobile Number Only");
+                    return false;
+                }
+            }
+          
           
                 
            if( document.getElementById("<%=BankYesRadioButton.ClientID%>").checked)                
@@ -257,7 +269,8 @@
                             document.getElementById("<%=bankAccTextBox.ClientID%>").focus();
                             alert("Please Enter Unit Holder's Bank Account Number");
                             return false;
-                      }
+                    }
+             
                       
                      if(document.getElementById("<%=bankNameDropDownList.ClientID%>").value =="0")
                      {
@@ -672,7 +685,7 @@
                 CssClass= "TextInputStyleLarge" MaxLength="125" TabIndex="16" 
                 meta:resourcekey="holderFMTextBoxResource1"></asp:TextBox>
             <span class="star">*</span></td>
-          <td align="right" ><b>Spouce Name:</b></td>
+          <td align="right" ><b>Spouse Name:</b></td>
         <td align="left">
             <span class="star">
             <asp:TextBox ID="spouceTextBox" runat="server" 
@@ -817,10 +830,25 @@
     </tr>
     <tr>
             
-              <td align="right"><b>Telephone/Mobile:</b></td>
+              <td align="right"><b>Mobile Number:</b></td>
               <td align="left">
+             <asp:TextBox ID="MobileTextBox" runat="server" 
+                CssClass= "TextInputStyleLarge" MaxLength="11" TabIndex="34" 
+                      meta:resourcekey="holderTelphoneTextBoxResource1"></asp:TextBox>
+                                </td>
+        <td align="right"><b>Telephone:</b></td>
+        <td align="left">
              <asp:TextBox ID="TelphoneTextBox" runat="server" 
-                CssClass= "TextInputStyleLarge" MaxLength="20" TabIndex="34" 
+                CssClass= "TextInputStyleLarge" MaxLength="32" TabIndex="34" 
+                      meta:resourcekey="holderTelphoneTextBoxResource1"></asp:TextBox>
+                                    </td>
+    </tr>
+     <tr>
+            
+              <td align="right"><b>Source of Fund:</b></td>
+              <td align="left">
+             <asp:TextBox ID="SourceFundTextBox" runat="server" 
+                CssClass= "TextInputStyleLarge" MaxLength="20" TabIndex="36" 
                       meta:resourcekey="holderTelphoneTextBoxResource1"></asp:TextBox>
                                 </td>
         <td align="right"><b>E-Mail:</b></td>
@@ -830,24 +858,15 @@
                       meta:resourcekey="holderEmailTextBoxResource1"></asp:TextBox>
                                     </td>
     </tr>
-     <tr>
-            
-              <td align="right"><b>Source of Fund:</b></td>
+    <tr>
+              <td align="right"><b>Web Address:</b></td>
               <td align="left">
-             <asp:TextBox ID="SourceFundTextBox" runat="server" 
-                CssClass= "TextInputStyleLarge" MaxLength="128" TabIndex="36" 
-                      meta:resourcekey="holderTelphoneTextBoxResource1"></asp:TextBox>
-                                </td>
-        <td align="right"><b>Web Address:</b></td>
-        <td align="left">
              <asp:TextBox ID="webaddressTextBox" runat="server" 
                 CssClass= "TextInputStyleLarge" MaxLength="20" TabIndex="37" 
                       meta:resourcekey="holderEmailTextBoxResource1"></asp:TextBox>
-                                    </td>
-    </tr>
-    <tr>
-              <td align="right"><b>Sex:</b></td>
-              <td align="left">
+                                </td>
+        <td align="right"><b>Sex:</b></td>
+        <td align="left">
                   <asp:DropDownList ID="SexDropDownList" runat="server" 
                       CssClass="DropDownList" TabIndex="38" 
                       meta:resourcekey="holderSexDropDownListResource1"> 
@@ -856,8 +875,12 @@
             <asp:ListItem Value="F" meta:resourcekey="ListItemResource20">Female</asp:ListItem>            
             </asp:DropDownList>
                                 </td>
-        <td align="right"><b>Maritial Status:</b></td>
-        <td align="left">
+    </tr>
+   
+   
+      <tr>
+              <td align="right"><b>Maritial Status:</b></td>
+              <td align="left">
                   <asp:DropDownList ID="MaritialStatusDropDownList" runat="server" 
                       CssClass="DropDownList" TabIndex="39" 
                       meta:resourcekey="holderMaritialStatusDropDownListResource1">
@@ -867,12 +890,8 @@
                       <asp:ListItem Value="O" meta:resourcekey="ListItemResource24">Others</asp:ListItem>
             </asp:DropDownList>
                                 </td>
-    </tr>
-   
-   
-      <tr>
-              <td align="right"><b>Religion:</b></td>
-              <td align="left">
+        <td align="right"><b>Religion:</b></td>
+        <td align="left">
                   <asp:DropDownList ID="ReligionDropDownList" runat="server" 
                       CssClass="DropDownList" TabIndex="40" 
                       meta:resourcekey="holderReligionDropDownListResource1">
@@ -884,7 +903,10 @@
                       <asp:ListItem Value="O" meta:resourcekey="ListItemResource30">Others</asp:ListItem>
             </asp:DropDownList>
                                 </td>
-        <td align="right"><b>Education Qua:</b></td>
+    </tr>
+     
+    <tr>
+         <td align="right"><b>Education Qua:</b></td>
         <td align="left">
                   <asp:DropDownList ID="EducationDropDownList" runat="server" 
                       CssClass="DropDownList" TabIndex="41" 
@@ -897,13 +919,10 @@
                       <asp:ListItem Value="POST GRADUATE" meta:resourcekey="ListItemResource36">Post Graduate</asp:ListItem>
             </asp:DropDownList>
                                 </td>
-    </tr>
-     
-    <tr>
               <td align="right"><b>Remarks:</b></td>
-              <td align="left" colspan="3">
+              <td align="left">
              <asp:TextBox ID="RemarksTextBox" runat="server" 
-                CssClass= "TextInputStyleLarge" MaxLength="55" TabIndex="42" 
+                CssClass= "TextInputStyleLarge" MaxLength="128" TabIndex="42" 
                       meta:resourcekey="holderRemarksTextBoxResource1"></asp:TextBox>
                                 </td>
     </tr>

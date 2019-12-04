@@ -28,6 +28,7 @@ public partial class UI_UnitReportTaxCert : System.Web.UI.Page
     UnitLienBl unitLienBLObj = new UnitLienBl();
     string fundCode = "";
     string branchCode = "";
+    string CDSStatus = "";
 
     protected void Page_Load(object sender, EventArgs e)
     {
@@ -46,7 +47,7 @@ public partial class UI_UnitReportTaxCert : System.Web.UI.Page
         spanFundName.InnerText = opendMFDAO.GetFundName(fundCode.ToString());
         fundCodeTextBox.Text = fundCode.ToString();
         branchCodeTextBox.Text = branchCode.ToString();
-
+        CDSStatus = bcContent.CDS.ToString().ToUpper();
         
         if (!IsPostBack)
         {
@@ -73,13 +74,36 @@ public partial class UI_UnitReportTaxCert : System.Web.UI.Page
         {
             fyPartDropDownList.SelectedValue = "2nd Half";
         }
-        string fyFrom = "01-JUL-2015";
-        string fyTo = "30-JUN-2016";
-       
-        TTDateTextBox.Text =DateTime.Today.AddDays(-1).ToString("dd-MMM-yyyy");
-        investFYFromTextBox.Text = fyFrom;
-        investFYToTextBox.Text = fyTo;       
-        surrenderFYToTextBox.Text = fyTo;
+        DataTable dtFYCheck=reportObj.getDtFY(fundCode);
+        if (dtFYCheck.Rows.Count > 0)
+        {
+            string fy = incomeTaxFYDropDownList.SelectedItem.Text.ToString();
+            string fyFrom = " ";
+            string fyTo = " ";
+
+            string[] divideFY = fy.Split('-');
+            if (divideFY.Length > 1)
+            {
+                fyFrom = "01-JUL-" + divideFY[0].ToString();
+                fyTo = "30-JUN-" + divideFY[1].ToString();
+            }
+            else
+            {
+                fyFrom = "01-JUL-" + incomeTaxFYDropDownList.SelectedItem.Text.ToString();
+                fyTo = "30-JUN-" + Convert.ToString(Convert.ToUInt16(incomeTaxFYDropDownList.SelectedItem.Text.ToString()) + 1);
+            }
+
+            TTDateTextBox.Text = DateTime.Today.AddDays(-1).ToString("dd-MMM-yyyy");
+            investFYFromTextBox.Text = fyFrom;
+            investFYToTextBox.Text = fyTo;
+            surrenderFYToTextBox.Text = fyTo;
+        }
+        else
+        {
+            investFYFromTextBox.Text = "";
+            investFYToTextBox.Text = "";
+            surrenderFYToTextBox.Text = "";
+        }
     }
     protected void CloseButton_Click(object sender, EventArgs e)
     {         
@@ -97,8 +121,8 @@ public partial class UI_UnitReportTaxCert : System.Web.UI.Page
         {
             DataTable dtIncomeTax = new DataTable();
             certType = "IncomeTaxCert";
-            sbQueryString.Append("SELECT  U_MASTER.REG_BK, U_MASTER.REG_BR, U_MASTER.REG_NO, FUND_INFO.FUND_NM, U_MASTER.HNAME, U_MASTER.ADDRS1, DECODE(DIVIDEND.DIDUCT, 0, 0, ROUND((DIVIDEND.DIDUCT * 100) / (DIVIDEND.TOT_DIVI - DIVI_PARA.TAX_LIMIT), 2)) AS TAX_RATE,");
-            sbQueryString.Append("  U_MASTER.ADDRS2, U_MASTER.CITY, U_JHOLDER.JNT_NAME, DIVI_PARA.F_YEAR, TO_CHAR(DIVI_PARA.CLOSE_DT,'DD-MON-YYYY')AS CLOSE_DT, DIVI_PARA.DIVI_NO,DECODE(CIP,'Y',TO_CHAR(DIVI_PARA.ISS_DT,'DD-MON-YYYY'),'')AS ISS_DT,");
+            sbQueryString.Append("SELECT  U_MASTER.REG_BK, U_MASTER.REG_BR, U_MASTER.REG_NO, FUND_INFO.FUND_NM, U_MASTER.HNAME, U_MASTER.ADDRS1, TAX_DIDUCT_RT AS TAX_RATE,");
+            sbQueryString.Append("  U_MASTER.ADDRS2, U_MASTER.CITY, U_JHOLDER.JNT_NAME, DIVI_PARA.F_YEAR, TO_CHAR(DIVI_PARA.CLOSE_DT,'DD-MON-YYYY')AS CLOSE_DT, DIVI_PARA.DIVI_NO,DECODE(DIVIDEND.CIP,'Y',TO_CHAR(DIVI_PARA.ISS_DT,'DD-MON-YYYY'),'')AS ISS_DT,");
             sbQueryString.Append("  DIVI_PARA.FY_PART, DIVI_PARA.RATE, TO_CHAR(DIVI_PARA.AGM_DT,'DD-MON-YYYY') AS AGM_DT, DIVI_PARA.CIP_RATE, DIVIDEND.TOT_DIVI, DIVIDEND.DIDUCT,DIVIDEND.TOT_DIVI-DIVIDEND.DIDUCT AS NET_DIVIDEND,DECODE(UPPER(DIVIDEND.CIP), 'Y', DIVIDEND.FI_DIVI_QTY, 0) AS FRACTION_DIVI, ");
             sbQueryString.Append("  DIVIDEND.FI_DIVI_QTY,DIVIDEND.CIP_QTY, DIVIDEND.BALANCE FROM U_MASTER INNER JOIN  DIVIDEND INNER JOIN ");
             sbQueryString.Append("  DIVI_PARA ON DIVIDEND.FUND_CD = DIVI_PARA.FUND_CD AND DIVIDEND.FY = DIVI_PARA.F_YEAR AND DIVIDEND.DIVI_NO = DIVI_PARA.DIVI_NO ON ");
@@ -166,9 +190,9 @@ public partial class UI_UnitReportTaxCert : System.Web.UI.Page
                 Session["dtInvestCertHolderInfo"] = dtInvestCertHolderInfo;
                 Session["dtInvestSaleInfo"] = dtInvestSaleInfo;
                 Session["dtInvestTotal"] = dtInvestTotal;
-                string FY = Convert.ToDateTime(investFYFromTextBox.Text.Trim().ToString()).Year.ToString();
-                FY = FY + "-";
-                FY = FY + Convert.ToDateTime(investFYToTextBox.Text.Trim().ToString()).Year.ToString();
+                
+              
+                string FY = investFYFromTextBox.Text.Trim().ToString() + " to " + investFYToTextBox.Text.Trim().ToString();
                 Session["FY"] = FY.ToString();
                 Session["CloseDate"] = surrenderFYToTextBox.Text.ToString();
                 Session["investmentType"] = investmentType.ToString();
@@ -207,7 +231,7 @@ public partial class UI_UnitReportTaxCert : System.Web.UI.Page
                 decimal saleAmount = 0;
                 decimal repAmount = 0;
                 string asOnDate = surrenderFYToTextBox.Text.Trim().ToString();
-              //  decimal ledgerAmount = 0;
+            
 
                 DataRow drReport;
                 for (int loop = 0; loop < dtLedger.Rows.Count; loop++)
@@ -306,6 +330,8 @@ public partial class UI_UnitReportTaxCert : System.Web.UI.Page
         else if (solventRadioButton.Checked)
         {
             certType = "SolventCert";
+            decimal totalUnitHolding = 0;
+
             sbQueryString = new StringBuilder();
             sbQueryString.Append(" SELECT  FUND_INFO.FUND_NM, U_MASTER.REG_BK, U_MASTER.REG_BR, U_MASTER.REG_NO, U_MASTER.HNAME, U_MASTER.ADDRS1, U_MASTER.REG_BK || '/' || U_MASTER.REG_BR || '/' || U_MASTER.REG_NO AS REG_NUM,");
             sbQueryString.Append(" U_MASTER.ADDRS2, U_MASTER.CITY ,   DECODE(U_JHOLDER.JNT_NAME, NULL, NULL, 'AND' || ' ' || U_JHOLDER.JNT_NAME) AS JNT_NAME FROM U_MASTER INNER JOIN  FUND_INFO ON U_MASTER.REG_BK = FUND_INFO.FUND_CD  LEFT OUTER JOIN  U_JHOLDER ON U_MASTER.REG_BK = U_JHOLDER.REG_BK AND U_MASTER.REG_BR = U_JHOLDER.REG_BR AND   U_MASTER.REG_NO = U_JHOLDER.REG_NO");
@@ -315,22 +341,20 @@ public partial class UI_UnitReportTaxCert : System.Web.UI.Page
             unitRegObj.FundCode = fundCodeTextBox.Text.Trim();
             unitRegObj.BranchCode = branchCodeTextBox.Text.Trim();
             unitRegObj.RegNumber = regNoTextBox.Text.Trim();
-            //DataTable dtLedger = reportObj.GetLedgerData(unitRegObj);
-            //sbQueryString = new StringBuilder();
-            //sbQueryString.Append(" SELECT SL_NO, TO_CHAR(SL_DT, 'DD-MON-YYYY') AS SL_DT, QTY, SL_PRICE, QTY * SL_PRICE AS AMOUNT, REG_BK || '/' || REG_BR || '/' || REG_NO AS REG_NO");
-            //sbQueryString.Append(" FROM SALE WHERE (REG_BR = '" + branchCodeTextBox.Text.Trim().ToString().ToUpper() + "') AND (REG_BK = '" + fundCodeTextBox.Text.Trim().ToString().ToUpper() + "') AND (REG_NO = " + Convert.ToInt32(regNoTextBox.Text.Trim().ToString()) + ") ");
-            //// sbQueryString.Append(" AND (SL_DT BETWEEN '" + Convert.ToDateTime(investFYFromTextBox.Text.Trim().ToString()).ToString("dd-MMM-yyyy") + "' AND '" + Convert.ToDateTime(investFYToTextBox.Text.Trim().ToString()).ToString("dd-MMM-yyyy") + "')");
-            //DataTable dtInvestSaleInfo = commonGatewayObj.Select(sbQueryString.ToString());
+            
+            if (CDSStatus == "Y")
+            {
+                totalUnitHolding = opendMFDAO.getTotalSaleUnitBalanceCDS(unitRegObj) + unitLienBLObj.totalLienAmount(unitRegObj);
+            }
+            else
+            {
 
-            //sbQueryString = new StringBuilder();
-            //sbQueryString.Append(" SELECT SUM(QTY) as TOTAL_UNIT, sum(QTY * SL_PRICE) AS TOTAL_AMOUNT");
-            //sbQueryString.Append(" FROM SALE WHERE (REG_BR = '" + branchCodeTextBox.Text.Trim().ToString().ToUpper() + "') AND (REG_BK = '" + fundCodeTextBox.Text.Trim().ToString().ToUpper() + "') AND (REG_NO = " + Convert.ToInt32(regNoTextBox.Text.Trim().ToString()) + ") ");
-            decimal totalUnitHolding = opendMFDAO.getTotalSaleUnitBalance(unitRegObj) + unitLienBLObj.totalLienAmount(unitRegObj);
+                totalUnitHolding = opendMFDAO.getTotalSaleUnitBalance(unitRegObj) + unitLienBLObj.totalLienAmount(unitRegObj);
+            }
 
             if (dtInvestCertHolderInfo.Rows.Count > 0)
             {
-                Session["dtInvestCertHolderInfo"] = dtInvestCertHolderInfo;
-               // Session["dtInvestSaleInfo"] = dtInvestSaleInfo;
+                Session["dtInvestCertHolderInfo"] = dtInvestCertHolderInfo;              
                 Session["totalUnitHolding"] = totalUnitHolding;
                 Session["USDRate"] = USDRateTextBox.Text.Trim().ToString();
                 Session["TTDate"] = TTDateTextBox.Text.Trim().ToString();
@@ -352,8 +376,7 @@ public partial class UI_UnitReportTaxCert : System.Web.UI.Page
         {
             Session["certType"] = certType;
             Session["fundCode"] = fundCodeTextBox.Text.Trim().ToString();
-            Session["branchCode"] = branchCodeTextBox.Text.Trim().ToString();
-           // Response.Redirect("ReportViewer/UnitReportTaxCertReportViewer.aspx");
+            Session["branchCode"] = branchCodeTextBox.Text.Trim().ToString();          
             ClientScript.RegisterStartupScript(this.GetType(), "UnitReportTaxCert", "window.open('ReportViewer/UnitReportTaxCertReportViewer.aspx')", true);
         }
         else

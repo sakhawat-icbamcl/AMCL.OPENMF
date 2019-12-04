@@ -70,7 +70,7 @@ public partial class UI_UnitProcessExportBEFTNFile : System.Web.UI.Page
 
     protected void PrintButton_Click(object sender, EventArgs e)
     {
-        string duplicate = "";
+       // string duplicate = "";
         string fundCode = fundNameDropDownList.SelectedValue.ToString();
         StringBuilder sbMaster = new StringBuilder();
         StringBuilder sbFilter = new StringBuilder();
@@ -81,14 +81,14 @@ public partial class UI_UnitProcessExportBEFTNFile : System.Web.UI.Page
         if (NormalRadioButton.Checked)
         {
             //FOR IFIC BANK
-                //sbMaster.Append("  SELECT  TO_CHAR(DIVI_PARA.ISS_DT,'DD-MON-YYYY') AS EFFECTIVE_DATE,CASE  WHEN LENGTH(DIVIDEND.BK_AC_NO)>13 THEN SUBSTR(DIVIDEND.BK_AC_NO, - 13) ELSE DIVIDEND.BK_AC_NO  END AS RECEIVER_ACC_NO, U_MASTER.HNAME AS RECEIVER_NAME, ");
-                //sbMaster.Append("  DIVIDEND.FI_DIVI_QTY AS AMOUNT, DIVI_PARA.BK_ROUTING_NO AS ORIGINATING_BR_ROUTER_NO, ");
-                //sbMaster.Append("  BANK_BRANCH.ROUTING_NO AS RECEIVING_BR_ROUTING_NO, DIVI_PARA.BK_AC_NO_MICR AS ORIGINATING_ACC_NO,");
-                //sbMaster.Append("  '" + fundCode + "_15_16' AS ORIGINATOR_NAME,   DIVIDEND.REG_BR || '/' || DIVIDEND.REG_NO || '/' || DIVIDEND.WAR_NO AS REMARKS");
+            //sbMaster.Append("  SELECT  TO_CHAR(DIVI_PARA.ISS_DT,'DD-MON-YYYY') AS EFFECTIVE_DATE,CASE  WHEN LENGTH(DIVIDEND.BK_AC_NO)>13 THEN SUBSTR(DIVIDEND.BK_AC_NO, - 13) ELSE DIVIDEND.BK_AC_NO  END AS RECEIVER_ACC_NO, U_MASTER.HNAME AS RECEIVER_NAME, ");
+            //sbMaster.Append("  DIVIDEND.FI_DIVI_QTY AS AMOUNT, DIVI_PARA.BK_ROUTING_NO AS ORIGINATING_BR_ROUTER_NO, ");
+            //sbMaster.Append("  BANK_BRANCH.ROUTING_NO AS RECEIVING_BR_ROUTING_NO, DIVI_PARA.BK_AC_NO_MICR AS ORIGINATING_ACC_NO,");
+            //sbMaster.Append("  '" + fundCode + "_2016' AS ORIGINATOR_NAME,   DIVIDEND.REG_BR || '/' || DIVIDEND.REG_NO || '/' || DIVIDEND.WAR_NO AS REMARKS");
 
-                //sbMaster.Append(" FROM   BANK_BRANCH INNER JOIN   U_MASTER INNER JOIN    DIVI_PARA INNER JOIN   DIVIDEND ON DIVI_PARA.DIVI_NO = DIVIDEND.DIVI_NO AND DIVI_PARA.FUND_CD = DIVIDEND.FUND_CD AND DIVI_PARA.F_YEAR = DIVIDEND.FY ON ");
-                //sbMaster.Append(" U_MASTER.REG_BK = DIVIDEND.REG_BK AND U_MASTER.REG_BR = DIVIDEND.REG_BR AND U_MASTER.REG_NO = DIVIDEND.REG_NO ON   BANK_BRANCH.BANK_CODE = DIVIDEND.BK_NM_CD AND BANK_BRANCH.BRANCH_CODE = DIVIDEND.BK_BR_NM_CD");
-                //sbMaster.Append(" WHERE (DIVI_PARA.FUND_CD = '" + fundCode + "') AND (DIVIDEND.IS_BEFTN = 'Y') AND (DIVI_PARA.CLOSE_DT = '" + closingDate + "') AND DIVI_PARA.F_YEAR='" + FY.ToString() + "' AND DIVIDEND.BK_NM_CD=21 ");//DIVIDEND.BK_NM_CD 21 IS THE DIVIDEND CLEARING BANK CODE
+            //sbMaster.Append(" FROM   BANK_BRANCH INNER JOIN   U_MASTER INNER JOIN    DIVI_PARA INNER JOIN   DIVIDEND ON DIVI_PARA.DIVI_NO = DIVIDEND.DIVI_NO AND DIVI_PARA.FUND_CD = DIVIDEND.FUND_CD AND DIVI_PARA.F_YEAR = DIVIDEND.FY ON ");
+            //sbMaster.Append(" U_MASTER.REG_BK = DIVIDEND.REG_BK AND U_MASTER.REG_BR = DIVIDEND.REG_BR AND U_MASTER.REG_NO = DIVIDEND.REG_NO ON   BANK_BRANCH.BANK_CODE = DIVIDEND.BK_NM_CD AND BANK_BRANCH.BRANCH_CODE = DIVIDEND.BK_BR_NM_CD");
+            //sbMaster.Append(" WHERE (DIVI_PARA.FUND_CD = '" + fundCode + "') AND (DIVIDEND.IS_BEFTN = 'Y') AND (DIVI_PARA.CLOSE_DT = '" + closingDate + "') AND DIVI_PARA.F_YEAR='" + FY.ToString() + "' AND DIVIDEND.BK_NM_CD=21 ");//DIVIDEND.BK_NM_CD 21 IS THE DIVIDEND CLEARING BANK CODE
             //FOR SHAHAJALAL BANK
             sbMaster.Append("  SELECT BANK_BRANCH.ROUTING_NO AS REC_BRANCH_CODE, 22 AS TX_CODE,CASE  WHEN LENGTH(DIVIDEND.BK_AC_NO)>13 THEN SUBSTR(DIVIDEND.BK_AC_NO, - 13) ELSE DIVIDEND.BK_AC_NO  END AS RECV_ACC_NO, ");
             sbMaster.Append(" 0 AS DEBIT, DIVIDEND.FI_DIVI_QTY AS CREDIT,DIVIDEND.WAR_NO AS RECV_ID ,U_MASTER.HNAME AS RECEIVER_NAME, DIVIDEND.REG_BR || '/' || DIVIDEND.REG_NO AS REMARKS ");
@@ -169,7 +169,7 @@ public partial class UI_UnitProcessExportBEFTNFile : System.Web.UI.Page
         if (dtDividend.Rows.Count > 0)
         {
             
-            string separetor = SeparatorTextBox.Text.Trim().ToString();
+            string separetor = MultipleWarrantTextBox.Text.Trim().ToString();
             string commaSeparator = "\"";
             string fileName = fundNameDropDownList.SelectedValue.ToString() + "_" + fromWar_NoTextBox.Text.Trim().ToString() + " TO " + toWar_NoTextBox.Text.Trim().ToString();
 
@@ -180,25 +180,25 @@ public partial class UI_UnitProcessExportBEFTNFile : System.Web.UI.Page
             for(int loop=0;loop<dtDividend.Rows.Count;loop++)
             {
                 //FOR IFIC BANK
-                //sbFileData.Append(dtDividend.Rows[loop]["EFFECTIVE_DATE"].ToString());
-                //sbFileData.Append(separetor + commaSeparator+ dtDividend.Rows[loop]["RECEIVER_ACC_NO"].ToString()+ commaSeparator );
-                //sbFileData.Append(separetor + commaSeparator + dtDividend.Rows[loop]["RECEIVER_NAME"].ToString() + commaSeparator);
-                //sbFileData.Append(separetor + dtDividend.Rows[loop]["AMOUNT"].ToString());
-                //sbFileData.Append(separetor + commaSeparator + dtDividend.Rows[loop]["ORIGINATING_BR_ROUTER_NO"].ToString() + commaSeparator);
-                //sbFileData.Append(separetor + commaSeparator + dtDividend.Rows[loop]["RECEIVING_BR_ROUTING_NO"].ToString() + commaSeparator);
-                //sbFileData.Append(separetor + commaSeparator + dtDividend.Rows[loop]["ORIGINATING_ACC_NO"].ToString() + commaSeparator);
-                //sbFileData.Append(separetor + commaSeparator + dtDividend.Rows[loop]["ORIGINATOR_NAME"].ToString() + commaSeparator);
-                //sbFileData.Append(separetor + commaSeparator + dtDividend.Rows[loop]["REMARKS"].ToString() + commaSeparator);
+                sbFileData.Append(dtDividend.Rows[loop]["EFFECTIVE_DATE"].ToString());
+                sbFileData.Append(separetor + commaSeparator + dtDividend.Rows[loop]["RECEIVER_ACC_NO"].ToString() + commaSeparator);
+                sbFileData.Append(separetor + commaSeparator + dtDividend.Rows[loop]["RECEIVER_NAME"].ToString() + commaSeparator);
+                sbFileData.Append(separetor + dtDividend.Rows[loop]["AMOUNT"].ToString());
+                sbFileData.Append(separetor + commaSeparator + dtDividend.Rows[loop]["ORIGINATING_BR_ROUTER_NO"].ToString() + commaSeparator);
+                sbFileData.Append(separetor + commaSeparator + dtDividend.Rows[loop]["RECEIVING_BR_ROUTING_NO"].ToString() + commaSeparator);
+                sbFileData.Append(separetor + commaSeparator + dtDividend.Rows[loop]["ORIGINATING_ACC_NO"].ToString() + commaSeparator);
+                sbFileData.Append(separetor + commaSeparator + dtDividend.Rows[loop]["ORIGINATOR_NAME"].ToString() + commaSeparator);
+                sbFileData.Append(separetor + commaSeparator + dtDividend.Rows[loop]["REMARKS"].ToString() + commaSeparator);
                 
                 //FOR SHAHJALAL BANK
-                sbFileData.Append(dtDividend.Rows[loop]["REC_BRANCH_CODE"].ToString());
-                sbFileData.Append(separetor + dtDividend.Rows[loop]["TX_CODE"].ToString());
-                sbFileData.Append(separetor + dtDividend.Rows[loop]["RECV_ACC_NO"].ToString());
-                sbFileData.Append(separetor + dtDividend.Rows[loop]["DEBIT"].ToString());
-                sbFileData.Append(separetor + dtDividend.Rows[loop]["CREDIT"].ToString());
-                sbFileData.Append(separetor + dtDividend.Rows[loop]["RECV_ID"].ToString());
-                sbFileData.Append(separetor + dtDividend.Rows[loop]["RECEIVER_NAME"].ToString());               
-                sbFileData.Append(separetor + dtDividend.Rows[loop]["REMARKS"].ToString());
+                //sbFileData.Append(dtDividend.Rows[loop]["REC_BRANCH_CODE"].ToString());
+                //sbFileData.Append(separetor + dtDividend.Rows[loop]["TX_CODE"].ToString());
+                //sbFileData.Append(separetor + dtDividend.Rows[loop]["RECV_ACC_NO"].ToString());
+                //sbFileData.Append(separetor + dtDividend.Rows[loop]["DEBIT"].ToString());
+                //sbFileData.Append(separetor + dtDividend.Rows[loop]["CREDIT"].ToString());
+                //sbFileData.Append(separetor + dtDividend.Rows[loop]["RECV_ID"].ToString());
+                //sbFileData.Append(separetor + dtDividend.Rows[loop]["RECEIVER_NAME"].ToString());               
+                //sbFileData.Append(separetor + dtDividend.Rows[loop]["REMARKS"].ToString());
 
                 sbFileData.Append("\r\n");
             }

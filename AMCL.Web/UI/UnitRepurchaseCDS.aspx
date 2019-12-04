@@ -293,7 +293,27 @@
                     CssClass= "TextInputStyleLarge" MaxLength="55" TabIndex="7"></asp:TextBox></td>
                                      
         </tr>
-     
+        <tr>
+            <td align="left">Payment Type:</td>
+            <td align="left">
+                  <table>
+                    <tr>
+                       
+                        <td>
+                            <asp:RadioButton ID="EFTRadioButton" runat="server" Font-Bold="True" 
+                                GroupName="PayType" Text="BEFTN"  Checked="True"/>
+                        </td>
+                         <td>
+                            <asp:RadioButton ID="CHQRadioButton" runat="server" Font-Bold="True"
+                                GroupName="PayType" Text="CHEQUE" />
+                        </td>
+                        <td id="Td1" runat="server">
+                        
+                        </td>
+                    </tr>
+                </table></td>
+                                     
+        </tr>
         </table>
       </div>
           <div style="border-style: solid; border-color: inherit; border-width: 1px; width:229px; float:left; height:153px;">

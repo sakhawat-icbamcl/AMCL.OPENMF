@@ -69,6 +69,10 @@ public partial class ReportViewer_UnitReportDividendStatementReportViewer : Syst
                 drReport["F_YEAR"] = dtDividend.Rows[loop]["F_YEAR"].Equals(DBNull.Value) ? "" : dtDividend.Rows[loop]["F_YEAR"].ToString();
                 drReport["CLOSE_DT"] = dtDividend.Rows[loop]["CLOSE_DT"].Equals(DBNull.Value) ? "" : dtDividend.Rows[loop]["CLOSE_DT"].ToString();
                 drReport["TIN"] = dtDividend.Rows[loop]["TIN"].Equals(DBNull.Value) ? "" : dtDividend.Rows[loop]["TIN"].ToString();
+              
+                    drReport["WAR_TYPE"] = dtDividend.Rows[loop]["WAR_TYPE"];
+                    drReport["BO_FOLIO"] = dtDividend.Rows[loop]["BO_FOLIO"];
+                
 
                 drReport["DIVI_RATE"] = Convert.ToDecimal(dtDividend.Rows[loop]["DIVI_RATE"].Equals(DBNull.Value) ? "0" : dtDividend.Rows[loop]["DIVI_RATE"].ToString());
                 drReport["BK_AC_NO"] = dtDividend.Rows[loop]["BK_AC_NO"].Equals(DBNull.Value) ? "" : dtDividend.Rows[loop]["BK_AC_NO"].ToString();
@@ -117,54 +121,18 @@ public partial class ReportViewer_UnitReportDividendStatementReportViewer : Syst
                     drReport["ID_BK_NM"] = reportObj.getBankNameByBankCode(Convert.ToInt16(dtDividend.Rows[loop]["ID_BK_NM_CD"].ToString())).ToString();
                     drReport["ID_BK_BR_NM"] = reportObj.getBankBranchNameByCode(Convert.ToInt16(dtDividend.Rows[loop]["ID_BK_NM_CD"].ToString()), Convert.ToInt16(dtDividend.Rows[loop]["ID_BK_BR_NM_CD"].ToString())).ToString();
                 }
-                if (!dtDividend.Rows[loop]["BK_FLAG"].Equals(DBNull.Value))
-                {
-                    if (string.Compare(dtDividend.Rows[loop]["BK_FLAG"].ToString(), "Y", true) == 0)
-                    {
-                        if (!dtDividend.Rows[loop]["HOLDER_BK_NM_CD"].Equals(DBNull.Value) && !dtDividend.Rows[loop]["HOLDER_BK_BR_NM_CD"].Equals(DBNull.Value) && !dtDividend.Rows[loop]["HOLDER_BK_ACC_NO"].Equals(DBNull.Value))
-                        {
-                            drReport["HOLDER_BK_ACC_NO"] = dtDividend.Rows[loop]["HOLDER_BK_ACC_NO"].ToString();
-                            drReport["HOLDER_BK_NM"] = reportObj.getBankNameByBankCode(Convert.ToInt16(dtDividend.Rows[loop]["HOLDER_BK_NM_CD"].ToString())).ToString();
-                            drReport["HOLDER_BK_BR_NM"] = reportObj.getBankBranchNameByCode(Convert.ToInt16(dtDividend.Rows[loop]["HOLDER_BK_NM_CD"].ToString()), Convert.ToInt16(dtDividend.Rows[loop]["HOLDER_BK_BR_NM_CD"].ToString())).ToString();
-                            drReport["HOLDER_BK_BR_ADDRES"] = reportObj.getBankBranchAddressByCode(Convert.ToInt16(dtDividend.Rows[loop]["HOLDER_BK_NM_CD"].ToString()), Convert.ToInt16(dtDividend.Rows[loop]["HOLDER_BK_BR_NM_CD"].ToString())).ToString();
-                        }
-                        else
-                        {
-                            string branchAddress = "";
-                            string BankAccInfo = dtDividend.Rows[loop]["SPEC_IN1"].ToString() + dtDividend.Rows[loop]["SPEC_IN2"].ToString();
-                            string[] BankAccountInfo = BankAccInfo.Split(',');
-                            if (BankAccountInfo.Length > 0)
-                            {
-                                drReport["HOLDER_BK_ACC_NO"] = BankAccountInfo[0].ToString();
-                                if (BankAccountInfo.Length > 1)
-                                {
-                                    drReport["HOLDER_BK_NM"] = BankAccountInfo[1].ToString();
-                                }
-                                if (BankAccountInfo.Length > 2)
-                                {
-                                    drReport["HOLDER_BK_BR_NM"] = BankAccountInfo[2].ToString();
-                                }
-                                if (BankAccountInfo.Length > 3)
-                                {
-                                    for (int looper = 3; looper < BankAccountInfo.Length; looper++)
-                                    {
-                                        branchAddress = branchAddress + BankAccountInfo[looper].ToString();
-                                    }
-                                    drReport["HOLDER_BK_BR_ADDRES"] = branchAddress;
-                                }
-
-                            }
-                        }
-                    }
-
-                }
+                
+                drReport["HOLDER_BK_ACC_NO"] = dtDividend.Rows[loop]["HOLDER_BK_ACC_NO"].ToString();
+                drReport["HOLDER_BK_NM"] = reportObj.getBankNameByBankCode(Convert.ToInt16(dtDividend.Rows[loop]["HOLDER_BK_NM_CD"].Equals(DBNull.Value) ? "0" : dtDividend.Rows[loop]["HOLDER_BK_NM_CD"].ToString())).ToString();
+                drReport["HOLDER_BK_BR_NM"] = reportObj.getBankBranchNameByCode(Convert.ToInt16(dtDividend.Rows[loop]["HOLDER_BK_NM_CD"].Equals(DBNull.Value) ? "0" : dtDividend.Rows[loop]["HOLDER_BK_NM_CD"].ToString()), Convert.ToInt16(dtDividend.Rows[loop]["HOLDER_BK_NM_CD"].Equals(DBNull.Value) ? "0" : dtDividend.Rows[loop]["HOLDER_BK_BR_NM_CD"].ToString())).ToString();
+                drReport["HOLDER_BK_BR_ADDRES"] = reportObj.getBankBranchAddressByCode(Convert.ToInt16(dtDividend.Rows[loop]["HOLDER_BK_NM_CD"].Equals(DBNull.Value) ? "0" : dtDividend.Rows[loop]["HOLDER_BK_NM_CD"].ToString()), Convert.ToInt16(dtDividend.Rows[loop]["HOLDER_BK_NM_CD"].Equals(DBNull.Value) ? "0" : dtDividend.Rows[loop]["HOLDER_BK_BR_NM_CD"].ToString())).ToString();
                 if (string.Compare(statementType, "OFFICE_SIGN") == 0 && string.Compare(investmentType, "CIP") == 0)
                 {
                     if( Convert.ToInt32(dtDividend.Rows[loop]["CIP_QTY"].Equals(DBNull.Value) ? "0" : dtDividend.Rows[loop]["CIP_QTY"].ToString())>0)
                     {
                         int saleNo = Convert.ToInt32(dtDividend.Rows[loop]["CIP_SL_NO"].Equals(DBNull.Value) ? "0" : dtDividend.Rows[loop]["CIP_SL_NO"].ToString());
                         drReport["SL_NO"] = saleNo;
-                        string queryString = "SELECT  NVL(CERT_TYPE,' ') AS CERT_TYPE, NVL(CERT_NO,0) AS CERT_NO FROM  CIP_SALE_CERT WHERE SL_NO=" + saleNo + " AND REG_BK='" + Convert.ToString(dtDividend.Rows[loop]["FUND_CD"].Equals(DBNull.Value) ? "" : dtDividend.Rows[loop]["FUND_CD"].ToString()) + "' AND REG_BR='" + Convert.ToString(dtDividend.Rows[loop]["REG_BR"].Equals(DBNull.Value) ? "" : dtDividend.Rows[loop]["REG_BR"].ToString()) + "' AND REG_NO=" + Convert.ToInt32(dtDividend.Rows[loop]["REG_NUM"].Equals(DBNull.Value) ? "0" : dtDividend.Rows[loop]["REG_NUM"].ToString()) + " ORDER BY CERT_TYPE";
+                        string queryString = "SELECT  NVL(CERT_TYPE,' ') AS CERT_TYPE, NVL(CERT_NO,0) AS CERT_NO FROM  CIP_SALE_CERT WHERE SL_NO=" + saleNo + " AND REG_BK='" + Convert.ToString(dtDividend.Rows[loop]["FUND_CD"].Equals(DBNull.Value) ? "" : dtDividend.Rows[loop]["FUND_CD"].ToString()) + "' AND REG_BR='" + Convert.ToString(dtDividend.Rows[loop]["REG_BR"].Equals(DBNull.Value) ? "" : dtDividend.Rows[loop]["REG_BR"].ToString()) + "' AND REG_NO=" + Convert.ToInt32(dtDividend.Rows[loop]["REG_NUM"].Equals(DBNull.Value) ? "0" : dtDividend.Rows[loop]["REG_NUM"].ToString()) + " ORDER BY CERT_TYPE, CERT_NO";
                         drReport["CIP_CERT"] = reportObj.getTotalCertNo(queryString, dtDividend.Rows[loop]["FUND_CD"].Equals(DBNull.Value) ? "" : dtDividend.Rows[loop]["FUND_CD"].ToString());
                     }
                     
@@ -175,7 +143,7 @@ public partial class ReportViewer_UnitReportDividendStatementReportViewer : Syst
             }
 
             dtReport.TableName = "ReportDividend";
-    //       dtReport.WriteXmlSchema(@"D:\Project\Web\AMCL.OPENMF\AMCL.REPORT\XMLSCHEMAS\ReportDividend.xsd");
+          //dtReport.WriteXmlSchema(@"F:\GITHUB_AMCL\DOTNET2015\AMCL.OPENMF\AMCL.REPORT\XMLSCHEMAS\ReportDividend.xsd");
             if (string.Compare(investorType, "NON_ID") == 0 || string.Compare(investorType, "ALLID") == 0)
             {
                 if (string.Compare(statementType, "OFFICE_SIGN")== 0 && string.Compare(investmentType, "NON_CIP")== 0)

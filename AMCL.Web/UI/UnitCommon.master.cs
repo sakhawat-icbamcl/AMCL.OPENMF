@@ -16,7 +16,7 @@ using AMCL.UTILITY;
 using AMCL.GATEWAY;
 using AMCL.COMMON;
 
-public partial class UI_UnitCommon : System.Web.UI.MasterPage
+public partial class UI_AMCLCommon : System.Web.UI.MasterPage
 {
     CommonGateway commonGatewayObj = new CommonGateway();
     OMFDAO opendMFDAO = new OMFDAO();
@@ -107,38 +107,11 @@ public partial class UI_UnitCommon : System.Web.UI.MasterPage
         }
         else
         {
-           
-            if (string.Compare(FundCode, "IAMCL", 0) == 0)//for Unit Fund Change Colour
-            {
-                tdFundName.InnerHtml = "<span style=\"color:Blue;\">" + opendMFDAO.GetFundName(FundCode) + "</span>";
-                tdUser.InnerHtml = "<span style=\"color:Blue\"> User: <b>" + UserName + "</b></span>";
-                tdBranch.InnerHtml = "<span style=\"color:Blue\">Branch: <b>" + opendMFDAO.GetBranchName(BranchCode) + "</b></span>";
-            }
-            else if (string.Compare(FundCode, "IAMPH", 0) == 0)// for pension holder's unit
-            {
-                tdFundName.InnerHtml = "<span style=\"color:#ff6600;\">" + opendMFDAO.GetFundName(FundCode) + "</span>";
-                tdUser.InnerHtml = "<span style=\"color:#ff6600;\"> User: <b>" + UserName + "</b></span>";
-                tdBranch.InnerHtml = "<span style=\"color:#ff6600;\">Branch: <b>" + opendMFDAO.GetBranchName(BranchCode) + "</b></span>";
-                
-            }
-            else if (string.Compare(FundCode, "BDF", 0) == 0)// for BDF
-            {
-                tdFundName.InnerHtml = "<span style=\"color:Green;\">" + opendMFDAO.GetFundName(FundCode) + "</span>";
-                tdUser.InnerHtml = "<span style=\"color:#Green;\"> User: <b>" + UserName + "</b></span>";
-                tdBranch.InnerHtml = "<span style=\"color:#Green;\">Branch: <b>" + opendMFDAO.GetBranchName(BranchCode) + "</b></span>";
-            }
-            else if (string.Compare(FundCode, "CFUF", 0) == 0) // for CFUF
-            {
-                tdFundName.InnerHtml = "<span style=\"color:#669900;\">" + opendMFDAO.GetFundName(FundCode) + "</span>";
-                tdUser.InnerHtml = "<span style=\"color:#669900;\"> User: <b>" + UserName + "</b></span>";
-                tdBranch.InnerHtml = "<span style=\"color:#669900;\">Branch: <b>" + opendMFDAO.GetBranchName(BranchCode) + "</b></span>";
-            }
-           else // for IUF
-            {
-                tdFundName.InnerHtml = "<span style=\"color:#CC9900;\">" + opendMFDAO.GetFundName(FundCode) + "</span>";
-                tdUser.InnerHtml = "<span style=\"color:#CC9900;\"> User: <b>" + UserName + "</b></span>";
-                tdBranch.InnerHtml = "<span style=\"color:#CC9900;\">Branch: <b>" + opendMFDAO.GetBranchName(BranchCode) + "</b></span>";
-            }
+            string cssColourCode = opendMFDAO.getFundCSSColourCode(FundCode.ToUpper());
+            tdFundName.InnerHtml = "<span style=\"color:" + cssColourCode + ";\">" + opendMFDAO.GetFundName(FundCode) + "</span>";
+            tdUser.InnerHtml = "<span style=\"color:" + cssColourCode + "\"> User: <b>" + UserName + "</b></span>";
+            tdBranch.InnerHtml = "<span style=\"color:" + cssColourCode + "\">Branch: <b>" + opendMFDAO.GetBranchName(BranchCode) + "</b></span>";
+         
 
         }
         mnuMenu1.Items.Clear();                    

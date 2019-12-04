@@ -75,8 +75,8 @@ public partial class UI_UnitRepurchase : System.Web.UI.Page
         RegNoTextBox.Text = "";
         HolderJNameTextBox.Text = "";
         HolderNameTextBox.Text = "";
-        NormalRadioButton.Checked = true;
-        DeathRadioButton.Checked = false;
+        //NormalRadioButton.Checked = true;
+        //DeathRadioButton.Checked = false;
         
     }       
     protected void CloseButton_Click(object sender, EventArgs e)
@@ -92,14 +92,19 @@ public partial class UI_UnitRepurchase : System.Web.UI.Page
         regObj.FundCode = FundCodeTextBox.Text.Trim();
         regObj.BranchCode = BranchCodeTextBox.Text.Trim();
         regObj.RegNumber = RegNoTextBox.Text.Trim();
-
+        
         unitRepObj.RepurchaseNo = Convert.ToInt32(RepNoTextBox.Text.Trim().ToString());
         unitRepObj.RepurchaseRate = decimal.Parse(RepRateTextBox.Text.Trim().ToString());
         unitRepObj.RepurchaseDate = RepDateTextBox.Text.Trim().ToString();
-        if (DeathRadioButton.Checked)
+        if (EFTRadioButton.Checked)
         {
-            unitRepObj.ChequeIssueTo = ChequeIssueToDropDownList.SelectedValue.ToString();
+            unitRepObj.PayType = "EFT";
         }
+        else
+        {
+            unitRepObj.PayType = "CHQ";
+        }
+       
  
         try
         {
@@ -118,9 +123,19 @@ public partial class UI_UnitRepurchase : System.Web.UI.Page
                     ScriptManager.RegisterStartupScript(this.Page, this.Page.GetType(), "Popup", "alert('" + msgObj.Duplicate().ToString() + " " + "Repurchase Number " + "');", true);
 
                 }
+                else if (!unitRepBLObj.IsValidBEFTN(regObj, unitRepObj))
+                {
+                    dvContentBottom.Visible = true;
+                    ScriptManager.RegisterStartupScript(this.Page, this.Page.GetType(), "Popup", "alert('" + msgObj.Error().ToString() + " " + "Either No Router Number  or Account Number>13 digits " + "');", true);
+                }
+                else if (unitRepBLObj.IsIDAccount(regObj, unitRepObj))
+                {
+                    dvContentBottom.Visible = true;
+                    ScriptManager.RegisterStartupScript(this.Page, this.Page.GetType(), "Popup", "alert('" + msgObj.Error().ToString() + " " + "ID Account is not allow to BEFTN " + "');", true);
+                }
                 else
                 {
-
+                    long totalSurrenderUnits = 0;
                     DataTable dtGrid = opendMFDAO.getTableDataGrid();
                     DataRow drGrid;
                     foreach (DataGridItem gridRow in leftDataGrid.Items)
@@ -132,20 +147,36 @@ public partial class UI_UnitRepurchase : System.Web.UI.Page
                             drGrid["SL_NO"] = gridRow.Cells[1].Text.Trim().ToString();
                             drGrid["CERTIFICATE"] = gridRow.Cells[2].Text.Trim().ToString();
                             drGrid["QTY"] = gridRow.Cells[3].Text.Trim().ToString();
+                            totalSurrenderUnits = totalSurrenderUnits + Convert.ToInt64(gridRow.Cells[3].Text.Trim().ToString());
                             dtGrid.Rows.Add(drGrid);
                         }
                     }
+                    if (dtGrid.Rows.Count > 0)
+                    {
+                        if (totalSurrenderUnits == Convert.ToInt64(TotalUnitRepurchaseTextBox.Text))
+                        {
+                            unitRepBLObj.saveRepurchase(dtGrid, regObj, unitRepObj, userObj);//save Repurchase Data
+                            ClearText();
 
-                    unitRepBLObj.saveRepurchase(dtGrid, regObj, unitRepObj, userObj);//save Repurchase Data
-                    ClearText();
+                            leftDataGrid.DataSource = opendMFDAO.getTableDataGrid();// hide remaining Data
+                            leftDataGrid.DataBind();
+                            TotalUnitHoldingTextBox.Text = "";
+                            EFTRadioButton.Checked = true;
+                            CHQRadioButton.Checked = false;
 
-                    leftDataGrid.DataSource = opendMFDAO.getTableDataGrid();// hide remaining Data
-                    leftDataGrid.DataBind();
-                    TotalUnitHoldingTextBox.Text = "";
-
-                    NormalRadioButton.Checked = true;
-                    DeathRadioButton.Checked = false;
-                    ScriptManager.RegisterStartupScript(this.Page, this.Page.GetType(), "Popup", "alert ('Save SuccessFully');", true);
+                            //NormalRadioButton.Checked = true;
+                            //DeathRadioButton.Checked = false;
+                            ScriptManager.RegisterStartupScript(this.Page, this.Page.GetType(), "Popup", "alert ('Save SuccessFully');", true);
+                        }
+                        else
+                        {
+                            ScriptManager.RegisterStartupScript(this.Page, this.Page.GetType(), "Popup", "alert ('Save Failed : Total Selected Units and Add Total Units is not equal');", true);
+                        }
+                    }
+                    else 
+                    {
+                        ScriptManager.RegisterStartupScript(this.Page, this.Page.GetType(), "Popup", "alert ('Save Failed Due to No Sale Selected');", true);
+                    }
                 }
             }
             else
@@ -198,6 +229,7 @@ public partial class UI_UnitRepurchase : System.Web.UI.Page
                     leftDataGrid.DataBind();
                     TotalUnitHoldingTextBox.Text = TotalUnitsBalance.ToString();
                     TotalLienUnitHoldingTextBox.Text = unitLienBLObj.totalLienAmount(unitRegObj).ToString();
+                    TotalUnitRepurchaseTextBox.Text = "";
                 }
                 else
                 {
@@ -206,8 +238,8 @@ public partial class UI_UnitRepurchase : System.Web.UI.Page
                     TotalUnitRepurchaseTextBox.Text = "";
                     TotalLienUnitHoldingTextBox.Text = unitLienBLObj.totalLienAmount(unitRegObj).ToString();
                     dvContentBottom.Visible = false;
-                    NormalRadioButton.Checked = true;
-                    DeathRadioButton.Checked = false;
+                    //NormalRadioButton.Checked = true;
+                    //DeathRadioButton.Checked = false;
                     ScriptManager.RegisterStartupScript(this.Page, this.Page.GetType(), "Popup", "alert ('No Units To Repurchase');", true);
 
                 }
@@ -226,8 +258,8 @@ public partial class UI_UnitRepurchase : System.Web.UI.Page
                 TotalUnitRepurchaseTextBox.Text = "";
                 TotalLienUnitHoldingTextBox.Text = "";
                 dvContentBottom.Visible = false;
-                NormalRadioButton.Checked = true;
-                DeathRadioButton.Checked = false;
+                //NormalRadioButton.Checked = true;
+                //DeathRadioButton.Checked = false;
                 ScriptManager.RegisterStartupScript(this.Page, this.Page.GetType(), "Popup", "alert ('No Units To Repurchase');", true);
             }
         }
@@ -238,10 +270,27 @@ public partial class UI_UnitRepurchase : System.Web.UI.Page
             TotalUnitRepurchaseTextBox.Text = "";
             TotalLienUnitHoldingTextBox.Text = "";
             dvContentBottom.Visible = false;
-            NormalRadioButton.Checked = true;
-            DeathRadioButton.Checked = false;
+            //NormalRadioButton.Checked = true;
+            //DeathRadioButton.Checked = false;
             ScriptManager.RegisterStartupScript(this.Page, this.Page.GetType(), "Popup", "alert ('Invalid Registration Number');", true);
         }
     }
-    
+
+    protected void AddTotalButton_Click(object sender, EventArgs e)
+    {
+        long totalSurrenderUnits = 0;
+        DataTable dtGrid = opendMFDAO.getTableDataGrid();
+
+        foreach (DataGridItem gridRow in leftDataGrid.Items)
+        {
+            CheckBox leftCheckBox = (CheckBox)gridRow.FindControl("leftCheckBox");
+            if (leftCheckBox.Checked)
+            {
+                              
+                totalSurrenderUnits = totalSurrenderUnits + Convert.ToInt64(gridRow.Cells[3].Text.Trim().ToString());
+
+            }
+        }
+        TotalUnitRepurchaseTextBox.Text = totalSurrenderUnits.ToString();
+    }
 }

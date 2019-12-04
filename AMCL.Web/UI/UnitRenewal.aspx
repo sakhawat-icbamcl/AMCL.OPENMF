@@ -42,9 +42,10 @@
          document.getElementById("<%=hTextBox.ClientID%>").value ="";
          document.getElementById("<%=iTextBox.ClientID%>").value ="";
          document.getElementById("<%=jTextBox.ClientID%>").value ="";
-          document.getElementById("<%=kTextBox.ClientID%>").value ="";
-         document.getElementById("<%=lTextBox.ClientID%>").value ="";
-         
+         document.getElementById("<%=kTextBox.ClientID%>").value ="";
+         document.getElementById("<%=lTextBox.ClientID%>").value = "";
+         document.getElementById("<%=yTextBox.ClientID%>").value ="";
+          document.getElementById("<%=yQTYTextBox.ClientID%>").value ="";
          document.getElementById("<%=tdCIP.ClientID%>").innerHTML ="";
          document.getElementById("<%=SignImage.ClientID%>").src ="";
         document.getElementById("<%=regNoTextBox.ClientID%>").focus();
@@ -101,8 +102,9 @@
               document.getElementById("<%=kTextBox.ClientID%>").value ="";
              document.getElementById("<%=tdCIP.ClientID%>").innerHTML ="";
              document.getElementById("<%=SignImage.ClientID%>").src ="";
-             document.getElementById("<%=lTextBox.ClientID%>").value ="";
-             
+             document.getElementById("<%=lTextBox.ClientID%>").value = "";
+            document.getElementById("<%=yTextBox.ClientID%>").value ="";
+              document.getElementById("<%=yQTYTextBox.ClientID%>").value ="";
              document.getElementById("<%=regNoTextBox.ClientID%>").focus();
              alert("No Data Found");
              return false;
@@ -207,37 +209,33 @@
                      return false;
             }
           
-           //Data Grid Checking
-           if(document.getElementById("<%=dinoGridView.ClientID%>"))
-           {
-                    var inputs = document.getElementById("<%=dinoGridView.ClientID%>").getElementsByTagName("input");
-                    
-                    var wightNo=0;
-                    wightNo=parseInt(wightNo);
-                    var dinotxt = "";
-                    var weighttxt = "";
-                   
+           
+         //Data Grid Checking
+         if (document.getElementById("ctl00_ContentPlaceHolder1_dinoGridView")) {
+             var inputs = document.getElementById("ctl00_ContentPlaceHolder1_dinoGridView").getElementsByTagName("input");
 
-                   for(var i=0;i<inputs.length;i++)
-                    {
-                        if(inputs[i].type =="text")
-                        {
-                            if(inputs[i].id.indexOf("weightTextBox") != -1)
-                            {
-                              
-                               
-                                wightNo=wightNo+parseInt(inputs[i].value)
-                            }
-                          }
-                    }
-                    var unitQty=document.getElementById("<%=renewalUnitsTextBox.ClientID%>").value
-                    if(wightNo!=parseInt(unitQty))
-                    {
-                        document.getElementById("<%=renewalUnitsTextBox.ClientID%>").focus();
-                        alert(" Save Failed:Renewal Unit Quantity and List Quantity is not Equal");
-                        return false;
-                    }
+             var wightNo = 0;
+             wightNo = parseInt(wightNo);
+             var dinotxt = "";
+             var weighttxt = "";
+
+
+             for (var i = 0; i < inputs.length; i++) {
+                 if (inputs[i].type == "text") {
+                     if (inputs[i].id.indexOf("weightTextBox") != -1) {
+
+
+                         wightNo = wightNo + parseInt(inputs[i].value)
+                     }
+                 }
              }
+             var unitQty = document.getElementById("ctl00_ContentPlaceHolder1_renewalUnitsTextBox").value
+             if (wightNo != parseInt(unitQty)) {
+                 document.getElementById("ctl00_ContentPlaceHolder1_renewalUnitsTextBox").focus();
+                 alert(" Save Failed:Renewal Unit Quantity and List Quantity is not Equal");
+                 return false;
+             }
+         }
         
         }
         
@@ -394,6 +392,17 @@
                 }
                SumQty=parseInt(SumQty)+(20000*parseInt(document.getElementById("<%=lTextBox.ClientID%>").value));
             }
+            if(document.getElementById("<%=yQTYTextBox.ClientID%>").value!= "")
+            {
+                 var digitCheck = /^\d+$/;
+                if(!digitCheck.test(document.getElementById("<%=yQTYTextBox.ClientID%>").value))
+                {
+                    document.getElementById("<%=yQTYTextBox.ClientID%>").focus();
+                    alert("Invalid Certtificate Quantity Number of Dinomination Y");
+                    return false;
+                }
+               SumQty=parseInt(SumQty)+(parseInt(document.getElementById("<%=lTextBox.ClientID%>").value));
+            }
         
         
          if(parseInt(SumQty)>0)
@@ -418,7 +427,9 @@
              document.getElementById("<%=iTextBox.ClientID%>").value ="";
              document.getElementById("<%=jTextBox.ClientID%>").value ="";
              document.getElementById("<%=kTextBox.ClientID%>").value ="";
-             document.getElementById("<%=lTextBox.ClientID%>").value ="";
+            document.getElementById("<%=lTextBox.ClientID%>").value = "";
+            document.getElementById("<%=yTextBox.ClientID%>").value = "";
+            document.getElementById("<%=yQTYTextBox.ClientID%>").value ="";
              return false;
          }
          
@@ -479,7 +490,12 @@
                         }
                       }
                 }
-               if(dinoObj.value.indexOf("L")==0 ||dinoObj.value.indexOf("l")==0)
+                if (dinoObj.value.indexOf("Y") == 0 || dinoObj.value.indexOf("y") == 0)
+                {
+                    return true;
+
+                }
+                else if(dinoObj.value.indexOf("L")==0 ||dinoObj.value.indexOf("l")==0)
                   {
                       var weight=inputs[wightNo].value;
                         if(weight!=20000)
@@ -760,11 +776,23 @@
                             alert("Invalid Dinomination");
                            return false;
                         }
-                    }
-                    else
-                    {
-                        alert("Invalid Weight");
-                        return false;
+                   }
+                  
+                   else
+                   {
+                  
+                               var dino = inputs[dinoNo].value;
+                               if (dino.toUpperCase() == "Y")
+                               {
+                                  return true;
+                               }
+                               else
+                               {
+                                   alert("Invalid Weight");
+                                   return false;
+                               }
+                          
+                        
                     }
              
              
@@ -829,6 +857,20 @@
      .style21
      {
          width: 26px;
+     }
+     .auto-style1 {
+         font-size: medium;
+     }
+     .auto-style2 {
+         font-family: Verdana, Arial, Helvetica, sans-serif;
+         border: 1px #1B68B8 solid;
+         BACKGROUND-COLOR: #FFFFDD;
+         COLOR: #000000;
+         FONT-SIZE: 12px;
+         padding-left: 2px;
+     }
+     .auto-style3 {
+         text-align: center;
      }
      </style>
 
@@ -971,7 +1013,19 @@
                         onkeypress="fncInputNumericValuesOnly()"></asp:TextBox>
                 </td>
             </tr>
-           <%-- <tr>
+             <tr>
+                <td align="right" class="auto-style3">
+                    <b>
+                    <asp:TextBox ID="yQTYTextBox" runat="server" CssClass="auto-style2" 
+                        onkeypress="fncInputNumericValuesOnly()" Width="40px"></asp:TextBox>
+                &nbsp;<span class="auto-style1">Y:</span></b>
+                </td>
+                <td align="left">
+                    <asp:TextBox ID="yTextBox" runat="server" CssClass="TextInputStyleDenomination" 
+                        onkeypress="fncInputNumericValuesOnly()"></asp:TextBox>
+                </td>
+            </tr>
+                <%-- <tr>
                 <td align="right">
                 </td>
                 <td align="left">
@@ -1173,7 +1227,7 @@
             <td>
                <asp:Button ID="addListButton" runat="server" 
                     Text="Add to List" CssClass="buttoncommon" onclick="addListButton_Click" 
-                    OnClientClick="return fnCheqQty();" AccessKey="l" /> 
+                    OnClientClick="return fnCheqQty();" AccessKey="l" style="height: 20px" /> 
             </td>
             <td>
                 <div style="text-align: center; display: block; overflow: auto; width:319px; height:241px;" id="dvContentBottom" runat="server">

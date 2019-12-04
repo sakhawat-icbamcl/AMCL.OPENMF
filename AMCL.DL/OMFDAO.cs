@@ -752,9 +752,30 @@ namespace AMCL.DL
         public DataTable getDtRegInfo(UnitHolderRegistration unitRegObj)
         {
             DataTable dtRegInfo = new DataTable();
+            StringBuilder sbMaseter = new StringBuilder();
+            sbMaseter.Append("SELECT U_MASTER.*,U_JHOLDER.* FROM U_JHOLDER RIGHT OUTER JOIN U_MASTER ON U_JHOLDER.REG_BK = U_MASTER.REG_BK AND U_JHOLDER.REG_BR = U_MASTER.REG_BR AND U_JHOLDER.REG_NO = U_MASTER.REG_NO WHERE U_MASTER.REG_BK='" + unitRegObj.FundCode.ToString() + "' AND U_MASTER.REG_BR='" + unitRegObj.BranchCode.ToString() + "'");
+            bool flag = true;
+            if (unitRegObj.RegNumber != "")
+            {
+                sbMaseter.Append(" AND U_MASTER.REG_NO=" + Convert.ToInt32(unitRegObj.RegNumber));
+            }
+            else if (unitRegObj.BO != "")
+            {
+                sbMaseter.Append(" AND U_MASTER.BO='" + unitRegObj.BO + "'");
+            }
+            else if (unitRegObj.Folio != "")
+            {
+                sbMaseter.Append(" AND U_MASTER.FOLIO_NO='" + unitRegObj.Folio + "'");
+            }
+            else
+            {
+                flag = false;
+            }
+            if (flag == true)
+            {
+                dtRegInfo = commonGatewayObj.Select(sbMaseter.ToString());
 
-            dtRegInfo = commonGatewayObj.Select("SELECT U_MASTER.*,U_JHOLDER.* FROM U_JHOLDER RIGHT OUTER JOIN U_MASTER ON U_JHOLDER.REG_BK = U_MASTER.REG_BK AND U_JHOLDER.REG_BR = U_MASTER.REG_BR AND U_JHOLDER.REG_NO = U_MASTER.REG_NO WHERE U_MASTER.REG_BK='" + unitRegObj.FundCode.ToString() + "' AND U_MASTER.REG_BR='" + unitRegObj.BranchCode.ToString() + "' AND U_MASTER.REG_NO=" + Convert.ToInt32(unitRegObj.RegNumber.ToString()) + "");
-
+            }           
 
             return dtRegInfo;
         }
@@ -791,6 +812,49 @@ namespace AMCL.DL
                 else
                 {
                     return false;
+                }
+            }
+        }
+        public bool validationWeight(int weight, string fundCode, string dino)
+        {
+            if (dino.ToUpper() == "Y")
+            {
+                return true;
+            }
+            else
+            {
+                if (fundCode.ToUpper() == "CFUF" || fundCode.ToUpper() == "IUF")
+                {
+                    if (weight == 1 || weight == 5 || weight == 10 || weight == 20 || weight == 50 || weight == 100 || weight == 250 || weight == 500 || weight == 1000 || weight == 5000 || weight == 10000 || weight == 20000)
+                    {
+                        return true;
+                    }
+                    else
+                    {
+                        return false;
+                    }
+                }
+                else if (fundCode.ToUpper() == "BDF" || fundCode.ToUpper() == "CFUF" || fundCode.ToUpper() == "IUF")
+                {
+                    if (weight == 1 || weight == 5 || weight == 10 || weight == 20 || weight == 50 || weight == 100 || weight == 250 || weight == 500 || weight == 1000 || weight == 5000 || weight == 10000)
+                    {
+                        return true;
+                    }
+                    else
+                    {
+                        return false;
+                    }
+                }
+                else
+                {
+                    if (weight == 1 || weight == 5 || weight == 10 || weight == 20 || weight == 50 || weight == 100 || weight == 250 || weight == 500 || weight == 1000 || weight == 5000)
+                    {
+                        return true;
+                    }
+                    else
+                    {
+                        return false;
+                    }
                 }
             }
         }
@@ -927,7 +991,7 @@ namespace AMCL.DL
             sbQueryString.Append(" AND (REG_NO =" + regObj.RegNumber.ToString() + ") AND (REG_BR = '" + regObj.BranchCode.ToString() + "') AND (VALID IS NULL) UNION ALL");
             sbQueryString.Append(" SELECT 'T' || TR_NO AS SL_NO, CERTIFICATE, QTY FROM   TRANS_CERT WHERE (STATUS_FLAG IS NULL) AND (VALID IS NULL)  AND (BR_CODE = '" + regObj.FundCode.ToString() + "_" + regObj.BranchCode.ToString() + "') AND (TR_NO IN");
             sbQueryString.Append(" (SELECT TR_NO FROM  TRANSFER WHERE (REG_BK_I = '" + regObj.FundCode.ToString() + "') AND (BR_CODE = '" + regObj.FundCode.ToString() + "_" + regObj.BranchCode.ToString() + "')AND (REG_NO_I = " + regObj.RegNumber.ToString() + ") AND ");
-            sbQueryString.Append(" (REG_BR_I = '" + regObj.BranchCode.ToString() + "')AND (VALID IS NULL))) UNION ALL");
+            sbQueryString.Append(" (REG_BR_I = '" + regObj.BranchCode.ToString() + "') AND (VALID IS NULL))) UNION ALL");
             sbQueryString.Append(" SELECT 'R' || REN_NO AS SL_NO, CERTIFICATE, QTY FROM  RENEWAL_OUT  WHERE (STATUS_FLAG IS NULL) AND (REG_BK = '" + regObj.FundCode.ToString() + "')");
             sbQueryString.Append(" AND (REG_NO = " + regObj.RegNumber.ToString() + ") AND (REG_BR = '" + regObj.BranchCode.ToString() + "') AND (VALID IS NULL) ) A");
             sbQueryString.Append(" WHERE A.CERTIFICATE NOT IN ( SELECT CERTIFICATE FROM REP_CERT_NO WHERE (REG_BK = '" + regObj.FundCode.ToString() + "')");
@@ -964,7 +1028,7 @@ namespace AMCL.DL
             sbQueryString.Append(" AND (REG_NO =" + regObj.RegNumber.ToString() + ") AND (REG_BR = '" + regObj.BranchCode.ToString() + "') AND (VALID IS NULL) UNION ALL");
             sbQueryString.Append(" SELECT 'T' || TR_NO AS SL_NO, CERTIFICATE, QTY FROM   TRANS_CERT WHERE (STATUS_FLAG IS NULL) AND (VALID IS NULL)  AND (BR_CODE = '" + regObj.FundCode.ToString() + "_" + regObj.BranchCode.ToString() + "') AND (TR_NO IN");
             sbQueryString.Append(" (SELECT TR_NO FROM  TRANSFER WHERE (REG_BK_I = '" + regObj.FundCode.ToString() + "') AND (BR_CODE = '" + regObj.FundCode.ToString() + "_" + regObj.BranchCode.ToString() + "')AND (REG_NO_I = " + regObj.RegNumber.ToString() + ") AND ");
-            sbQueryString.Append(" (REG_BR_I = '" + regObj.BranchCode.ToString() + "')AND (VALID IS NULL))) UNION ALL");
+            sbQueryString.Append(" (REG_BR_I = '" + regObj.BranchCode.ToString() + "') AND (VALID IS NULL))) UNION ALL");
             sbQueryString.Append(" SELECT 'R' || REN_NO AS SL_NO, CERTIFICATE, QTY FROM  RENEWAL_OUT  WHERE (STATUS_FLAG IS NULL) AND (REG_BK = '" + regObj.FundCode.ToString() + "')");
             sbQueryString.Append("  AND (REG_NO = " + regObj.RegNumber.ToString() + ") AND (REG_BR = '" + regObj.BranchCode.ToString() + "') AND (VALID IS NULL)");
             sbQueryString.Append(" ) T");
@@ -1057,7 +1121,7 @@ namespace AMCL.DL
         }
         public DataTable getDtMenuList()
         {
-            DataTable dtMenuList = commonGatewayObj.Select("SELECT M_ID,M_NAME FROM MENU WHERE VALID='Y' and M_PARENT_ID<>0 ORDER BY M_ID");
+            DataTable dtMenuList = commonGatewayObj.Select("SELECT M_ID,M_NAME FROM MENU WHERE VALID='Y' and M_PARENT_ID<>0 AND PROJECT_ID=1 ORDER BY M_ID");
             return dtMenuList;
         }
         public DataTable getBranchForMenu()
@@ -1167,6 +1231,37 @@ namespace AMCL.DL
             return validReg;
 
         }
+        public DataTable dtValidSearch(UnitHolderRegistration regObj)
+        {
+            DataTable dtRegInfo = new DataTable();
+            StringBuilder sbMaseter = new StringBuilder();
+            sbMaseter.Append("SELECT U_MASTER.* FROM  U_MASTER  WHERE U_MASTER.REG_BK='" + regObj.FundCode.ToString() + "' AND U_MASTER.REG_BR='" + regObj.BranchCode.ToString() + "'");
+            bool flag = true;
+            if (regObj.RegNumber != "")
+            {
+                sbMaseter.Append(" AND U_MASTER.REG_NO=" + Convert.ToInt32(regObj.RegNumber));
+            }
+            else if (regObj.BO != "")
+            {
+                sbMaseter.Append(" AND U_MASTER.BO='" + regObj.BO + "'");
+            }
+            else if (regObj.Folio != "")
+            {
+                sbMaseter.Append(" AND U_MASTER.FOLIO_NO='" + regObj.Folio + "'");
+            }
+            else
+            {
+                flag = false;
+            }
+            if (flag == true)
+            {
+                dtRegInfo = commonGatewayObj.Select(sbMaseter.ToString());
+
+            }
+
+            return dtRegInfo;
+
+        }
         public decimal getMaxRepPrice(string fundCode)
         {
             DataTable dtMaxReprice = commonGatewayObj.Select("SELECT * FROM   PRICE_REFIX WHERE (REFIX_DT IN  (SELECT MAX(REFIX_DT) AS EXPR1 FROM  PRICE_REFIX PRICE_REFIX_1)) AND (FUND_CD = '" + fundCode.ToString() + "')");
@@ -1205,7 +1300,7 @@ namespace AMCL.DL
         public int getRegNoByFolio(string folio)
         {
             int regNo = 0;
-            DataTable dtRegNo = commonGatewayObj.Select(" SELECT * FROM CMF_CDBL WHERE BO='" + folio + "' and FUND_CODE=28 ");
+            DataTable dtRegNo = commonGatewayObj.Select(" SELECT * FROM CMF_CDBL WHERE BO='" + folio + "' and FUND_CODE=7 ");
             if (dtRegNo.Rows.Count > 0)
             {
                 regNo = int.Parse(dtRegNo.Rows[0]["VOTTER_NO"].ToString());
@@ -1225,6 +1320,12 @@ namespace AMCL.DL
             }
             return CDS;
 
+        }
+        public string getFundCSSColourCode(string fundCode)
+        {
+
+            DataTable dtCSSColourCode = commonGatewayObj.Select("SELECT NVL(CSS_COLOUR,'#CC9900') AS CSS_COLOUR FROM FUND_INFO WHERE FUND_CD='" + fundCode.ToUpper() + "' ");
+            return dtCSSColourCode.Rows[0]["CSS_COLOUR"].ToString();
         }
     }
 }

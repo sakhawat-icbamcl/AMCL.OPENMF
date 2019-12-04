@@ -42,20 +42,31 @@ public partial class UI_UnitRegiSearch : System.Web.UI.Page
         string fundCode = bcContent.FundCode.ToString();
         string branchCode = bcContent.BranchCode.ToString();
         spanFundName.InnerText = opendMFDAO.GetFundName(fundCode.ToString());
-        fundCodeTextBox.Text = fundCode.ToString();
-        branchCodeTextBox.Text = branchCode.ToString();
+       
 
 
             
         
       
         regNoTextBox.Focus();
-      
+
         if (!IsPostBack)
         {
-          
+
+            fundCodeDDL.DataSource = reportObj.dtFundCodeList();
+            fundCodeDDL.DataTextField = "NAME";
+            fundCodeDDL.DataValueField = "ID";
+            fundCodeDDL.SelectedValue = fundCode.ToString();
+            fundCodeDDL.DataBind();
+
+            branchCodeDDL.DataSource = reportObj.dtBranchCodeList();
+            branchCodeDDL.DataTextField = "NAME";
+            branchCodeDDL.DataValueField = "ID";
+            branchCodeDDL.SelectedValue = branchCode.ToString();
+            branchCodeDDL.DataBind();
+
         }
-    
+
     }
     
     private void ClearText()
@@ -76,21 +87,21 @@ public partial class UI_UnitRegiSearch : System.Web.UI.Page
         StringBuilder sbMaster = new StringBuilder();
         DataTable dtSearchInfo = new DataTable();
 
-        if (string.Compare( fundCodeTextBox.Text.Trim().ToString().ToUpper(),"IAMPH", true) == 0)
+        if (string.Compare(fundCodeDDL.SelectedValue.ToString().ToUpper(),"IAMPH", true) == 0)
         {
-            sbMaster.Append("SELECT REG_BK, REG_BR, REG_NO, HNAME, ADDRESS, JNT_NAME, CIP, ID_FLAG, BK_FLAG,TIN,NID,FMH_NAME,MO_NAME ");
-            sbMaster.Append(" FROM  (SELECT   U_MASTER.REG_BK, U_MASTER.REG_BR, U_MASTER.REG_NO, U_MASTER.HNAME,U_MASTER.TIN,U_MASTER.NID, U_MASTER.FMH_NAME, U_MASTER.MO_NAME,");
+            sbMaster.Append("SELECT REG_BK, REG_BR, REG_NO, HNAME, ADDRESS, JNT_NAME, CIP, ID_FLAG, BK_FLAG,TIN,NID,FMH_NAME,MO_NAME,BIRTH_CERT_NO,PASS_NO,MOBILE1  ");
+            sbMaster.Append(" FROM  (SELECT   U_MASTER.REG_BK, U_MASTER.REG_BR, U_MASTER.REG_NO, U_MASTER.HNAME,U_MASTER.TIN,U_MASTER.NID, U_MASTER.FMH_NAME, U_MASTER.MO_NAME,U_MASTER.PASS_NO, U_MASTER.BIRTH_CERT_NO, U_MASTER.MOBILE1,");
             sbMaster.Append(" U_MASTER.ADDRS1 || U_MASTER.ADDRS2 || ',' || U_MASTER.CITY AS ADDRESS, NULL AS JNT_NAME,U_MASTER.CIP,");
-            sbMaster.Append(" U_MASTER.ID_FLAG, U_MASTER.BK_FLAG  FROM U_MASTER) A WHERE 1=1 AND REG_BK='" + fundCodeTextBox.Text.Trim().ToString().ToUpper() + "'");
+            sbMaster.Append(" U_MASTER.ID_FLAG, U_MASTER.BK_FLAG  FROM U_MASTER) A WHERE 1=1 AND REG_BK='" + fundCodeDDL.SelectedValue.ToString().ToUpper() + "'");
 
         }
         else
         {
-            sbMaster.Append("SELECT REG_BK, REG_BR, REG_NO, HNAME, ADDRESS, JNT_NAME, CIP, ID_FLAG, BK_FLAG,TIN,NID,FMH_NAME,MO_NAME");
-            sbMaster.Append(" FROM  (SELECT   U_MASTER.REG_BK, U_MASTER.REG_BR, U_MASTER.REG_NO, U_MASTER.HNAME,U_MASTER.TIN,U_MASTER.NID, U_MASTER.FMH_NAME, U_MASTER.MO_NAME,");
+            sbMaster.Append("SELECT REG_BK, REG_BR, REG_NO, HNAME, ADDRESS, JNT_NAME, CIP, ID_FLAG, BK_FLAG,TIN,NID,FMH_NAME,MO_NAME,BIRTH_CERT_NO,PASS_NO,MOBILE1 ");
+            sbMaster.Append(" FROM  (SELECT   U_MASTER.REG_BK, U_MASTER.REG_BR, U_MASTER.REG_NO, U_MASTER.HNAME,U_MASTER.TIN,U_MASTER.NID, U_MASTER.FMH_NAME, U_MASTER.MO_NAME,U_MASTER.PASS_NO, U_MASTER.BIRTH_CERT_NO, U_MASTER.MOBILE1,");
             sbMaster.Append(" U_MASTER.ADDRS1 || U_MASTER.ADDRS2 || ',' || U_MASTER.CITY AS ADDRESS, U_JHOLDER.JNT_NAME, U_MASTER.CIP,");
             sbMaster.Append(" U_MASTER.ID_FLAG, U_MASTER.BK_FLAG  FROM U_MASTER LEFT OUTER JOIN   U_JHOLDER ON U_MASTER.REG_BK = U_JHOLDER.REG_BK AND U_MASTER.REG_BR = U_JHOLDER.REG_BR AND");
-            sbMaster.Append(" U_MASTER.REG_NO = U_JHOLDER.REG_NO) A WHERE 1=1 AND REG_BK='" + fundCodeTextBox.Text.Trim().ToString().ToUpper() + "'");
+            sbMaster.Append(" U_MASTER.REG_NO = U_JHOLDER.REG_NO) A WHERE 1=1 AND REG_BK='" + fundCodeDDL.SelectedValue.ToString().ToUpper() + "'");
 
             if (jHolderTextBox.Text != "")
             {
@@ -100,7 +111,7 @@ public partial class UI_UnitRegiSearch : System.Web.UI.Page
         if (regNoTextBox.Text != "")
         {
             sbMaster.Append(" AND (REG_NO=" + Convert.ToInt32(regNoTextBox.Text .Trim())+ ")");
-            sbMaster.Append(" AND (REG_BR='" + branchCodeTextBox.Text .Trim().ToString()+ "')");
+            sbMaster.Append(" AND (REG_BR='" + branchCodeDDL.SelectedValue.ToString()+ "')");
         }
         if (holderNameTextBox.Text != "")
         {
@@ -116,7 +127,19 @@ public partial class UI_UnitRegiSearch : System.Web.UI.Page
         }
         if (TINTextBox.Text != "")
         {
-            sbMaster.Append(" AND (  TIN= '" + TINTextBox.Text.Trim().ToUpper().ToString() + "')");
+            sbMaster.Append(" AND (  TIN = '" + TINTextBox.Text.Trim().ToUpper().ToString() + "')");
+        }
+        if (mobileNumberTextBox.Text != "")
+        {
+            sbMaster.Append(" AND ( MOBILE1 = '" + mobileNumberTextBox.Text.Trim().ToUpper().ToString() + "')");
+        }
+        if (PassportNoTextBox.Text != "")
+        {
+            sbMaster.Append(" AND ( PASS_NO = '" + PassportNoTextBox.Text.Trim().ToUpper().ToString() + "')");
+        }
+        if (BirthCertNoTextBox.Text != "")
+        {
+            sbMaster.Append(" AND (  BIRTH_CERT_NO= '" + BirthCertNoTextBox.Text.Trim().ToUpper().ToString() + "')");
         }
         if (certNoDropDownList.SelectedValue != "0" && certNoTextBox.Text != "")
         {
@@ -126,7 +149,7 @@ public partial class UI_UnitRegiSearch : System.Web.UI.Page
         }
         sbMaster.Append(" ORDER BY REG_BR, REG_NO");
 
-        if (string.Compare(fundCodeTextBox.Text.Trim().ToString().ToUpper(), "IAMPH", true) == 0)
+        if (string.Compare(fundCodeDDL.SelectedValue.ToString().ToUpper(), "IAMPH", true) == 0)
         {
             OracleConnection Conn = new OracleConnection(ConfigReader.PENSION.ToString());
             Conn.Open();

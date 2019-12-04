@@ -78,6 +78,19 @@
 
     <tr   class="style5">
         <td class="style11"><b>
+            <span class="style7">Statement Type:</span></b></td>
+        <td align="left"  class="style6" colspan="4">
+            <asp:RadioButton ID="sammaryRadioButton" runat="server" Checked="True" 
+                GroupName="reportType" style="font-weight: 700; font-size: small" 
+                Text="Summary" />
+            &nbsp;<asp:RadioButton ID="taxDeductListRadioButton" runat="server" 
+                GroupName="reportType" style="font-weight: 700; font-size: small" 
+                Text="Tax Duduct List" />
+        </td>
+        
+    </tr>
+    <tr   class="style5">
+        <td class="style11"><b>
             <span class="style7">Fund Name:</span></b></td>
         <td align="left"  class="style6" colspan="4">
             &nbsp;<asp:DropDownList ID="fundNameDropDownList" runat="server" AutoPostBack="True" 

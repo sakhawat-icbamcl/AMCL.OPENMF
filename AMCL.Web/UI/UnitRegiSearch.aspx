@@ -10,6 +10,7 @@
         var Confrm=confirm("Are Sure To Resete");
         if(Confrm)
         {
+            
             document.getElementById("<%=regNoTextBox.ClientID%>").value ="";
             document.getElementById("<%=holderNameTextBox.ClientID%>").value ="";
             document.getElementById("<%=holderAddressTextBox.ClientID%>").value ="";
@@ -17,7 +18,11 @@
             document.getElementById("<%=jHolderTextBox.ClientID%>").value ="";
             document.getElementById("<%=certNoDropDownList.ClientID%>").value ="0";
             document.getElementById("<%=certNoTextBox.ClientID%>").value ="";
-
+            document.getElementById("<%=TINTextBox.ClientID%>").value = "";
+            document.getElementById("<%=mobileNumberTextBox.ClientID%>").value ="";
+            document.getElementById("<%=NIDTextBox.ClientID%>").value ="";
+            document.getElementById("<%=PassportNoTextBox.ClientID%>").value ="";
+            document.getElementById("<%=BirthCertNoTextBox.ClientID%>").value ="";
        
             return false;
         }
@@ -114,15 +119,10 @@
         <tr>
             <td align="right" >Registration No:</td>
             <td align="left">
-                <asp:TextBox ID="fundCodeTextBox" runat="server" 
-                    CssClass= "TextInputStyleSmall" Enabled="False" 
-                    meta:resourcekey="fundCodeTextBoxResource1"></asp:TextBox>
-                &nbsp;
-                <asp:TextBox ID="branchCodeTextBox" runat="server" 
-                    CssClass= "TextInputStyleSmall" Enabled="False" 
-                    meta:resourcekey="branchCodeTextBoxResource1"></asp:TextBox>
-                &nbsp;
-                                    <asp:TextBox ID="regNoTextBox" runat="server"  MaxLength="8"   
+                <asp:DropDownList ID="fundCodeDDL" runat="server"  ></asp:DropDownList>
+                        <b>/</b> <asp:DropDownList ID="branchCodeDDL" runat="server"  ></asp:DropDownList>
+                            
+                        <b>/</b>  <asp:TextBox ID="regNoTextBox" runat="server"  MaxLength="8"   
                     CssClass= "TextInputStyleSmall" TabIndex="1" 
                     onkeypress= "fncInputNumericValuesOnly()"
                     Width="95px"></asp:TextBox>
@@ -161,6 +161,14 @@
                                     </td>
           
             </tr>
+               <tr>
+           <td align="right" class="style9" >Mobile Number:</td>
+            <td align="left" class="style9">
+                <asp:TextBox ID="mobileNumberTextBox" runat="server" 
+                    CssClass= "TextInputStyleLarge" MaxLength="12" TabIndex="4" ></asp:TextBox>
+                                    </td>
+          
+            </tr>
              <tr>
            <td align="right" class="style9" >TIN:</td>
             <td align="left" class="style9">
@@ -173,6 +181,22 @@
            <td align="right" >National ID No:</td>
             <td align="left">
                 <asp:TextBox ID="NIDTextBox" runat="server" 
+                    CssClass= "TextInputStyleLarge" MaxLength="20" TabIndex="4" ></asp:TextBox>
+                                    </td>
+          
+            </tr>
+              <tr>
+           <td align="right" >Passport No:</td>
+            <td align="left">
+                <asp:TextBox ID="PassportNoTextBox" runat="server" 
+                    CssClass= "TextInputStyleLarge" MaxLength="20" TabIndex="4" ></asp:TextBox>
+                                    </td>
+          
+            </tr>
+              <tr>
+           <td align="right" >Birth Certificate No:</td>
+            <td align="left">
+                <asp:TextBox ID="BirthCertNoTextBox" runat="server" 
                     CssClass= "TextInputStyleLarge" MaxLength="20" TabIndex="4" ></asp:TextBox>
                                     </td>
           
@@ -194,6 +218,8 @@
                  <asp:ListItem Value="I">I</asp:ListItem>
                  <asp:ListItem Value="J">J</asp:ListItem>
                  <asp:ListItem Value="K">K</asp:ListItem>
+                 <asp:ListItem Value="L">L</asp:ListItem>
+                 <asp:ListItem Value="Y">Y</asp:ListItem>
                 </asp:DropDownList>
                 <asp:TextBox ID="certNoTextBox" runat="server" onkeypress= "fncInputNumericValuesOnly()"
                     CssClass= "TextInputStyleLarge" MaxLength="55" TabIndex="6" Width="205px"></asp:TextBox>

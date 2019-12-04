@@ -66,11 +66,6 @@ function fnOnChangeText(textObject)
  </script>
    <style type="text/css">
        
-        .style6
-        {
-         border:solid 1px #A8ACAF;
-        text-align: left;
-    }
         .style8
         {
             font-size: small;
@@ -83,11 +78,6 @@ function fnOnChangeText(textObject)
             font-size: small;
             font-weight: bold;
         }
-       .style11
-       {
-           color: #FF3300;
-           font-size: small;
-       }
        .style12
        {
            font-size: small;
@@ -101,15 +91,16 @@ function fnOnChangeText(textObject)
        }
        .style14
        {
-           color: #009933;
            font-size: small;
+           font-weight: bold;
+           text-align: right;
+           height: 23px;
        }
        .style15
        {
-           color: #990033;
-           font-size: small;
+           height: 23px;
        }
-    </style>
+       </style>
     
     </asp:Content>
 
@@ -131,7 +122,7 @@ function fnOnChangeText(textObject)
     <br />
   <asp:UpdatePanel ID="holderInfoUpdatePanel" runat="server">
     <ContentTemplate>  
-<table width="600" align="center" cellpadding="0" cellspacing="0" >
+<table align="center" cellpadding="0" cellspacing="0" style="width: 721px" >
 
     <tr   class="style5">
         <td align="right" ><b style="font-size: small; text-align: right;">&nbsp;&nbsp;Dividend Category :</b></td>
@@ -190,11 +181,11 @@ function fnOnChangeText(textObject)
       
     </tr>
      <tr class="style5">
-       <td class="style8"  >
+       <td class="style14"  >
            Closing Date :
         </td>
         
-        <td align="left">&nbsp;
+        <td align="left" class="style15">&nbsp;
             <asp:DropDownList ID="ClosingDateDropDownList" runat="server" 
                     TabIndex="5"></asp:DropDownList><span class="star">*</span></td>
         
@@ -234,16 +225,17 @@ function fnOnChangeText(textObject)
     </tr>
     <tr class="style5">
        <td class="style12"  >
-           Enter Separator:
+           Enter Warrants<br />
+           &nbsp;With Comma(,)
+           <br />
+           To ReBEFTN:
         </td>
         
         <td align="left" class="style13">&nbsp;
                 
-        <asp:TextBox ID="SeparatorTextBox" runat="server" 
-                CssClass= "TextInputStyleSmall" Width="100px" TabIndex="5" 
-                >~</asp:TextBox> &nbsp;<span 
-                class="style11">[</span><span class="style14">Recommandation Value</span><span 
-                class="style11"> </span><span class="style15">~</span><span class="style11">]</span></td>
+        <asp:TextBox ID="MultipleWarrantTextBox" runat="server" 
+                CssClass= "TextInputStyleSmall" Width="333px" TabIndex="5" Height="43px" TextMode="MultiLine" 
+                ></asp:TextBox> &nbsp;(Ex: 1,2,3)</td>
         
       
     </tr>
@@ -266,18 +258,18 @@ function fnOnChangeText(textObject)
     <asp:AsyncPostBackTrigger ControlID="DividendFYDropDownList" EventName="SelectedIndexChanged" />
 </Triggers>
 </asp:UpdatePanel>
-<table align="center" cellpadding="0" cellspacing="0" style="width: 467px">
+<table align="center" cellpadding="0" cellspacing="0" style="width: 511px">
      <tr>
       <td align="right">
-        <asp:Button ID="ExportPhoneButton" runat="server" Text="Export Phone No" 
+      <asp:Button ID="ExportPhoneButton" runat="server" Text="Export Online Data File" 
                 CssClass="buttoncommon" OnClientClick="return fnCheqInput();"
                  AccessKey="p" TabIndex="10" Height="20px" 
-              Width="117px" onclick="ExportPhoneButton_Click" />&nbsp;
+              Width="146px" onclick="ExportPhoneButton_Click" />&nbsp;
         </td>
         <td align="right">
-        <asp:Button ID="ExportButton" runat="server" Text="Export File" 
+        <asp:Button ID="ExportBEFTNButton" runat="server" Text="Export BEFTN Data  File" 
                 CssClass="buttoncommon" OnClientClick="return fnCheqInput();"
-                 AccessKey="p" onclick="PrintButton_Click" TabIndex="10" />&nbsp;
+                 AccessKey="p" onclick="PrintButton_Click" TabIndex="10" Width="127px" />&nbsp;
         </td>
         <td align="left">&nbsp;&nbsp;&nbsp;
         <asp:Button ID="ResetButton" runat="server" Text="Reset" 

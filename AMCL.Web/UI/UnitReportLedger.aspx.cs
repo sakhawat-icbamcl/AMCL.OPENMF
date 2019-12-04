@@ -29,6 +29,7 @@ public partial class UI_UnitReportLedger : System.Web.UI.Page
     UnitReport reportObj = new UnitReport();
     BaseClass bcContent = new BaseClass();
     UnitLienBl unitLienBLObj = new UnitLienBl();
+
     protected void Page_Load(object sender, EventArgs e)
     {
         if (BaseContent.IsSessionExpired())
@@ -41,21 +42,37 @@ public partial class UI_UnitReportLedger : System.Web.UI.Page
         userObj.UserID = bcContent.LoginID.ToString();
         string fundCode = bcContent.FundCode.ToString();
         string branchCode = bcContent.BranchCode.ToString();
-        spanFundName.InnerText = opendMFDAO.GetFundName(fundCode.ToString());
-        fundCodeTextBox.Text = fundCode.ToString();
-        branchCodeTextBox.Text = branchCode.ToString();      
+        spanFundName.InnerText = opendMFDAO.GetFundName(fundCode.ToString());            
         regNoTextBox.Focus();
-      
+
         if (!IsPostBack)
         {
-          
+            
+            fundCodeDDL.DataSource = reportObj.dtFundCodeList();
+            fundCodeDDL.DataTextField = "NAME";
+            fundCodeDDL.DataValueField = "ID";
+            fundCodeDDL.SelectedValue = fundCode.ToString();
+            fundCodeDDL.DataBind();
+
+            branchCodeDDL.DataSource = reportObj.dtBranchCodeList();
+            branchCodeDDL.DataTextField = "NAME";
+            branchCodeDDL.DataValueField = "ID";
+            branchCodeDDL.SelectedValue = branchCode.ToString();
+            branchCodeDDL.DataBind();
+
         }
-    
+
+
     }
     
     private void ClearText()
     {
-        
+        bcContent = (BaseClass)Session["BCContent"];
+
+        userObj.UserID = bcContent.LoginID.ToString();
+        string fundCode = bcContent.FundCode.ToString();
+        string branchCode = bcContent.BranchCode.ToString();
+
         holderNameTextBox.Text="";
         jHolderTextBox.Text="";
         holderAddress1TextBox.Text="";
@@ -74,7 +91,9 @@ public partial class UI_UnitReportLedger : System.Web.UI.Page
         LienLockLabel.Text = "NO";
         RenLockLabel.Text = "NO";
         dvLockin.Attributes.Add("style", "visibility:hidden");
-        
+        fundCodeDDL.SelectedValue = fundCode.ToString();
+        branchCodeDDL.SelectedValue = branchCode.ToString();
+
     }
     protected void CloseButton_Click(object sender, EventArgs e)
     {
@@ -85,19 +104,26 @@ public partial class UI_UnitReportLedger : System.Web.UI.Page
     {
 
         UnitHolderRegistration regObj = new UnitHolderRegistration();
-        regObj.FundCode = fundCodeTextBox.Text.Trim();
-        regObj.BranchCode = branchCodeTextBox.Text.Trim();
+        regObj.FundCode = fundCodeDDL.SelectedValue.ToString();
+        regObj.BranchCode = branchCodeDDL.SelectedValue.ToString();
         regObj.RegNumber = regNoTextBox.Text.Trim();
-        if(opendMFDAO.IsValidRegistration(regObj))
+        regObj.BO = holderBOTextBox.Text.ToString().Trim();
+        regObj.Folio = folioTextBox.Text.Trim();
+        DataTable dtValidSearch = opendMFDAO.dtValidSearch(regObj);
+        if (dtValidSearch.Rows.Count > 0)
         {
-            displayRegInfo();
+            regObj = new UnitHolderRegistration();
+            regObj.FundCode = fundCodeDDL.SelectedValue.ToString();
+            regObj.BranchCode = branchCodeDDL.SelectedValue.ToString();
+            regObj.RegNumber =dtValidSearch.Rows[0]["REG_NO"].ToString();
+            displayRegInfo(regObj);
         }
         else
         {
             SignImage.ImageUrl =encrypt.PhotoBase64ImgSrc( Path.Combine(ConfigReader.SingLocation, "Notavailable.JPG").ToString());
             ClearText();
             dvLedger.Visible = false;
-            ScriptManager.RegisterStartupScript(this.Page, this.Page.GetType(), "Popup", "alert ('Invalid Registration Number');", true);
+            ScriptManager.RegisterStartupScript(this.Page, this.Page.GetType(), "Popup", "alert ('Invalid Registration Number OR BO OR Foilo');", true);
         }
 
 
@@ -105,14 +131,12 @@ public partial class UI_UnitReportLedger : System.Web.UI.Page
         
     
     }
-   
-    public void displayRegInfo()
+
+    public void displayRegInfo(UnitHolderRegistration unitRegObj)
     {
         dvLedger.Visible = true;
-        UnitHolderRegistration unitRegObj = new UnitHolderRegistration();
-        unitRegObj.FundCode = fundCodeTextBox.Text.Trim();
-        unitRegObj.BranchCode = branchCodeTextBox.Text.Trim();
-        unitRegObj.RegNumber = regNoTextBox.Text.Trim();
+
+
         DataTable dtRegInfo = opendMFDAO.getDtRegInfo(unitRegObj);
         DataTable dtNominee = opendMFDAO.dtNomineeRegInfo(unitRegObj);
         if (dtRegInfo.Rows.Count > 0)
@@ -189,7 +213,9 @@ public partial class UI_UnitReportLedger : System.Web.UI.Page
                 RenLockLabel.Text = "NO";
                 dvLockin.Attributes.Add("style", "visibility:hidden");
             }
+            regNoTextBox.Text = dtRegInfo.Rows[0]["REG_NO"].Equals(DBNull.Value) ? "" : dtRegInfo.Rows[0]["REG_NO"].ToString();
             holderBOTextBox.Text = dtRegInfo.Rows[0]["BO"].Equals(DBNull.Value) ? "" : dtRegInfo.Rows[0]["BO"].ToString();
+            folioTextBox.Text = dtRegInfo.Rows[0]["FOLIO_NO"].Equals(DBNull.Value) ? "" : dtRegInfo.Rows[0]["FOLIO_NO"].ToString();
             holderNameTextBox.Text = dtRegInfo.Rows[0]["HNAME"].Equals(DBNull.Value) ? "" : dtRegInfo.Rows[0]["HNAME"].ToString();
             jHolderTextBox.Text = dtRegInfo.Rows[0]["JNT_NAME"].Equals(DBNull.Value) ? "" : dtRegInfo.Rows[0]["JNT_NAME"].ToString();
             holderAddress1TextBox.Text = dtRegInfo.Rows[0]["ADDRS1"].Equals(DBNull.Value) ? "" : dtRegInfo.Rows[0]["ADDRS1"].ToString();
@@ -352,10 +378,10 @@ public partial class UI_UnitReportLedger : System.Web.UI.Page
         string fundName = "";
 
         regNo = regNoTextBox.Text.ToString();
-        fundName = opendMFDAO.GetFundName(fundCodeTextBox.Text.ToString());
-        fundCode = fundCodeTextBox.Text.ToString();
-        branchName = opendMFDAO.GetBranchName(branchCodeTextBox.Text.ToString());
-        branchCode = branchCodeTextBox.Text.ToString();
+        fundName = opendMFDAO.GetFundName(fundCodeDDL.SelectedValue.ToString());
+        fundCode = fundCodeDDL.SelectedValue.ToString();
+        branchName = opendMFDAO.GetBranchName(branchCodeDDL.SelectedValue.ToString());
+        branchCode = branchCodeDDL.SelectedValue.ToString();
 
 
         unitHolderName = opendMFDAO.GetHolderName(fundCode, branchCode, regNo);
@@ -377,29 +403,11 @@ public partial class UI_UnitReportLedger : System.Web.UI.Page
        
     }
 
-    protected void regNoTextBox_TextChanged(object sender, EventArgs e)
-    {
-        UnitHolderRegistration regObj = new UnitHolderRegistration();
-        regObj.FundCode = fundCodeTextBox.Text.Trim();
-        regObj.BranchCode = branchCodeTextBox.Text.Trim();
-        regObj.RegNumber = regNoTextBox.Text.Trim();
-        if (opendMFDAO.IsValidRegistration(regObj))
-        {
-
-            displayRegInfo();
-        }
-        else
-        {
-            ClearText();
-            dvLedger.Visible = false;
-            ScriptManager.RegisterStartupScript(this.Page, this.Page.GetType(), "Popup", "alert ('Invalid Registration Number');", true);
-        }
-
-    }
+  
     protected void PrintReportButton_Click(object sender, EventArgs e)
     {
-        Session["fundCode"] = fundCodeTextBox.Text.Trim().ToString();
-        Session["branchCode"] = branchCodeTextBox.Text.Trim().ToString();
+        Session["fundCode"] = fundCodeDDL.SelectedValue.ToString();
+        Session["branchCode"] = branchCodeDDL.SelectedValue.ToString();
         Session["regiNo"] = regNoTextBox.Text.Trim().ToString();
         ClientScript.RegisterStartupScript(this.GetType(), "UnitHolderLedgerReport", "window.open('ReportViewer/UnitReportLedgerReportViewer.aspx')", true);
 

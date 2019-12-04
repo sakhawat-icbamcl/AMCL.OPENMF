@@ -82,8 +82,8 @@ public partial class UI_UnitReportRepurchase : System.Web.UI.Page
             StringBuilder sbMaster = new StringBuilder();
             StringBuilder sbFilter = new StringBuilder();
             DataTable dtReportStatement = new DataTable();
-                     
-            sbMaster.Append("SELECT NVL(REPURCHASE.REP_NO,0) AS REP_NO , TO_CHAR(REPURCHASE.REP_DT, 'DD-MON-YYYY') AS REP_DT, U_MASTER.REG_BK, U_MASTER.REG_BR, U_MASTER.REG_NO AS RG_NO, ");
+
+            sbMaster.Append("SELECT NVL(REPURCHASE.REP_NO,0) AS REP_NO , TO_CHAR(REPURCHASE.REP_DT, 'DD-MON-YYYY') AS REP_DT, U_MASTER.REG_BK, U_MASTER.REG_BR, U_MASTER.REG_NO AS RG_NO, U_MASTER.BO,");
             sbMaster.Append(" U_MASTER.HNAME, U_JHOLDER.JNT_NAME, U_MASTER.REG_BK || '/' || U_MASTER.REG_BR || '/' || U_MASTER.REG_NO AS REG_NO,");
             sbMaster.Append(" U_MASTER.ADDRS1, U_MASTER.ADDRS2, U_MASTER.CITY, U_MASTER.SPEC_IN1, U_MASTER.SPEC_IN2, U_MASTER.BK_AC_NO,");
             sbMaster.Append(" U_MASTER.BK_BR_NM_CD, U_MASTER.BK_FLAG,REPURCHASE.QTY,  REPURCHASE.REP_PRICE AS RATE, REPURCHASE.QTY * REPURCHASE.REP_PRICE AS AMOUNT,  REPURCHASE.SL_TR_NO, U_MASTER.CIP, U_MASTER.ID_AC");

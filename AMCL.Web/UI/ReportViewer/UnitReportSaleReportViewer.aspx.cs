@@ -30,6 +30,11 @@ public partial class ReportViewer_UnitReportSaleReportViewer : System.Web.UI.Pag
     UnitReport reportObj = new UnitReport();
     CommonGateway commonGatewayObj = new CommonGateway();
     BaseClass bcContent = new BaseClass();
+    AMCL.REPORT.CR_UnitSaleStatementCDS sale_Statement_CDS = new AMCL.REPORT.CR_UnitSaleStatementCDS();
+    AMCL.REPORT.CR_UnitSaleStatement sale_Statement = new AMCL.REPORT.CR_UnitSaleStatement();
+    string CDSStatus = "";
+
+
     private ReportDocument rdoc = new ReportDocument();
 
     protected void Page_Load(object sender, EventArgs e)
@@ -44,12 +49,13 @@ public partial class ReportViewer_UnitReportSaleReportViewer : System.Web.UI.Pag
         bcContent = (BaseClass)Session["BCContent"];
 
         userObj.UserID = bcContent.LoginID.ToString();
+        CDSStatus = bcContent.CDS.ToString().ToUpper();
         branchCode = (string)Session["branchCode"];
         fundCode = (string)Session["fundCode"];
             
        
         DataTable dtReport = reportObj.getDtForReportStatement();
-        dtReport.TableName = "ReportStatement";
+        dtReport.TableName = "ReportSaleStatement";
         DataRow drReport;
         
         DataTable dtReportStatement = (DataTable)Session["dtReportStatement"];
@@ -66,7 +72,11 @@ public partial class ReportViewer_UnitReportSaleReportViewer : System.Web.UI.Pag
                 drReport["SL_DT"] = dtReportStatement.Rows[looper]["SL_DT"].Equals(DBNull.Value) ? "" : dtReportStatement.Rows[looper]["SL_DT"].ToString();
                 drReport["SL_TYPE"] = dtReportStatement.Rows[looper]["SL_TYPE"].Equals(DBNull.Value) ? "" : dtReportStatement.Rows[looper]["SL_TYPE"].ToString();
                 drReport["HNAME"] = dtReportStatement.Rows[looper]["HNAME"].Equals(DBNull.Value) ? "" : dtReportStatement.Rows[looper]["HNAME"].ToString();
-                drReport["BO"] = dtReportStatement.Rows[looper]["BO"].Equals(DBNull.Value) ? "" : dtReportStatement.Rows[looper]["BO"].ToString();
+                drReport["MOBILE1"] = dtReportStatement.Rows[looper]["MOBILE1"].Equals(DBNull.Value) ? "" : dtReportStatement.Rows[looper]["MOBILE1"].ToString();
+
+                drReport["NID"] = dtReportStatement.Rows[looper]["NID"].Equals(DBNull.Value) ? "" : dtReportStatement.Rows[looper]["NID"].ToString();
+                drReport["MONY_RECT_NO"] = dtReportStatement.Rows[looper]["MONY_RECT_NO"].Equals(DBNull.Value) ? "" : dtReportStatement.Rows[looper]["MONY_RECT_NO"].ToString();
+
                 drReport["TIN"] = dtReportStatement.Rows[looper]["TIN"].Equals(DBNull.Value) ? "" : dtReportStatement.Rows[looper]["TIN"].ToString();
                 if (!dtReportStatement.Rows[looper]["REG_TYPE"].Equals(DBNull.Value))
                 {
@@ -77,10 +87,7 @@ public partial class ReportViewer_UnitReportSaleReportViewer : System.Web.UI.Pag
                 drReport["ADDRS2"] = dtReportStatement.Rows[looper]["ADDRS2"].Equals(DBNull.Value) ? "" : dtReportStatement.Rows[looper]["ADDRS2"].ToString();
                 drReport["CITY"] = dtReportStatement.Rows[looper]["CITY"].Equals(DBNull.Value) ? "" : dtReportStatement.Rows[looper]["CITY"].ToString();
                 drReport["REG_NO"] = dtReportStatement.Rows[looper]["REG_NO"].Equals(DBNull.Value) ? "" : dtReportStatement.Rows[looper]["REG_NO"].ToString();
-
-                drReport["CERT_DLVRY_DT"] = dtReportStatement.Rows[looper]["CERT_DLVRY_DT"].Equals(DBNull.Value) ? "" : dtReportStatement.Rows[looper]["CERT_DLVRY_DT"].ToString();
-                drReport["CERT_RCV_BY"] = dtReportStatement.Rows[looper]["CERT_RCV_BY"].Equals(DBNull.Value) ? "" : dtReportStatement.Rows[looper]["CERT_RCV_BY"].ToString();
-
+                
                 DataTable dtNominee = reportObj.dtNominee(dtReportStatement.Rows[looper]["REG_BK"].ToString(), dtReportStatement.Rows[looper]["REG_BR"].ToString(), Convert.ToInt32(dtReportStatement.Rows[looper]["RG_NO"].ToString()));
                 if (dtNominee.Rows.Count > 0)
                 {
@@ -96,8 +103,29 @@ public partial class ReportViewer_UnitReportSaleReportViewer : System.Web.UI.Pag
                         }
                     }
                 }
-                saleNo = Convert.ToInt32(dtReportStatement.Rows[looper]["SL_NO"].ToString());
-                drReport["CERT_NO"] = reportObj.getTotalCertNo("SELECT  NVL(CERT_TYPE,' ') AS CERT_TYPE, NVL(CERT_NO,0) AS CERT_NO FROM SALE_CERT WHERE SL_NO=" + saleNo + " AND REG_BK='" + fundCode.ToString() + "'AND REG_BR='" + branchCode.ToString() + "'", fundCode.ToString() + "  ORDER BY CERT_TYPE").ToString();
+
+                if (CDSStatus.ToString() == "Y")
+                {                    
+                    drReport["DRF_REF_NO"] = dtReportStatement.Rows[looper]["DRF_REF_NO"];
+                    drReport["DRF_REG_FOLIO_NO"] = dtReportStatement.Rows[looper]["DRF_REG_FOLIO_NO"];
+                    drReport["DRF_CERT_NO"] = dtReportStatement.Rows[looper]["DRF_CERT_NO"];
+                    drReport["DRF_DISTNCT_NO_FROM"] = dtReportStatement.Rows[looper]["DRF_DISTNCT_NO_FROM"];
+                    drReport["DRF_DISTNCT_NO_TO"] = dtReportStatement.Rows[looper]["DRF_DISTNCT_NO_TO"];
+                    drReport["DRF_CUST_REQ_DATE"] = dtReportStatement.Rows[looper]["DRF_CUST_REQ_DATE"];
+                    drReport["DRF_ACCEPT_NO"] = dtReportStatement.Rows[looper]["DRF_ACCEPT_NO"];
+                    drReport["DRF_DRN"] = dtReportStatement.Rows[looper]["DRF_DRN"];
+                    drReport["DRF_ACCEPT_DATE"] = dtReportStatement.Rows[looper]["DRF_ACCEPT_DATE"];
+                    drReport["DRF_TR_SEQ_NO"] = dtReportStatement.Rows[looper]["DRF_TR_SEQ_NO"];
+                    drReport["DRF_TR_DATE"] = dtReportStatement.Rows[looper]["DRF_TR_DATE"];
+                    drReport["BO"] = dtReportStatement.Rows[looper]["HOLDER_BO"];
+                }
+                else
+                {
+                    saleNo = Convert.ToInt32(dtReportStatement.Rows[looper]["SL_NO"].ToString());
+                    drReport["CERT_DLVRY_DT"] = dtReportStatement.Rows[looper]["CERT_DLVRY_DT"].Equals(DBNull.Value) ? "" : dtReportStatement.Rows[looper]["CERT_DLVRY_DT"].ToString();
+                    drReport["CERT_RCV_BY"] = dtReportStatement.Rows[looper]["CERT_RCV_BY"].Equals(DBNull.Value) ? "" : dtReportStatement.Rows[looper]["CERT_RCV_BY"].ToString();
+                    drReport["CERT_NO"] = reportObj.getTotalCertNo("SELECT  NVL(CERT_TYPE,' ') AS CERT_TYPE, NVL(CERT_NO,0) AS CERT_NO FROM SALE_CERT WHERE SL_NO=" + saleNo + " AND REG_BK='" + fundCode.ToString() + "'AND REG_BR='" + branchCode.ToString() + "'  ORDER BY CERT_TYPE ", fundCode.ToString()).ToString();
+                }
 
 
                 if (!dtReportStatement.Rows[looper]["BK_FLAG"].Equals(DBNull.Value))
@@ -113,30 +141,7 @@ public partial class ReportViewer_UnitReportSaleReportViewer : System.Web.UI.Pag
                         }
                         else
                         {
-                            //string branchAddress = "";
-                            //string BankAccInfo = dtReportStatement.Rows[looper]["SPEC_IN1"].ToString() + dtReportStatement.Rows[looper]["SPEC_IN2"].ToString();
-                            //string[] BankAccountInfo = BankAccInfo.Split(',');
-                            //if (BankAccountInfo.Length > 0)
-                            //{
-                            //    drReport["BK_AC_NO"] = BankAccountInfo[0].ToString();
-                            //    if (BankAccountInfo.Length > 1)
-                            //    {
-                            //        drReport["BANK_NAME"] = BankAccountInfo[1].ToString();
-                            //    }
-                            //    if (BankAccountInfo.Length > 2)
-                            //    {
-                            //        drReport["BRANCH_NAME"] = BankAccountInfo[2].ToString();
-                            //    }
-                            //    if (BankAccountInfo.Length > 3)
-                            //    {
-                            //        for (int loop = 3; loop < BankAccountInfo.Length; loop++)
-                            //        {
-                            //            branchAddress = branchAddress + BankAccountInfo[loop].ToString();
-                            //        }
-                            //        drReport["BRANCH_ADDRESS"] = branchAddress;
-                            //    }
-
-                            //}
+                            
                         }
                     }
 
@@ -152,17 +157,31 @@ public partial class ReportViewer_UnitReportSaleReportViewer : System.Web.UI.Pag
             }
 
 
-        //   dtReport.WriteXmlSchema(@"D:\Project\Web\AMCL.OPENMF\AMCL.Web\UI\ReportViewer\Report\dtUnitReportForStatement.xsd");
+            //dtReport.WriteXmlSchema(@"F:\GITHUB_AMCL\DOTNET2015\AMCL.OPENMF\AMCL.REPORT\XMLSCHEMAS\dtUnitReportForStatement.xsd");
+            if (CDSStatus.ToString()=="Y")
+            {
+                sale_Statement_CDS.Refresh();
+                sale_Statement_CDS.SetDataSource(dtReport);
 
-            
-            string Path = Server.MapPath("Report/rptSaleStatement.rpt");
-            rdoc.Load(Path);
-            rdoc.SetDataSource(dtReport);
-            CrystalReportViewer1.ReportSource = rdoc;
-            rdoc.SetParameterValue("fundName", opendMFDAO.GetFundName(fundCode.ToString()));
-            rdoc.SetParameterValue("branchName", opendMFDAO.GetBranchName(branchCode.ToString()).ToString());
-            rdoc.SetParameterValue("branchCode", branchCode.ToString());
-            rdoc = ReportFactory.GetReport(rdoc.GetType());
+                sale_Statement_CDS.SetParameterValue("fundName", opendMFDAO.GetFundName(fundCode.ToString()));
+                sale_Statement_CDS.SetParameterValue("branchName", opendMFDAO.GetBranchName(branchCode.ToString()).ToString());
+                sale_Statement_CDS.SetParameterValue("branchCode", branchCode.ToString());
+
+                CrystalReportViewer1.ReportSource = sale_Statement_CDS;
+            }
+            else
+            {
+                sale_Statement.Refresh();
+                sale_Statement.SetDataSource(dtReport);
+
+                sale_Statement.SetParameterValue("fundName", opendMFDAO.GetFundName(fundCode.ToString()));
+                sale_Statement.SetParameterValue("branchName", opendMFDAO.GetBranchName(branchCode.ToString()).ToString());
+                sale_Statement.SetParameterValue("branchCode", branchCode.ToString());
+
+                CrystalReportViewer1.ReportSource = sale_Statement;
+            }
+           
+         
            
 
         }
@@ -177,11 +196,10 @@ public partial class ReportViewer_UnitReportSaleReportViewer : System.Web.UI.Pag
     }
     protected void Page_Unload(object sender, EventArgs e)
     {
-        CrystalReportViewer1.Dispose();
-        CrystalReportViewer1 = null;
-        rdoc.Close();
-        rdoc.Dispose();
-        rdoc = null;
-        GC.Collect();
+        sale_Statement_CDS.Close();
+        sale_Statement_CDS.Dispose();
+
+        sale_Statement.Close();
+        sale_Statement.Dispose();
     }
 }

@@ -257,7 +257,7 @@ public partial class UI_UnitTransferEntry : System.Web.UI.Page
                         dtGrid.Rows.Add(drGrid);
                     }
                 }
-                
+
                 unitTransferBLObj.saveTransfer(dtGrid, regObj, transferObj, userObj);//save Transfer Data
                 ClearText();
                 leftDataGrid.DataSource = opendMFDAO.getTableDataGrid();// hide remaining Data
@@ -273,4 +273,21 @@ public partial class UI_UnitTransferEntry : System.Web.UI.Page
         
     }
 
+    protected void AddTotalButton_Click(object sender, EventArgs e)
+    {
+        long totalSurrenderUnits = 0;
+        DataTable dtGrid = opendMFDAO.getTableDataGrid();
+
+        foreach (DataGridItem gridRow in leftDataGrid.Items)
+        {
+            CheckBox leftCheckBox = (CheckBox)gridRow.FindControl("leftCheckBox");
+            if (leftCheckBox.Checked)
+            {
+
+                totalSurrenderUnits = totalSurrenderUnits + Convert.ToInt64(gridRow.Cells[3].Text.Trim().ToString());
+
+            }
+        }
+        TotalUnitRepurchaseTextBox.Text = totalSurrenderUnits.ToString();
+    }
 }

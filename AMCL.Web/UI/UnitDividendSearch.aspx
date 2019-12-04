@@ -10,15 +10,19 @@
         var Confrm=confirm("Are Sure To Resete");
         if(Confrm)
         {         
-            document.getElementById("<%=holderNameTextBox.ClientID%>").value ="";
+            document.getElementById("<%=holderNameTextBox.ClientID%>").value = "";
+             document.getElementById("<%=holderBOTextBox.ClientID%>").value ="";    
+            document.getElementById("<%=folioTextBox.ClientID%>").value ="";
             document.getElementById("<%=jHolderTextBox.ClientID%>").value ="";
             document.getElementById("<%=holderAddress1TextBox.ClientID%>").value ="";
             document.getElementById("<%=holderAddress2TextBox.ClientID%>").value ="";            
             document.getElementById("<%=holderTelphoneTextBox.ClientID%>").value =""; 
             document.getElementById("<%=holderAddress2TextBox.ClientID%>").value ="";
-             document.getElementById("<%=Nominee1NameTextBox.ClientID%>").value =""; 
+            document.getElementById("<%=Nominee1NameTextBox.ClientID%>").value =""; 
             document.getElementById("<%=Nominee2NameTextBox.ClientID%>").value ="";
-            document.getElementById("<%=tdCIP.ClientID%>").innerHTML =""; 
+            document.getElementById("<%=tdCIP.ClientID%>").innerHTML = ""; 
+            document.getElementById("<%=tdTIN.ClientID%>").innerHTML = ""; 
+             document.getElementById("<%=tdBEFTN.ClientID%>").innerHTML =""; 
             document.getElementById("<%=BankInfoTextBox.ClientID%>").value ="";
             document.getElementById("<%=RemarksTextBox.ClientID%>").value =""; 
             document.getElementById("<%=TotalLienUnitHoldingTextBox.ClientID%>").value =""; 
@@ -54,7 +58,7 @@
         
         
               //Input Text Checking
-           if(document.getElementById("<%=regNoTextBox.ClientID%>").value =="")
+          if(document.getElementById("<%=regNoTextBox.ClientID%>").value =="" && document.getElementById("<%=holderBOTextBox.ClientID%>").value ==""&& document.getElementById("<%=folioTextBox.ClientID%>").value =="")
             {
                 document.getElementById("<%=regNoTextBox.ClientID%>").focus();
                 alert("Please Enter Registration Number");
@@ -96,9 +100,9 @@
             
            if(document.getElementById("<%=regNoTextBox.ClientID%>").value !="")
             {
-                 var fundCode=document.getElementById("<%=fundCodeTextBox.ClientID%>").value;
+                 var fundCode=document.getElementById("<%=fundCodeDDL.ClientID%>").value;
                  var reg=document.getElementById("<%=regNoTextBox.ClientID%>").value;
-                 var Branch=document.getElementById("<%=branchCodeTextBox.ClientID%>").value;
+                 var Branch=document.getElementById("<%=branchCodeDDL.ClientID%>").value;
                  var url='Popup/ViewLienDetails.aspx?reg='+reg+'&fund='+fundCode+'&branch='+Branch;
                  var ViewLienDetails= window.open(url,'ViewLienDetails');
                  ViewLienDetails.focus();
@@ -217,7 +221,7 @@
         <table align="center">
         <tr>
             <td class="FormTitle" align="center">
-           Unit Holder Ledger&nbsp; Form (<span id="spanFundName" runat="server"></span>)
+           Unit Holder Dividend Information&nbsp; Form (<span id="spanFundName" runat="server"></span>)
             </td>           
             <td>
                 <br />
@@ -225,55 +229,42 @@
         </tr> 
       </table>
       <br />
-      <div id="dvUpdatePannel" runat="server" style="text-align:left">
+      
       
               <div id="dvContent" runat="server" style="width:1200px;  text-align:left;" >
               <table width="1200px" align="left" cellpadding="0" cellspacing="0" border="0" >
               <colgroup width="300"></colgroup>
               <colgroup width="150"></colgroup>
               <colgroup width="310"></colgroup>
-                <tr>
+               
+                   <tr>
                     <td align="right" class="style9" ></td>
                     <td align="right">
                         <b>Registration No:</b></td>
                     <td align="left">
-                        <asp:TextBox ID="fundCodeTextBox" runat="server" 
-                            CssClass= "TextInputStyleSmall" Enabled="False" 
-                            meta:resourcekey="fundCodeTextBoxResource1"></asp:TextBox>
-                        <b>/</b><asp:TextBox ID="branchCodeTextBox" runat="server" 
-                            CssClass= "TextInputStyleSmall" Enabled="False" 
-                            meta:resourcekey="branchCodeTextBoxResource1"></asp:TextBox>
-                        <b>/</b><asp:TextBox ID="regNoTextBox" runat="server"  MaxLength="8"   
-                            CssClass= "TextInputStyleSmall" TabIndex="1" AutoPostBack="True" 
-                            ontextchanged="regNoTextBox_TextChanged" onkeypress= "fncInputNumericValuesOnly()"
-                            meta:resourcekey="regNoTextBoxResource1" Width="83px"></asp:TextBox>
-                                            <span class="star">*</span>&nbsp;<asp:Button 
+                        <asp:DropDownList ID="fundCodeDDL" runat="server"  ></asp:DropDownList>
+                        <b>/</b> <asp:DropDownList ID="branchCodeDDL" runat="server"  ></asp:DropDownList>
+                            
+                        <b>/</b><asp:TextBox ID="regNoTextBox" runat="server"    
+                            CssClass= "TextInputStyleSmall" TabIndex="1" 
+                           onkeypress= "fncInputNumericValuesOnly()"
+                            meta:resourcekey="regNoTextBoxResource1" Width="60px"></asp:TextBox>
+                                            <span class="star">*<asp:Button 
                             ID="findButton" runat="server" Text="Find" CssClass="buttonmid" 
                             onclick="findButton_Click" AccessKey="f" 
                             onclientclick="return fnCheqInput();" TabIndex="2" 
                             meta:resourcekey="findButtonResource1" /></td>
-                            <td rowspan="11" align="center">
-                              <div  id="dvImage" runat="server"  
-                                    style=" border-style: solid; border-color: inherit; border-width: 1px; width: 217px; width:415px; height: 254px;">
-                                <table align="center" width="164"  cellpadding="0" cellspacing="0" 
-                                    style="height: 180px">
-                                <tr style=" height:15px;">
-                                   <td align="center" ><span  style="border:1px solid">Signature    and 
-                                       Photo    </span></td></tr>
-                                   <tr style=" height:102px;">
-                                    <td align="left">
-                                   <asp:Image ID="SignImage" runat="server" Height="250px" Width="410px" 
-                                            meta:resourcekey="SignImageResource1"  />
-                                    </td>    
-                                </tr>
-                                                               
-                                </table>
-                             </div>
+                            <td>
+                             
+                             
+                                &nbsp;
                             </td>
+                           
                             
                 </tr>
+               
                 <tr>
-                    <td align="right" rowspan="11" >
+                    <td align="right" rowspan="12" >
                     <div  id="dvLockin" runat="server" style="visibility:hidden">
                         <table  width="252px" align="left" cellpadding="0" cellspacing="0" border="0">
                         <colgroup width="125"></colgroup>
@@ -342,8 +333,8 @@
                                     LOCK&nbsp; IN&nbsp; REMARKS</td>
                             </tr>
                              <tr>
-                                <td class="style11" colspan="2">
-                        <asp:TextBox ID="LockRemarksTextBox" runat="server" 
+                            <td class="style11" colspan="2">
+                          <asp:TextBox ID="LockRemarksTextBox" runat="server" 
                             CssClass= "TextInputStyleLarge" TabIndex="5" 
                             meta:resourcekey="holderAddress1TextBoxResource1" Font-Bold="False" 
                             Height="63px" TextMode="MultiLine"></asp:TextBox>
@@ -370,6 +361,42 @@
                         </table>
                     </div>
                     </td>
+                    <td align="right">
+                        <b>&nbsp;BO Number (if any):</b>
+
+                    </td>
+                    <td align="left">
+                        <asp:TextBox ID="holderBOTextBox" runat="server" 
+                            CssClass= "TextInputStyleLarge" MaxLength="16" TabIndex="3"  onkeypress= "fncInputNumericValuesOnly()"
+                            meta:resourcekey="holderNameTextBoxResource1" Width="137px"></asp:TextBox>
+                        <b>/Folio<asp:TextBox ID="folioTextBox" runat="server" 
+                            CssClass="TextInputStyleSmall" MaxLength="10" 
+                            onkeypress="fncInputNumericValuesOnly()" 
+                             TabIndex="3" Width="90px"></asp:TextBox>
+                        </b>
+                    </td>
+                   
+                    <td rowspan="12" align="center">
+                              <div  id="dvImage" runat="server"  
+                                    style=" border-style: solid; border-color: inherit; border-width: 1px; width: 217px; width:415px; height: 254px;">
+                                <table align="center" width="164"  cellpadding="0" cellspacing="0" 
+                                    style="height: 180px">
+                                <tr style=" height:15px;">
+                                   <td align="center" ><span  style="border:1px solid">Signature    and 
+                                       Photo    </span></td></tr>
+                                   <tr style=" height:102px;">
+                                    <td align="left">
+                                   <asp:Image ID="SignImage" runat="server" Height="250px" Width="410px" 
+                                            meta:resourcekey="SignImageResource1"  />
+                                    </td>    
+                                </tr>
+                                                               
+                                </table>
+                             </div>
+                            </td>
+                </tr>
+                 
+                <tr>
                     <td align="right">
                         <b>Name of Holder:</b></td>
                     <td align="left">
@@ -491,8 +518,9 @@
                             CssClass="buttoncommon" EnableTheming="True" OnClientClick=" return PopupLienDetails();"                            
                             Text="Lien Details" Height="17px" Width="71px" />
                     </td>
-                    <td></td>
+                   
                 </tr>  
+              
                 <tr>
                     <td colspan="4">
                      <table>
@@ -570,6 +598,9 @@
                                                 <asp:BoundColumn DataField="FY_PART" HeaderText="FY Part ">
                                                     <HeaderStyle Width="100px" />
                                                 </asp:BoundColumn>
+                                                <asp:BoundColumn DataField="ISSUE_DT" HeaderText="Issue Date ">
+                                                    <HeaderStyle Width="110px" />
+                                                </asp:BoundColumn>
                                                 <asp:BoundColumn DataField="WAR_NO" HeaderText="Warrant No">
                                                     <HeaderStyle Width="100px" />
                                                 </asp:BoundColumn>
@@ -635,7 +666,7 @@
               </div>
             
     
-   </div>
+ 
              
               <table width="450" align="center" cellpadding="0" cellspacing="0">
              <tr>

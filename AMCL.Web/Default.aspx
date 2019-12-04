@@ -67,6 +67,14 @@
             color: #CC33FF;
         }
         
+        .auto-style1 {
+            text-align: center;
+            height: 42px;
+        }
+        .auto-style2 {
+            height: 42px;
+        }
+        
     </style>
 </head>
 <body onkeydown="if (event.keyCode==13) {event.keyCode=9; return event.keyCode }">
@@ -83,14 +91,14 @@
     <tr>
         <td  class="style6" 
             colspan="2">
-                       IAMCL TradeUnits</td>
+                       IAMCL Trade&nbsp; Units</td>
     </tr>
    </table>
     <br />
     <br />
     <br />
     <br />
-    <table width="600" align="center" cellpadding="0" cellspacing="0">    
+    <table align="center" cellpadding="0" cellspacing="0" style="width: 233px">    
         <tr>
             <td align="right" class="style3">
              Login ID:
@@ -109,31 +117,20 @@
             </td>
         </tr>
         <tr>
-        <td align="right" class="style3">
-            Word Verification:<br />
-            <br />
-                    </td>
-            <td align="left" class="style7">            
-            <asp:TextBox ID="CaptchaTextBox" runat="server"  CssClass="textInputStyle"  TabIndex="2"></asp:TextBox>
-                <br />
-                <span class="style8">Type the characters you see                 <br />
-                in the&nbsp; picture right
-            </span>
-            </td>
-            <td align="left">
+           <%-- <td align="left">
              <cc1:CaptchaControl ID="ccJoin" runat="server" CaptchaBackgroundNoise="Low" CaptchaLength="3" CaptchaHeight="50" CaptchaWidth="200" CaptchaLineNoise="None" CaptchaMinTimeout="10" CaptchaMaxTimeout="240" />
-            </td>
+            </td>--%>
         </tr>
          <tr>
-         <td>
+         <td class="auto-style1">
          &nbsp;
          </td>
-         <td align="center">
+         <td align="center" class="auto-style2">
                 <asp:Button ID="loginButton" runat="server" Text="Login" 
                     CssClass="buttoncommon" OnClientClick="return fnValidation();" 
-                   TabIndex="3"/>
+                   TabIndex="3" Height="27px" Width="116px"/>
          </td>
-         <td>
+         <td class="auto-style2">
          &nbsp;
          </td>
 

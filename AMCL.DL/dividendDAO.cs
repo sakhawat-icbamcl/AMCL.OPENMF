@@ -108,14 +108,10 @@ namespace AMCL.DL
            dtDividend.Columns.Add("ID_AC", typeof(string));
            dtDividend.Columns.Add("ID_BK_NM", typeof(string));
            dtDividend.Columns.Add("ID_BK_BR_NM", typeof(string));
-          
-           
+           dtDividend.Columns.Add("WAR_TYPE", typeof(string));
+           dtDividend.Columns.Add("BO_FOLIO", typeof(string));
 
-
-
-
-
-           return dtDividend;
+            return dtDividend;
 
 
        }
@@ -173,5 +169,77 @@ namespace AMCL.DL
            DataTable dtTaxCal = commonGatewayObj.Select(sbQuery.ToString());
           return dtTaxCal;
        }
+       public DataTable getdtBOUploadTable()
+        {
+            DataTable dtBOUploadTable = new DataTable();
+
+            dtBOUploadTable.Columns.Add("SI", typeof(string));
+            dtBOUploadTable.Columns.Add("FUND_NAME", typeof(string));
+            dtBOUploadTable.Columns.Add("BO", typeof(string));
+            dtBOUploadTable.Columns.Add("NAME1", typeof(string));
+            dtBOUploadTable.Columns.Add("NAME2", typeof(string));
+            dtBOUploadTable.Columns.Add("BO_FATHER", typeof(string));
+            dtBOUploadTable.Columns.Add("BO_MOTHER", typeof(string));
+            dtBOUploadTable.Columns.Add("BO_TYPE", typeof(string));
+            dtBOUploadTable.Columns.Add("BO_CATAGORY", typeof(string));
+            dtBOUploadTable.Columns.Add("COUNTRY", typeof(string));
+            dtBOUploadTable.Columns.Add("BANK_ACC_NO", typeof(string));
+            dtBOUploadTable.Columns.Add("BANK_NAME", typeof(string));
+            dtBOUploadTable.Columns.Add("BRANCH_NAME", typeof(string));
+            dtBOUploadTable.Columns.Add("RESIDENCY", typeof(string));
+            dtBOUploadTable.Columns.Add("BALANCE", typeof(string));
+            dtBOUploadTable.Columns.Add("DIVIDEND", typeof(string));
+            dtBOUploadTable.Columns.Add("TAX", typeof(string));
+            dtBOUploadTable.Columns.Add("FINAL_DIVIDEND", typeof(string));
+            dtBOUploadTable.Columns.Add("ADDRESS1", typeof(string));
+            dtBOUploadTable.Columns.Add("ADDRESS2", typeof(string));
+            dtBOUploadTable.Columns.Add("ADDRESS3", typeof(string));
+            dtBOUploadTable.Columns.Add("ADDRESS4", typeof(string));
+            dtBOUploadTable.Columns.Add("CITY", typeof(string));
+            dtBOUploadTable.Columns.Add("POST_CODE", typeof(string));
+            dtBOUploadTable.Columns.Add("ADDRESS_COUNTRY", typeof(string));
+            dtBOUploadTable.Columns.Add("PHONE1", typeof(string));
+            dtBOUploadTable.Columns.Add("PHONE2", typeof(string));
+            dtBOUploadTable.Columns.Add("EMAIL", typeof(string));
+            dtBOUploadTable.Columns.Add("NO_OF_BANKS", typeof(string));
+            dtBOUploadTable.Columns.Add("BANK_CODE", typeof(int));
+            dtBOUploadTable.Columns.Add("ROUTING_NO", typeof(string));
+            dtBOUploadTable.Columns.Add("ETIN", typeof(string));
+            dtBOUploadTable.Columns.Add("IS_VALID_ETIN", typeof(string));
+            dtBOUploadTable.Columns.Add("OCCUPATION", typeof(string));
+            dtBOUploadTable.Columns.Add("GENDER", typeof(string));
+            dtBOUploadTable.Columns.Add("DATE_OF_BIRTH", typeof(string));
+            dtBOUploadTable.Columns.Add("BO_NATIONALITY", typeof(string));
+            dtBOUploadTable.Columns.Add("REG_BK", typeof(string));
+            dtBOUploadTable.Columns.Add("REG_BR", typeof(string));
+            dtBOUploadTable.Columns.Add("REG_NO", typeof(int));
+            dtBOUploadTable.Columns.Add("NO_OF_REGNO", typeof(int));
+
+
+
+
+
+            return dtBOUploadTable;
+
+
+        }
+       public DataTable dtRegInfo(string fund_code,string bo)
+        {
+            DataTable dtRegiInfo = commonGatewayObj.Select("SELECT * FROM U_MASTER WHERE REG_BK='" + fund_code + "' AND SUBSTR(BO,9,8)=SUBSTR("+bo+",9,8)");
+            commonGatewayObj.BeginTransaction();
+            if(dtRegiInfo.Rows.Count>0)
+            {
+                commonGatewayObj.ExecuteNonQuery("UPDATE U_MASTER SET CDBL_RECORD_DATE_STATUS='Y' WHERE REG_BK='" + fund_code + "' AND SUBSTR(BO,9,8)=SUBSTR(" + bo + ",9,8)");
+                commonGatewayObj.CommitTransaction();
+                return dtRegiInfo;
+
+            }
+            else
+            {
+                commonGatewayObj.RollbackTransaction();
+                return dtRegiInfo;
+            }
+            
+        }
     }
 }

@@ -592,5 +592,52 @@ namespace AMCL.DL
 
             }
         }
+        public long GetMaxNo(string tableName, string columnName, string filter)
+        {
+            OpenAppConnection();
+
+            try
+            {
+                if (Trans == null)
+                {
+                    Cmnd = new OracleCommand(string.Format("SELECT NVL(MAX({0}),0) AS ID FROM {1} WHERE {2} ", columnName, tableName, filter), AppConn);
+                }
+                else
+                {
+                    Cmnd.CommandText = string.Format("SELECT NVL(MAX({0}),0) AS ID FROM {1} WHERE {2} ", columnName, tableName, filter);
+                }
+                long lngMaxno = Convert.ToInt64(Cmnd.ExecuteScalar());
+
+                return lngMaxno;
+            }
+            catch (OracleException Ex)
+            {
+                if (Trans != null)
+                {
+                    Trans.Rollback();
+                    Trans = null;
+                }
+                throw Ex;
+
+            }
+            catch (Exception Ex)
+            {
+                if (Trans != null)
+                {
+                    Trans.Rollback();
+                    Trans = null;
+                }
+                throw Ex;
+
+            }
+            finally
+            {
+                if (Trans == null)
+                {
+                    CloseAppConnection();
+                }
+
+            }
+        }
     }
 }

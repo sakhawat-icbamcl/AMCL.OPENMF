@@ -32,6 +32,7 @@ public partial class ReportViewer_UnitReportLedgerReportViewer : System.Web.UI.P
     CommonGateway commonGatewayObj = new CommonGateway();
     BaseClass bcContent = new BaseClass();
     ReportDocument rdoc = new ReportDocument();
+    AMCL.REPORT.CR_UnitLedgerStatement CR_Ledger = new AMCL.REPORT.CR_UnitLedgerStatement();
 
     protected void Page_Load(object sender, EventArgs e)
     {
@@ -66,6 +67,7 @@ public partial class ReportViewer_UnitReportLedgerReportViewer : System.Web.UI.P
             unitRegObj.RegNumber = regiNo.ToString();
             DataTable dtLedgerRegInfo = opendMFDAO.getDtRegInfo(unitRegObj);
             dtLedgerRegInfo.TableName = "dtLedgerRegInfo";
+            
             string regiNumber=dtLedgerRegInfo.Rows[0]["REG_BK"].ToString()+"/"+dtLedgerRegInfo.Rows[0]["REG_BR"].ToString()+"/"+dtLedgerRegInfo.Rows[0]["REG_NO"].ToString();
             string holderName=dtLedgerRegInfo.Rows[0]["HNAME"].Equals(DBNull.Value)? "":dtLedgerRegInfo.Rows[0]["HNAME"].ToString();
             string JointHolderName=dtLedgerRegInfo.Rows[0]["JNT_NAME"].Equals(DBNull.Value)? "":dtLedgerRegInfo.Rows[0]["JNT_NAME"].ToString();
@@ -74,31 +76,52 @@ public partial class ReportViewer_UnitReportLedgerReportViewer : System.Web.UI.P
             string city=dtLedgerRegInfo.Rows[0]["CITY"].Equals(DBNull.Value)? "":dtLedgerRegInfo.Rows[0]["CITY"].ToString();
             string cip=dtLedgerRegInfo.Rows[0]["CIP"].Equals(DBNull.Value)? "":dtLedgerRegInfo.Rows[0]["CIP"].Equals("Y") ? "YES":"NO";
             string regType = dtLedgerRegInfo.Rows[0]["REG_TYPE"].Equals(DBNull.Value) ? "" : reportObj.getRegTypeFullName(dtLedgerRegInfo.Rows[0]["REG_TYPE"].ToString());
+            string BO_Folio = "";
+            if (!dtLedgerRegInfo.Rows[0]["BO"].Equals(DBNull.Value))
+            {
+                BO_Folio = dtLedgerRegInfo.Rows[0]["BO"].ToString();
+            }
+            else if ( !dtLedgerRegInfo.Rows[0]["FOLIO_NO"].Equals(DBNull.Value))
+            {
+                BO_Folio = dtLedgerRegInfo.Rows[0]["FOLIO_NO"].ToString();
+            }
+            string BEFTN = "";
+            if (!dtLedgerRegInfo.Rows[0]["IS_BEFTN"].Equals(DBNull.Value))
+            {
+                BEFTN = dtLedgerRegInfo.Rows[0]["IS_BEFTN"].Equals("Y") ? "YES" : "NO";
+            }
+            
+            string ETIN = dtLedgerRegInfo.Rows[0]["TIN"].Equals(DBNull.Value) ? "" : dtLedgerRegInfo.Rows[0]["TIN"].ToString();
 
 
 
 
-       dtLedgerForReport.WriteXmlSchema(@"D:\Project\Web\AMCL.OpenEndMF\UI\ReportViewer\Report\dtLedgerForReport.xsd");
+
+            //dtLedgerForReport. WriteXmlSchema(@"F:\GITHUB_AMCL\DOTNET2015\AMCL.OPENMF\AMCL.REPORT\XMLSCHEMAS\dtLedgerForReport.xsd");
+
+            CR_Ledger.Refresh();
+            CR_Ledger.SetDataSource(dtLedgerForReport);
+
+            CR_Ledger.SetParameterValue("fundName", opendMFDAO.GetFundName(fundCode.ToString()));
+            CR_Ledger.SetParameterValue("branchName", opendMFDAO.GetBranchName(branchCode.ToString()).ToString());
+            CR_Ledger.SetParameterValue("branchCode", branchCode.ToString());
+            CR_Ledger.SetParameterValue("Regi_No", regiNumber);
+            CR_Ledger.SetParameterValue("Holder_Name", holderName.ToString());
+            CR_Ledger.SetParameterValue("Jholder_name", JointHolderName.ToString());
+            CR_Ledger.SetParameterValue("Address1", address1.ToString());
+            CR_Ledger.SetParameterValue("Address2", address2.ToString());
+            CR_Ledger.SetParameterValue("City", city.ToString());
+            CR_Ledger.SetParameterValue("Cip", cip.ToString());
+            CR_Ledger.SetParameterValue("Reg_Type", regType.ToString());
+            CR_Ledger.SetParameterValue("BO_Folio", BO_Folio.ToString());
+            CR_Ledger.SetParameterValue("BEFTN", BEFTN.ToString());
+            CR_Ledger.SetParameterValue("ETIN", ETIN.ToString());
 
 
-            string Path = Server.MapPath("Report/rptLedgerStatement.rpt");
-            rdoc.Load(Path);
-            rdoc.SetDataSource(dtLedgerForReport);
-            rdoc.Refresh();
-            CrystalReportViewer1.ReportSource = rdoc;
-            rdoc.SetParameterValue("fundName", opendMFDAO.GetFundName(fundCode.ToString()));
-            rdoc.SetParameterValue("branchName", opendMFDAO.GetBranchName(branchCode.ToString()).ToString());
-            rdoc.SetParameterValue("branchCode", branchCode.ToString());
-            rdoc.SetParameterValue("Regi_No", regiNumber);
-            rdoc.SetParameterValue("Holder_Name", holderName.ToString());
-            rdoc.SetParameterValue("Jholder_name", JointHolderName.ToString());
-            rdoc.SetParameterValue("Address1", address1.ToString());
-            rdoc.SetParameterValue("Address2", address2.ToString());
-            rdoc.SetParameterValue("City", city.ToString());
-            rdoc.SetParameterValue("Cip", cip.ToString());
-            rdoc.SetParameterValue("Reg_Type", regType.ToString());
 
-           //rdoc.ExportToDisk(ExportFormatType.PortableDocFormat, "E:\\test.pdf");                       
+            CrystalReportViewer1.ReportSource = CR_Ledger;
+
+                                
 
         }
         else
@@ -113,11 +136,7 @@ public partial class ReportViewer_UnitReportLedgerReportViewer : System.Web.UI.P
 
     protected void Page_Unload(object sender, EventArgs e)
     {
-        CrystalReportViewer1.Dispose();
-        CrystalReportViewer1 = null;
-        rdoc.Close();
-        rdoc.Dispose();
-        rdoc = null;
-        GC.Collect();
+        CR_Ledger.Close();
+        CR_Ledger.Dispose();
     }
 }

@@ -82,6 +82,9 @@
         {
             height: 24px;
         }
+        .auto-style1 {
+            text-align: right;
+        }
     </style>
     
     </asp:Content>
@@ -114,7 +117,7 @@
 
     
      <tr >
-        <td class="style9" style="font-size: small"  ><b>Fund Name :</b></td>
+        <td  style="font-size: small" class="auto-style1"  ><b>Fund Name :</b></td>
         
         <td align="left"   colspan="4" class="style12"> &nbsp;&nbsp;          
             <asp:DropDownList ID="fundNameDropDownList" runat="server" 
@@ -171,7 +174,8 @@
                 meta:resourcekey="findButtonResource1" onclick="findButton_Click" 
                 onclientclick="return fnCheqInput();" TabIndex="7" Text="Find" 
                 Width="128px" />
-            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <span class="style11">(Alt + f)</span></td>
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<asp:Button ID="PrintButton" runat="server" CssClass="buttonmid" meta:resourcekey="findButtonResource1"  onclientclick="return fnCheqInput();" TabIndex="7" Text="Print" Width="128px" OnClick="PrintButton_Click" />
+&nbsp; </td>
     </tr>
 </table>
 <br />

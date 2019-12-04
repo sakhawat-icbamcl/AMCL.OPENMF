@@ -28,6 +28,7 @@ public partial class UI_UnitSaleEntry : System.Web.UI.Page
     string errorMassege = "";
     BaseClass bcContent = new BaseClass();
     EncryptDecrypt encrypt = new EncryptDecrypt();
+    string CDSStatus = "";
    
     protected void Page_Load(object sender, EventArgs e)
     {
@@ -46,6 +47,7 @@ public partial class UI_UnitSaleEntry : System.Web.UI.Page
         spanFundName.InnerText = opendMFDAO.GetFundName(fundCode.ToString());
         fundCodeTextBox.Text = fundCode.ToString();
         branchCodeTextBox.Text = branchCode.ToString();
+        CDSStatus = bcContent.CDS.ToString().ToUpper();
                         
         
         regNoTextBox.Focus();

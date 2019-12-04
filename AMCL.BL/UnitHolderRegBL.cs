@@ -111,6 +111,10 @@ namespace AMCL.BL
                 {
                     htReg.Add("EDU_QUA", unitHolderObj.HolderEduQua.ToString().ToUpper());
                 }
+                if (unitHolderObj.HolderMobile.ToString() != "")
+                {
+                    htReg.Add("MOBILE1", unitHolderObj.HolderMobile.ToString());
+                }
                 if (unitHolderObj.HolderTelephone.ToString() != "")
                 {
                     htReg.Add("TEL_NO", unitHolderObj.HolderTelephone.ToString());
@@ -2437,6 +2441,7 @@ namespace AMCL.BL
                 htReg.Add("RELIGION", dtHolderReg_Info.Rows[0]["RELIGION"].Equals(DBNull.Value) ? null : dtHolderReg_Info.Rows[0]["RELIGION"].ToString());
                 htReg.Add("EDU_QUA", dtHolderReg_Info.Rows[0]["EDU_QUA"].Equals(DBNull.Value) ? null : dtHolderReg_Info.Rows[0]["EDU_QUA"].ToString());
                 htReg.Add("TEL_NO", dtHolderReg_Info.Rows[0]["TEL_NO"].Equals(DBNull.Value) ? null : dtHolderReg_Info.Rows[0]["TEL_NO"].ToString());
+                htReg.Add("MOBILE1", dtHolderReg_Info.Rows[0]["MOBILE1"].Equals(DBNull.Value) ? null : dtHolderReg_Info.Rows[0]["MOBILE1"].ToString());
                 htReg.Add("EMAIL", dtHolderReg_Info.Rows[0]["EMAIL"].Equals(DBNull.Value) ? null : dtHolderReg_Info.Rows[0]["EMAIL"].ToString());
                 htReg.Add("REMARKS", dtHolderReg_Info.Rows[0]["REMARKS"].Equals(DBNull.Value) ? null : dtHolderReg_Info.Rows[0]["REMARKS"].ToString());
                 //   htReg.Add("SPEC_IN1", dtHolderReg_Info.Rows[0]["SPEC_IN1"].Equals(DBNull.Value) ? null : dtHolderReg_Info.Rows[0]["SPEC_IN1"].ToString());
@@ -3264,6 +3269,14 @@ namespace AMCL.BL
                 {
                     htReg.Add("TEL_NO", DBNull.Value);
                 }
+                if (unitHolderObj.HolderMobile.ToString() != "")
+                {
+                    htReg.Add("MOBILE1", unitHolderObj.HolderMobile.ToString());
+                }
+                else
+                {
+                    htReg.Add("MOBILE1", DBNull.Value);
+                }
                 if (unitHolderObj.HolderEmail.ToString() != "")
                 {
                     htReg.Add("EMAIL", unitHolderObj.HolderEmail.ToString());
@@ -3509,7 +3522,6 @@ namespace AMCL.BL
             else
                 return false;
         }
-
         public string kycStatus(UnitHolderInfo unitHolderObj)
         {
             string finalStatus = "";
@@ -3538,5 +3550,6 @@ namespace AMCL.BL
              return finalStatus;
         }
        
+
     }
 }

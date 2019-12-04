@@ -439,8 +439,8 @@
     
     
     <div id="dvTotalUnits" runat="server" 
-              style="text-align:left;  width:410px; height: 43px;" >
-     <table align="left" width="400" cellpadding="0" cellspacing="0">
+              style="text-align:left;  width:459px; height: 43px;" >
+     <table align="left" cellpadding="0" cellspacing="0" style="width: 455px">
      <colgroup width="250"></colgroup>
     
         <tr >
@@ -456,6 +456,10 @@
                 <asp:TextBox ID="TotalUnitLienTextBox" runat="server" 
                     CssClass= "TextInputStyleSmall"   Enabled= "false" Width="100px" 
                     Font-Bold="True" ForeColor="#990033"></asp:TextBox>
+            &nbsp;<asp:Button ID="AddTotalButton" runat="server" AccessKey="l" 
+                   CssClass="buttoncommon" EnableTheming="True" 
+                   Text="Add Total" 
+                   Height="18px" Width="87px" onclick="AddTotalButton_Click" />
             </td>           
         </tr>                      
       </table>
@@ -524,7 +528,7 @@
     <br />
     
    
-    <table align="left" cellpadding="0" cellspacing="0" style="width: 939px">
+    <table align="left" cellpadding="0" cellspacing="0" style="width: 1230px">
      <tr>
         <td align="right">
         

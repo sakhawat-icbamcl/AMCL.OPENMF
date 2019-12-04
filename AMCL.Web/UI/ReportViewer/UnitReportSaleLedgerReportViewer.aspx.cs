@@ -139,6 +139,9 @@ public partial class ReportViewer_UnitReportSaleLedgerReportViewer : System.Web.
 
                 //}
                 drReport["CIP"] = dtReportStatement.Rows[looper]["CIP"].Equals(DBNull.Value) ? "" : dtReportStatement.Rows[looper]["CIP"].ToString();
+                drReport["BO"] = dtReportStatement.Rows[looper]["BO"].Equals(DBNull.Value) ? "" : dtReportStatement.Rows[looper]["BO"].ToString();
+                drReport["TIN"] = dtReportStatement.Rows[looper]["TIN"].Equals(DBNull.Value) ? "" : dtReportStatement.Rows[looper]["TIN"].ToString();
+                drReport["BEFTN"] = dtReportStatement.Rows[looper]["BEFTN"].Equals(DBNull.Value) ? "" : dtReportStatement.Rows[looper]["BEFTN"].ToString();
                 drReport["ID_AC"] = dtReportStatement.Rows[looper]["ID_AC"].Equals(DBNull.Value) ? "" : dtReportStatement.Rows[looper]["ID_AC"].ToString();
                 drReport["QTY"] =Convert.ToInt32( dtReportStatement.Rows[looper]["QTY"].Equals(DBNull.Value) ? "0": dtReportStatement.Rows[looper]["QTY"].ToString());
                 drReport["RATE"] =decimal.Parse( dtReportStatement.Rows[looper]["RATE"].Equals(DBNull.Value) ? "0" : dtReportStatement.Rows[looper]["RATE"].ToString());

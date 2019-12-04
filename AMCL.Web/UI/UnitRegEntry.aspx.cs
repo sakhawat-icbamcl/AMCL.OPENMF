@@ -58,7 +58,7 @@ public partial class UI_UnitRegEntry : System.Web.UI.Page
             bankNameDropDownList.DataValueField = "BANK_CODE";
             bankNameDropDownList.DataBind();
 
-           IDbankNameDropDownList.DataSource = opendMFDAO.dtFillBankName(" CATE_CODE IN (2,3) ");
+           IDbankNameDropDownList.DataSource = opendMFDAO.dtFillBankName(" CATE_CODE IN (1,2,3) ");
            IDbankNameDropDownList.DataTextField = "BANK_NAME";
            IDbankNameDropDownList.DataValueField = "BANK_CODE";
            IDbankNameDropDownList.DataBind();
@@ -150,7 +150,7 @@ public partial class UI_UnitRegEntry : System.Web.UI.Page
 
 
 
-        
+        unitHolderObj.HolderMobile = MobileTextBox.Text.Trim();
         unitHolderObj.HolderTelephone =TelphoneTextBox.Text.Trim();
         unitHolderObj.HolderEmail =EmailTextBox.Text.Trim();
         unitHolderObj.HolderMaritialStatus = MaritialStatusDropDownList.SelectedValue;
@@ -268,6 +268,7 @@ public partial class UI_UnitRegEntry : System.Web.UI.Page
         OccupationDropDownList.SelectedValue="0";
         NationalityTextBox.Text="BANGLADESHI";
         TelphoneTextBox.Text="";
+        MobileTextBox.Text = "";
         EmailTextBox.Text="";
         SourceFundTextBox.Text = "";
         webaddressTextBox.Text = "";

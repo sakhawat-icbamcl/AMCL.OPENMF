@@ -118,7 +118,7 @@ public partial class UI_UnitLienMark : System.Web.UI.Page
             }
             else
             {
-
+                long totalSurrenderUnits = 0;
                 DataTable dtGrid = opendMFDAO.getTableDataGrid();
                 DataRow drGrid;
                 foreach (DataGridItem gridRow in leftDataGrid.Items)
@@ -130,18 +130,26 @@ public partial class UI_UnitLienMark : System.Web.UI.Page
                         drGrid["SL_NO"] = gridRow.Cells[1].Text.Trim().ToString();
                         drGrid["CERTIFICATE"] = gridRow.Cells[2].Text.Trim().ToString();
                         drGrid["QTY"] = gridRow.Cells[3].Text.Trim().ToString();
+                        totalSurrenderUnits = totalSurrenderUnits + Convert.ToInt64(gridRow.Cells[3].Text.Trim().ToString());
                         dtGrid.Rows.Add(drGrid);
                     }
                 }
 
-                unitLienBLObj.saveLienMark(dtGrid, regObj, unitLienObj, userObj);//save Lien Data
-                ClearText();
+                if (totalSurrenderUnits == Convert.ToInt64(TotalUnitLienTextBox.Text))
+                {
+                    unitLienBLObj.saveLienMark(dtGrid, regObj, unitLienObj, userObj);//save Lien Data
+                    ClearText();
 
-                leftDataGrid.DataSource = opendMFDAO.getTableDataGrid();// hide remaining Data
-                leftDataGrid.DataBind();
-                TotalUnitHoldingTextBox.Text = "";     
+                    leftDataGrid.DataSource = opendMFDAO.getTableDataGrid();// hide remaining Data
+                    leftDataGrid.DataBind();
+                    TotalUnitHoldingTextBox.Text = "";
 
-                ScriptManager.RegisterStartupScript(this.Page, this.Page.GetType(), "Popup", "alert ('Save SuccessFully');", true);
+                    ScriptManager.RegisterStartupScript(this.Page, this.Page.GetType(), "Popup", "alert ('Save SuccessFully');", true);
+                }
+                else
+                {
+                    ScriptManager.RegisterStartupScript(this.Page, this.Page.GetType(), "Popup", "alert ('Save Failed : Total Selected Units and Add Total Units is not equal');", true);
+                }
             }
         }
         catch (Exception ex)
@@ -228,5 +236,22 @@ public partial class UI_UnitLienMark : System.Web.UI.Page
         LienbranchNameDropDownList.DataValueField = "BRANCH_CODE";
         LienbranchNameDropDownList.DataBind();
 
+    }
+    protected void AddTotalButton_Click(object sender, EventArgs e)
+    {
+        long totalSurrenderUnits = 0;
+        DataTable dtGrid = opendMFDAO.getTableDataGrid();
+
+        foreach (DataGridItem gridRow in leftDataGrid.Items)
+        {
+            CheckBox leftCheckBox = (CheckBox)gridRow.FindControl("leftCheckBox");
+            if (leftCheckBox.Checked)
+            {
+
+                totalSurrenderUnits = totalSurrenderUnits + Convert.ToInt64(gridRow.Cells[3].Text.Trim().ToString());
+
+            }
+        }
+        TotalUnitLienTextBox.Text = totalSurrenderUnits.ToString();
     }
 }

@@ -95,40 +95,7 @@ public partial class ReportViewer_UnitReportTaxCertReportViewer : System.Web.UI.
             DataTable dtTaxCal = diviDAOObj.dtDividendInfo(REG_NO,fundCode,branchCode,FY);
             ReportDocument rdoc = new ReportDocument();
 
-            if ((dtIncomeTax.Rows[0]["FY_PART"].ToString().ToUpper() == "FINAL" || dtIncomeTax.Rows[0]["FY_PART"].ToString().ToUpper() == "2ND HALF") && (dtTaxCal.Rows.Count>1))
-            {
-                rdoc = new ReportDocument();
-                string Path = Server.MapPath("Report/rptIncomeTaxFinal.rpt");
-                rdoc.Load(Path);
-                rdoc.Refresh();
-                rdoc.SetDataSource(dtIncomeTax);
-                CrystalReportViewer1.ReportSource = rdoc;
-                decimal taxDiductCal = diviDAOObj.getTaxDiductRate(REG_NO, fundCode, branchCode,FY, Convert.ToDecimal(dtTaxCal.Rows[0]["TAX_LIMIT"].ToString())); 
-
-                decimal totalDividend = Convert.ToDecimal(dtTaxCal.Rows[0]["TOT_DIVI"].ToString()) + Convert.ToDecimal(dtTaxCal.Rows[1]["TOT_DIVI"].ToString());
-                decimal totalDiduct = Convert.ToDecimal(dtTaxCal.Rows[0]["DIDUCT"].ToString()) + Convert.ToDecimal(dtTaxCal.Rows[1]["DIDUCT"].ToString()); ;
-                decimal total_remainning = totalDividend -Convert.ToDecimal(dtTaxCal.Rows[0]["TAX_LIMIT"].ToString());
-                decimal taxtLimit = Convert.ToDecimal(dtTaxCal.Rows[0]["TAX_LIMIT"].ToString());
-                decimal diduct1 = Convert.ToDecimal(dtTaxCal.Rows[0]["DIDUCT"].ToString());
-                decimal diduct2 = Convert.ToDecimal(dtTaxCal.Rows[1]["DIDUCT"].ToString());
-
-
-                string TAX_CAL_TEXT = "*" + dtTaxCal.Rows[0]["TOT_DIVI"].ToString() + " (" + dtTaxCal.Rows[0]["FY_PART"].ToString() + ") +" + dtTaxCal.Rows[1]["TOT_DIVI"].ToString() + " (" + dtTaxCal.Rows[1]["FY_PART"].ToString() + ") ";
-                TAX_CAL_TEXT = TAX_CAL_TEXT + "=" + totalDividend.ToString() + "-" + taxtLimit + "=";
-                TAX_CAL_TEXT = TAX_CAL_TEXT + total_remainning.ToString() + "@" + taxDiductCal + "%=" + totalDiduct.ToString() + " [" + diduct1 + "(" + dtTaxCal.Rows[0]["FY_PART"].ToString() + ")+" + diduct2 + "(" + dtTaxCal.Rows[1]["FY_PART"].ToString() + ")" + "]";
-
-               
-
-                rdoc.SetParameterValue("fundCode", fundCode);
-                rdoc.SetParameterValue("branchCode", branchCode);
-                rdoc.SetParameterValue("FYPart", FYPart.ToString());
-                rdoc.SetParameterValue("Interim", interim.ToString());
-                rdoc.SetParameterValue("ended", ended.ToString());
-                rdoc.SetParameterValue("TAX_CAL_TEXT", TAX_CAL_TEXT.ToString());
-                rdoc = ReportFactory.GetReport(rdoc.GetType());
-            }
-            else
-            {
+          
                 rdoc = new ReportDocument();
                 string Path = Server.MapPath("Report/rptIncomeTax.rpt");
                 rdoc.Load(Path);
@@ -142,13 +109,12 @@ public partial class ReportViewer_UnitReportTaxCertReportViewer : System.Web.UI.
                 rdoc.SetParameterValue("Interim", interim.ToString());
                 rdoc.SetParameterValue("ended", ended.ToString());
                 rdoc = ReportFactory.GetReport(rdoc.GetType());
-            }
+            //}
         }
         else if (string.Compare(CertType, "SolventCert", true) == 0)//for Solvent 
         {
             opendMFDAOObj = new OMFDAO();
-            DataTable dtInvestCertHolderInfo = (DataTable)Session["dtInvestCertHolderInfo"];
-            //DataTable dtInvestSaleInfo = (DataTable)Session["dtInvestSaleInfo"];
+            DataTable dtInvestCertHolderInfo = (DataTable)Session["dtInvestCertHolderInfo"];          
             decimal totalUnitHolding = (decimal)Session["totalUnitHolding"];
             decimal USDRate =Convert.ToDecimal( (string)Session["USDRate"]);
             decimal repRate = Convert.ToDecimal((string)Session["RepRate"]);
@@ -156,11 +122,11 @@ public partial class ReportViewer_UnitReportTaxCertReportViewer : System.Web.UI.
 
             decimal equivalentInvestValue = totalUnitHolding * repRate;
             equivalentInvestValue = decimal.Round(equivalentInvestValue / USDRate, 2);
-            //decimal maxRepPrice = opendMFDAOObj.getMaxRepPrice(fundCode.ToString());
+            
             decimal equivalentMarketValue = totalUnitHolding * repRate;
             equivalentMarketValue = decimal.Round(equivalentMarketValue, 2);
            
-            //string FY = (string)Session["FY"];
+          
 
             // dtInvestSaleInfo.WriteXmlSchema(@"D:\Project\Web\AMCL.OPENMF\AMCL.Web\UI\ReportViewer\Report\rptSolventCert.xsd");
 
@@ -169,9 +135,7 @@ public partial class ReportViewer_UnitReportTaxCertReportViewer : System.Web.UI.
             rdoc.Load(Path);
             rdoc.Refresh();
             rdoc.SetDataSource(dtInvestCertHolderInfo);
-            CrystalReportViewer1.ReportSource = rdoc;
-            //rdoc.SetParameterValue("FY", FY.ToString());
-
+            CrystalReportViewer1.ReportSource = rdoc;           
             rdoc.SetParameterValue("fundCode", fundCode);
             rdoc.SetParameterValue("branchCode", branchCode);
             rdoc.SetParameterValue("HNAME", dtInvestCertHolderInfo.Rows[0]["HNAME"].Equals(DBNull.Value) ? "" : dtInvestCertHolderInfo.Rows[0]["HNAME"].ToString());
